@@ -1,0 +1,56 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: familie-ba-migrering
+  namespace: teamfamilie
+  labels:
+    team: teamfamilie
+
+spec:
+  image: {{ image }}
+  port: 8098
+  liveness:
+    path: /internal/health/liveness
+    initialDelay: 30
+    failureThreshold: 10
+  readiness:
+    path: /internal/health/readiness
+    initialDelay: 30
+    failureThreshold: 10
+  prometheus:
+    enabled: true
+    path: /internal/prometheus
+  vault:
+    enabled: false
+  replicas:
+    min: 1
+    max: 1
+    cpuThresholdPercentage: 50
+  resources:
+    limits:
+      memory: 1024Mi
+      cpu: "1"
+    requests:
+      memory: 512Mi
+      cpu: 200m
+  ingresses: # Optional. List of ingress URLs that will route HTTP traffic to the application.
+    - https://familie-ba-migrering.dev.intern.nav.no
+    - https://familie-ba-migrering.dev.nav.no
+  secureLogs:
+    enabled: true
+  gcp: # Database
+    sqlInstances:
+      - type: POSTGRES_12
+        name: familie-ba-migrering
+        autoBackupTime: "03:00"
+        databases:
+          - name: familie-ba-migrering
+            envVarPrefix: DB
+  azure:
+    application:
+      enabled: true
+  env:
+    - name: SPRING_PROFILES_ACTIVE
+      value: preprod
+    - name: JAVA_OPTS
+      value: "-Xmx1g"
