@@ -1,0 +1,55 @@
+application:
+  name: familie-ba-migrering
+
+server:
+  port: 8098
+  servlet:
+    context-path: /
+
+spring:
+  autoconfigure.exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
+  main:
+    allow-bean-definition-overriding: true
+    banner-mode: "off"
+management:
+  endpoint.health.show-details: always
+  endpoint.health.probes.enabled: true
+  health.livenessState.enabled: true
+  health.readinessState.enabled: true
+
+  endpoints.web:
+    exposure.include: info, health, metrics, prometheus
+    base-path: "/internal"
+  metrics.export.prometheus.enabled: true
+
+
+no.nav.security.jwt:
+  client:
+    registration:
+      ba-sak-clientcredentials:
+        resource-url: ${BA_SAK_API_URL}
+        token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
+        grant-type: client_credentials
+        scope: ${BA_SAK_SCOPE}
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-secret: ${AZURE_APP_CLIENT_SECRET}
+          client-auth-method: client_secret_basic
+      familie-ba-infotrygd-clientcredentials:
+        resource-url: ${FAMILIE_BA_INFOTRYGD_API_URL}
+        token-endpoint-url: ${AZUREAD_TOKEN_ENDPOINT_URL}
+        grant-type: client_credentials
+        scope: ${FAMILIE_BA_INFOTRYGD_SCOPE}
+        authentication:
+          client-id: ${AZURE_APP_CLIENT_ID}
+          client-secret: ${AZURE_APP_CLIENT_SECRET}
+          client-auth-method: client_secret_basic
+
+AZUREAD_TOKEN_ENDPOINT_URL: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/oauth2/v2.0/token
+
+#intern http-client trenger disse for å wire opp spring
+STS_URL: http://ikkeibruk
+CREDENTIAL_USERNAME: ikke_i_bruk
+CREDENTIAL_PASSWORD: ikke_i_bruk
+
+
