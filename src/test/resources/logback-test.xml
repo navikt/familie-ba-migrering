@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- override spring base logging pattern -->
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%d [%-5level] [%thread] %logger{5} %replace(- [%X{consumerId}, %X{callId}, %X{userId}] ){'- \[, , \] ',''}- %m%n"/>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+
+    <appender name="secureLoggerAppender" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+        <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %magenta([%thread]) %highlight(%-5level) %magenta(%logger{36}.%M) - %msg%n</pattern>
+    </encoder>
+</appender>
+
+    <logger name="secureLogger" level="INFO" additivity="false">
+        <appender-ref ref="secureLoggerAppender"/>
+    </logger>
+
+    <logger name="no.nav" level="INFO"/>
+</configuration>

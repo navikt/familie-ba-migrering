@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="ROOT_LOG_LEVEL" value="INFO"/>
+
+    <!-- Logger for sensitive data -->
+    <appender name="secureLoggerRestAppender" class="no.nav.familie.log.appender.SecureLoggerRestAppender"/>
+
+    <appender name="stdout_json" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+    </appender>
+
+    <logger name="secureLogger" level="INFO" additivity="false">
+        <appender-ref ref="secureLoggerRestAppender"/>
+    </logger>
+
+    <root level="${ROOT_LOG_LEVEL:-INFO}">
+        <!-- nais+local -->
+        <appender-ref ref="stdout_json"/>
+    </root>
+
+    <logger name="no.nav" level="INFO"/>
+    <logger name="no.nav.familie" level="INFO"/>
+
+</configuration>
