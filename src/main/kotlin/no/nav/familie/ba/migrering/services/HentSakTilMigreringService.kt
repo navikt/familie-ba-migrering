@@ -17,12 +17,17 @@ class HentSakTilMigreringService(val infotrygdClient: InfotrygdClient, val taskR
         val personerForMigrering = infotrygdClient.hentPersonerKlareForMigrering(
             MigreringRequest(
                 page = 1,
-                size = 2,
+                size = MAX_PERSON_FOR_MIGRERING,
                 valg = "OR",
                 undervalg = "OS",
-                maksAntallBarn = 3,
+                maksAntallBarn = 1,
             )
         )
+
+        if(personerForMigrering.size > MAX_PERSON_FOR_MIGRERING){
+            Log.error("For manger personer (${personerForMigrering.size}) avbryter migrering")
+            return
+        }
 
         Log.info("Fant ${personerForMigrering.size} personer for migrering")
 
@@ -33,5 +38,6 @@ class HentSakTilMigreringService(val infotrygdClient: InfotrygdClient, val taskR
 
     companion object {
         val Log = LoggerFactory.getLogger(HentSakTilMigreringService::class.java)
+        val MAX_PERSON_FOR_MIGRERING = 10
     }
 }

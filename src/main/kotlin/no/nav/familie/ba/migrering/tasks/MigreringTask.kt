@@ -27,23 +27,30 @@ class MigreringTask(
     override fun doTask(task: Task) {
         val personIdent = objectMapper.readValue(task.payload, MigreringTaskDto::class.java).personIdent
         secureLogger.info("Migrerer sak for person $personIdent")
+        val sak = migrertsakRepository.insert(
+            Migrertsak(
+                id = UUID.randomUUID(),
+                personIdent = personIdent,
+                migreringsdato = LocalDateTime.now(),
+                status = MigreringStatus.UKJENT,
+                sakNummer = "",
+            )
+        )
 
         try {
             sakClient.migrerPerson(personIdent)
-            migrertsakRepository.insert(
+            migrertsakRepository.update(
                 Migrertsak(
-                    id = UUID.randomUUID(),
-                    personIdent = personIdent,
+                    id = sak.id,
                     migreringsdato = LocalDateTime.now(),
-                    status = MigreringStatus.SUKKSESS,
+                    status = MigreringStatus.MIGRERT_I_BA,
                     sakNummer = "",
                 )
             )
         } catch (e: Exception) {
-            migrertsakRepository.insert(
+            migrertsakRepository.update(
                 Migrertsak(
-                    id = UUID.randomUUID(),
-                    personIdent = personIdent,
+                    id = sak.id,
                     migreringsdato = LocalDateTime.now(),
                     status = MigreringStatus.FEILET,
                     aarsak = e.message,

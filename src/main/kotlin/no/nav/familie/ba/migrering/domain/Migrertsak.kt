@@ -29,7 +29,7 @@ data class Migrertsak(
 
 enum class MigreringStatus {
     UKJENT,
-    SUKKSESS,
+    MIGRERT_I_BA,
     FEILET,
     VERIFISERT,
 }

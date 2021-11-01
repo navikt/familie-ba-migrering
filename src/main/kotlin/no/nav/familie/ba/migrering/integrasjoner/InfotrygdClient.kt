@@ -41,5 +41,6 @@ data class MigreringRequest(
     val size: Int,
     val valg: String,
     val undervalg: String,
-    val maksAntallBarn: Int = 99
+    val maksAntallBarn: Int = 99,
+    val minimumAlder: Int = 7,
 )

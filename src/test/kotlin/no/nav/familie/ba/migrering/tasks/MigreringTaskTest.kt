@@ -23,7 +23,7 @@ class MigreringTaskTest {
         val personIdent = "ooo"
         MigreringTask(sakClientMock, migrertsakRepositoryMock).doTask(MigreringTask.opprettTask(MigreringTaskDto(personIdent)))
 
-        assertThat(statusSlot.captured.status).isEqualTo(MigreringStatus.SUKKSESS)
+        assertThat(statusSlot.captured.status).isEqualTo(MigreringStatus.MIGRERT_I_BA)
         assertThat(statusSlot.captured.personIdent).isEqualTo(personIdent)
     }
 
