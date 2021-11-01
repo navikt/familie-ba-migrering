@@ -1,4 +1,4 @@
-package no.nav.familie.ba.migrering.task
+package no.nav.familie.ba.migrering.tasks
 
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
