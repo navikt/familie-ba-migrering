@@ -4,12 +4,13 @@ import no.nav.familie.ba.migrering.integrasjoner.InfotrygdClient
 import no.nav.familie.ba.migrering.integrasjoner.MigreringRequest
 import no.nav.familie.ba.migrering.tasks.MigreringTask
 import no.nav.familie.ba.migrering.tasks.MigreringTaskDto
+import no.nav.familie.prosessering.domene.TaskRepository
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
 @Service
-class HentSakTilMigreringService(val infotrygdClient: InfotrygdClient) {
+class HentSakTilMigreringService(val infotrygdClient: InfotrygdClient, val taskRepository: TaskRepository) {
 
     @Scheduled(cron = "0 8 * * *")
     fun hentSakTilMigrering() {
@@ -26,7 +27,7 @@ class HentSakTilMigreringService(val infotrygdClient: InfotrygdClient) {
         Log.info("Fant ${personerForMigrering.size} personer for migrering")
 
         personerForMigrering.forEach {
-            MigreringTask.opprettTask(MigreringTaskDto(it))
+            taskRepository.save(MigreringTask.opprettTask(MigreringTaskDto(it)))
         }
     }
 

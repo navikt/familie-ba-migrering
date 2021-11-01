@@ -9,25 +9,26 @@ import java.util.UUID
 @Table("migrertesaker")
 data class Migrertsak(
     @Id
-    val id: UUID,
+    val id: UUID = UUID.randomUUID(),
 
     @Column("person_ident")
-    val personIdent: String,
+    val personIdent: String = "",
 
     @Column("migreringsdato")
-    val migreringsdato: LocalDateTime,
+    val migreringsdato: LocalDateTime = LocalDateTime.now(),
 
     @Column("status")
-    val status: MigreringStatus,
+    val status: MigreringStatus = MigreringStatus.UKJENT,
 
     @Column("aarsak")
     val aarsak: String? = null,
 
     @Column("sak_nummer")
-    val sakNummer: String,
+    val sakNummer: String = "",
 )
 
 enum class MigreringStatus {
+    UKJENT,
     SUKKSESS,
     FEILET,
     VERIFISERT,
