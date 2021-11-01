@@ -24,7 +24,7 @@ class HentSakTilMigreringService(val infotrygdClient: InfotrygdClient, val taskR
             )
         )
 
-        if(personerForMigrering.size > MAX_PERSON_FOR_MIGRERING){
+        if (personerForMigrering.size > MAX_PERSON_FOR_MIGRERING) {
             Log.error("For manger personer (${personerForMigrering.size}) avbryter migrering")
             return
         }
