@@ -2,6 +2,7 @@ package no.nav.familie.ba.migrering.tasks
 
 import no.nav.familie.ba.migrering.domain.MigreringStatus
 import no.nav.familie.ba.migrering.domain.Migrertsak
+import no.nav.familie.ba.migrering.domain.MigrertsakJDBCRepository
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
 import no.nav.familie.ba.migrering.integrasjoner.SakClient
 import no.nav.familie.kontrakter.felles.objectMapper
@@ -21,42 +22,36 @@ import java.util.*
 )
 class MigreringTask(
     val sakClient: SakClient,
-    val migrertsakRepository: MigrertsakRepository,
+    val migrertsakJDBCRepository: MigrertsakJDBCRepository,
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
         val personIdent = objectMapper.readValue(task.payload, MigreringTaskDto::class.java).personIdent
         secureLogger.info("Migrerer sak for person $personIdent")
-        val sak = migrertsakRepository.insert(
-            Migrertsak(
-                id = UUID.randomUUID(),
-                personIdent = personIdent,
-                migreringsdato = LocalDateTime.now(),
-                status = MigreringStatus.UKJENT,
-                sakNummer = "",
-            )
+        val migrertsak = Migrertsak(
+            id = UUID.randomUUID(),
+            personIdent = personIdent,
+            migreringsdato = LocalDateTime.now(),
+            status = MigreringStatus.UKJENT,
+            sakNummer = "",
         )
+        migrertsakJDBCRepository.lagre(migrertsak)
 
         var resultatFraBa = ""
         var status = MigreringStatus.MIGRERT_I_BA
-        var aarsak: String? = ""
+        var aarsak: String = ""
         try {
             resultatFraBa = objectMapper.writeValueAsString(sakClient.migrerPerson(personIdent))
         } catch (e: Exception) {
             status = MigreringStatus.FEILET
-            aarsak = e.message
+            aarsak = e.message!!
         }
-        migrertsakRepository.update(
-            Migrertsak(
-                id = sak.id,
-                migreringsdato = LocalDateTime.now(),
-                personIdent = personIdent,
-                status = status,
-                aarsak = aarsak,
-                sakNummer = "",
-                resultatFraBa = resultatFraBa,
-            )
-        )
+
+        migrertsakJDBCRepository.oppdaterStatusÅrsakOgResultat(uuid = migrertsak.id,
+                                                               status = status.name,
+                                                               aarsak = aarsak,
+                                                               resultat = resultatFraBa )
+
     }
 
     companion object {
