@@ -12,6 +12,6 @@ import java.util.UUID
 interface MigrertsakRepository : RepositoryInterface<Migrertsak, UUID>, InsertUpdateRepository<Migrertsak> {
 
     //TODO: implement json column query
-    @Query("""select ms.* from migrertesaker ms where ms.resultat_fra_ba->>'test' = 'ooo' """)
+    @Query("""select ms.* from migrertesaker ms where ms.resultat_fra_ba->>'test' = 'ok' """)
     fun finnMedBaResultat(): List<Migrertsak>
 }

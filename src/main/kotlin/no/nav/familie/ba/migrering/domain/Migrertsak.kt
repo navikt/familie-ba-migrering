@@ -1,6 +1,6 @@
 package no.nav.familie.ba.migrering.domain
 
-import com.fasterxml.jackson.annotation.JsonSubTypes
+import no.nav.familie.kontrakter.felles.objectMapper
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
@@ -28,7 +28,7 @@ data class Migrertsak(
     val sakNummer: String = "",
 
     @Column("resultat_fra_ba")
-    val resultatFraBa: String = "",
+    val resultatFraBa: JsonWrapper? = null,
 )
 
 enum class MigreringStatus {
@@ -36,4 +36,10 @@ enum class MigreringStatus {
     MIGRERT_I_BA,
     FEILET,
     VERIFISERT,
+}
+
+data class JsonWrapper(val jsonStr: String?) {
+    companion object {
+        fun of(obj: Any?): JsonWrapper = JsonWrapper(if (obj != null) objectMapper.writeValueAsString(obj) else null)
+    }
 }

@@ -1,10 +1,14 @@
 package no.nav.familie.ba.migrering.tasks
 
+import com.fasterxml.jackson.module.kotlin.readValue
 import io.mockk.*
+import no.nav.familie.ba.migrering.domain.JsonWrapper
 import no.nav.familie.ba.migrering.domain.MigreringStatus
 import no.nav.familie.ba.migrering.domain.Migrertsak
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
 import no.nav.familie.ba.migrering.integrasjoner.SakClient
+import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.kontrakter.felles.objectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -16,14 +20,20 @@ class MigreringTaskTest {
 
     @Test
     fun `Skal insert row til migeringsstatus med status == SUKKESS hvis sakClient ikke kast et unntak`() {
-        every { sakClientMock.migrerPerson(any()) } returns ""
+        every { sakClientMock.migrerPerson(any()) } returns JsonWrapper.of(null)
         val statusSlotInsert = slot<Migrertsak>()
         val statusSlotUpdate = slot<Migrertsak>()
         every { migrertsakRepositoryMock.insert(capture(statusSlotInsert)) } returns Migrertsak()
         every { migrertsakRepositoryMock.update(capture(statusSlotUpdate)) } returns Migrertsak()
 
         val personIdent = "ooo"
-        MigreringTask(sakClientMock, migrertsakRepositoryMock).doTask(MigreringTask.opprettTask(MigreringTaskDto(personIdent)))
+        MigreringTask(sakClientMock, migrertsakRepositoryMock).doTask(
+            MigreringTask.opprettTask(
+                MigreringTaskDto(
+                    personIdent
+                )
+            )
+        )
 
         assertThat(statusSlotInsert.captured.status).isEqualTo(MigreringStatus.UKJENT)
         assertThat(statusSlotInsert.captured.personIdent).isEqualTo(personIdent)
@@ -43,7 +53,13 @@ class MigreringTaskTest {
         every { migrertsakRepositoryMock.update(capture(statusSlotUpdate)) } returns Migrertsak()
 
         val personIdent = "ooo"
-        MigreringTask(sakClientMock, migrertsakRepositoryMock).doTask(MigreringTask.opprettTask(MigreringTaskDto(personIdent)))
+        MigreringTask(sakClientMock, migrertsakRepositoryMock).doTask(
+            MigreringTask.opprettTask(
+                MigreringTaskDto(
+                    personIdent
+                )
+            )
+        )
 
         assertThat(statusSlotInsert.captured.status).isEqualTo(MigreringStatus.UKJENT)
         assertThat(statusSlotInsert.captured.personIdent).isEqualTo(personIdent)

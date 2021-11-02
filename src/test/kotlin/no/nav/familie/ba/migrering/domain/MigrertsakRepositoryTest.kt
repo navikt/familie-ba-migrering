@@ -1,10 +1,10 @@
 package no.nav.familie.ba.migrering.domain
 
 import no.nav.familie.ba.migrering.DevLauncher
+import no.nav.familie.ba.migrering.database.DatabaseCleanUpService
 import no.nav.familie.ba.migrering.database.DbContainerInitializer
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Ignore
-import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,13 +24,27 @@ class MigrertsakRepositoryTest {
     @Autowired
     lateinit var migrertsakRepository: MigrertsakRepository
 
+    @Autowired
+    lateinit var databaseCleanUpService: DatabaseCleanUpService
+
+    data class BaResultat(
+        val test: String = "ok",
+    )
+
+    @BeforeEach
+    fun truncateTables() {
+        databaseCleanUpService.truncate()
+    }
+
     @Test
     fun `save() skal lagre MigrertSak til database`() {
+        val resultatFraBa = JsonWrapper.of(BaResultat())
+
         val migrertsak = Migrertsak(
             id = UUID.randomUUID(),
             sakNummer = "",
             aarsak = null,
-            resultatFraBa = "{\"test\": \"test\"}",
+            resultatFraBa = resultatFraBa,
             migreringsdato = LocalDateTime.now(),
             personIdent = "1234", status = MigreringStatus.MIGRERT_I_BA
         )
@@ -40,11 +54,13 @@ class MigrertsakRepositoryTest {
 
     @Test
     fun `find() skal hent MigrertSak fra database`() {
+        val resultatFraBa = JsonWrapper.of(BaResultat())
+
         val migrertsak = Migrertsak(
             id = UUID.randomUUID(),
             sakNummer = "",
             aarsak = null,
-            resultatFraBa = "{\"test\": \"test\"}",
+            resultatFraBa = resultatFraBa,
             migreringsdato = LocalDateTime.now(),
             personIdent = "1234", status = MigreringStatus.MIGRERT_I_BA
         )
@@ -57,12 +73,14 @@ class MigrertsakRepositoryTest {
 
     @Test
     fun `resultatFraBa skal lagres som json`() {
+        val resultatFraBa = JsonWrapper.of(BaResultat())
+
         val targetSak = migrertsakRepository.insert(
             Migrertsak(
                 id = UUID.randomUUID(),
                 sakNummer = "",
                 aarsak = null,
-                resultatFraBa = "{\"test\": \"ooo\"}",
+                resultatFraBa = resultatFraBa,
                 migreringsdato = LocalDateTime.now(),
                 personIdent = "1234", status = MigreringStatus.MIGRERT_I_BA
             )
@@ -73,7 +91,7 @@ class MigrertsakRepositoryTest {
                 id = UUID.randomUUID(),
                 sakNummer = "",
                 aarsak = null,
-                resultatFraBa = "{\"test\": \"xxx\"}",
+                resultatFraBa = null,
                 migreringsdato = LocalDateTime.now(),
                 personIdent = "1234", status = MigreringStatus.MIGRERT_I_BA
             )

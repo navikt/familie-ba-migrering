@@ -1,5 +1,6 @@
 package no.nav.familie.ba.migrering.tasks
 
+import no.nav.familie.ba.migrering.domain.JsonWrapper
 import no.nav.familie.ba.migrering.domain.MigreringStatus
 import no.nav.familie.ba.migrering.domain.Migrertsak
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
@@ -37,26 +38,28 @@ class MigreringTask(
             )
         )
 
-        var resultatFraBa = ""
-        var status = MigreringStatus.MIGRERT_I_BA
-        var aarsak: String? = ""
         try {
-            resultatFraBa = objectMapper.writeValueAsString(sakClient.migrerPerson(personIdent))
-        } catch (e: Exception) {
-            status = MigreringStatus.FEILET
-            aarsak = e.message
-        }
-        migrertsakRepository.update(
-            Migrertsak(
-                id = sak.id,
-                migreringsdato = LocalDateTime.now(),
-                personIdent = personIdent,
-                status = status,
-                aarsak = aarsak,
-                sakNummer = "",
-                resultatFraBa = resultatFraBa,
+            migrertsakRepository.update(
+                Migrertsak(
+                    id = sak.id,
+                    personIdent = personIdent,
+                    status = MigreringStatus.MIGRERT_I_BA,
+                    sakNummer = "",
+                    resultatFraBa = JsonWrapper.of(sakClient.migrerPerson(personIdent)),
+                )
             )
-        )
+        } catch (e: Exception) {
+            migrertsakRepository.update(
+                Migrertsak(
+                    id = sak.id,
+                    personIdent = personIdent,
+                    status = MigreringStatus.FEILET,
+                    sakNummer = "",
+                    resultatFraBa = null,
+                    aarsak = e.message,
+                )
+            )
+        }
     }
 
     companion object {
