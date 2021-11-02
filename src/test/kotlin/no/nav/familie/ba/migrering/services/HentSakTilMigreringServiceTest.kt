@@ -20,7 +20,7 @@ class HentSakTilMigreringServiceTest {
         every { infotrygdClientMock.hentPersonerKlareForMigrering(any()) } returns personIdenter.toSet()
         val tasker = mutableListOf<Task>()
         every { taskRepositoryMock.save(capture(tasker)) } returns Task(type = "", payload = "")
-        HentSakTilMigreringService(infotrygdClientMock, taskRepositoryMock).hentSakTilMigrering()
+        HentSakTilMigreringService(infotrygdClientMock, taskRepositoryMock, false).hentSakTilMigrering()
 
         assertThat(tasker).hasSize(2)
         assertThat(
