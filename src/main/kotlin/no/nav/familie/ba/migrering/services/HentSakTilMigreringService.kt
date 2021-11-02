@@ -11,26 +11,27 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
 @Service
-class HentSakTilMigreringService(val infotrygdClient: InfotrygdClient,
-                                 val taskRepository: TaskRepository,
-                                 @Value("\${migrering.deaktivert:true}") val migreringDeaktivert: Boolean) {
-
+class HentSakTilMigreringService(
+    val infotrygdClient: InfotrygdClient,
+    val taskRepository: TaskRepository,
+    @Value("\${migrering.aktivert:false}") val migreringAktivert: Boolean
+) {
 
     @Scheduled(cron = "0 8 * * * *")
     fun hentSakTilMigrering() {
-        if (migreringDeaktivert) {
+        if (!migreringAktivert) {
             Log.info("Migrering deaktivert, stopper videre jobbing")
             return
         }
-            val personerForMigrering = infotrygdClient.hentPersonerKlareForMigrering(
-                MigreringRequest(
-                    page = 1,
-                    size = MAX_PERSON_FOR_MIGRERING,
-                    valg = "OR",
-                    undervalg = "OS",
-                    maksAntallBarn = 1,
-                )
+        val personerForMigrering = infotrygdClient.hentPersonerKlareForMigrering(
+            MigreringRequest(
+                page = 1,
+                size = MAX_PERSON_FOR_MIGRERING,
+                valg = "OR",
+                undervalg = "OS",
+                maksAntallBarn = 1,
             )
+        )
 
         if (personerForMigrering.size > MAX_PERSON_FOR_MIGRERING) {
             Log.error("For manger personer (${personerForMigrering.size}) avbryter migrering")
