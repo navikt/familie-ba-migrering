@@ -1,3 +1,5 @@
+CREATE CAST (VARCHAR AS JSON) WITHOUT FUNCTION AS IMPLICIT;
+
 CREATE TABLE IF NOT EXISTS migrertesaker(
     id UUID PRIMARY KEY,
     person_ident VARCHAR,
@@ -6,4 +8,4 @@ CREATE TABLE IF NOT EXISTS migrertesaker(
     aarsak VARCHAR,
     resultat_fra_ba json,
     sak_nummer VARCHAR
-)
+);

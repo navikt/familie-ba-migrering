@@ -44,6 +44,7 @@ class MigreringTask(
                 Migrertsak(
                     id = sak.id,
                     migreringsdato = LocalDateTime.now(),
+                    personIdent = personIdent,
                     status = MigreringStatus.MIGRERT_I_BA,
                     sakNummer = "",
                     resultatFraBa = response.toString(),
@@ -55,6 +56,7 @@ class MigreringTask(
                     id = sak.id,
                     migreringsdato = LocalDateTime.now(),
                     status = MigreringStatus.FEILET,
+                    personIdent = personIdent,
                     aarsak = e.message,
                     sakNummer = "",
                 )

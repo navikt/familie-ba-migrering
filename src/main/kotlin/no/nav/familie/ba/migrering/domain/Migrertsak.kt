@@ -1,5 +1,6 @@
 package no.nav.familie.ba.migrering.domain
 
+import com.fasterxml.jackson.annotation.JsonSubTypes
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
