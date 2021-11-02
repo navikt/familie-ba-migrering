@@ -16,7 +16,7 @@ class HentSakTilMigreringService(val infotrygdClient: InfotrygdClient,
                                  @Value("\${migrering.deaktivert:true}") val migreringDeaktivert: Boolean) {
 
 
-    @Scheduled(cron = "0 8 * * *")
+    @Scheduled(cron = "0 8 * * * *")
     fun hentSakTilMigrering() {
         if (migreringDeaktivert) {
             Log.info("Migrering deaktivert, stopper videre jobbing")

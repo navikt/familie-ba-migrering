@@ -10,6 +10,7 @@ import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import reactor.core.publisher.toMono
 import java.time.LocalDateTime
 import java.util.*
 
@@ -38,13 +39,14 @@ class MigreringTask(
         )
 
         try {
-            sakClient.migrerPerson(personIdent)
+            val response = sakClient.migrerPerson(personIdent)
             migrertsakRepository.update(
                 Migrertsak(
                     id = sak.id,
                     migreringsdato = LocalDateTime.now(),
                     status = MigreringStatus.MIGRERT_I_BA,
                     sakNummer = "",
+                    resultatFraBa = response.toString(),
                 )
             )
         } catch (e: Exception) {

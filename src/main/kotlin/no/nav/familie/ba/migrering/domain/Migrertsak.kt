@@ -25,6 +25,9 @@ data class Migrertsak(
 
     @Column("sak_nummer")
     val sakNummer: String = "",
+
+    @Column("resultat_fra_ba")
+    val resultatFraBa: String = "",
 )
 
 enum class MigreringStatus {
