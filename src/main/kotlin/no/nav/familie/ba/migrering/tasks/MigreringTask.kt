@@ -10,7 +10,6 @@ import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import reactor.core.publisher.toMono
 import java.time.LocalDateTime
 import java.util.*
 
@@ -38,30 +37,26 @@ class MigreringTask(
             )
         )
 
+        var resultatFraBa = ""
+        var status = MigreringStatus.MIGRERT_I_BA
+        var aarsak: String? = ""
         try {
-            val response = sakClient.migrerPerson(personIdent)
-            migrertsakRepository.update(
-                Migrertsak(
-                    id = sak.id,
-                    migreringsdato = LocalDateTime.now(),
-                    personIdent = personIdent,
-                    status = MigreringStatus.MIGRERT_I_BA,
-                    sakNummer = "",
-                    resultatFraBa = response.toString(),
-                )
-            )
+            resultatFraBa = objectMapper.writeValueAsString(sakClient.migrerPerson(personIdent))
         } catch (e: Exception) {
-            migrertsakRepository.update(
-                Migrertsak(
-                    id = sak.id,
-                    migreringsdato = LocalDateTime.now(),
-                    status = MigreringStatus.FEILET,
-                    personIdent = personIdent,
-                    aarsak = e.message,
-                    sakNummer = "",
-                )
-            )
+            status = MigreringStatus.FEILET
+            aarsak = e.message
         }
+        migrertsakRepository.update(
+            Migrertsak(
+                id = sak.id,
+                migreringsdato = LocalDateTime.now(),
+                personIdent = personIdent,
+                status = status,
+                aarsak = aarsak,
+                sakNummer = "",
+                resultatFraBa = resultatFraBa,
+            )
+        )
     }
 
     companion object {
