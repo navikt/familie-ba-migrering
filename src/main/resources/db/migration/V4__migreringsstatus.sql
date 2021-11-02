@@ -6,6 +6,6 @@ CREATE TABLE IF NOT EXISTS migrertesaker(
     migreringsdato TIMESTAMP(3) DEFAULT LOCALTIMESTAMP,
     status VARCHAR,
     aarsak VARCHAR,
-    resultat_fra_ba json,
+    resultat_fra_ba JSON,
     sak_nummer VARCHAR
 );
