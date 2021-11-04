@@ -25,6 +25,9 @@ class MigrertsakRepositoryTest {
     lateinit var migrertsakRepository: MigrertsakRepository
 
     @Autowired
+    lateinit var migrertsakRepositoryForJsonQuery: MigrertsakRepositoryForJsonQuery
+
+    @Autowired
     lateinit var databaseCleanUpService: DatabaseCleanUpService
 
     data class BaResultat(
@@ -97,7 +100,7 @@ class MigrertsakRepositoryTest {
             )
         )
 
-        val saker = migrertsakRepository.finnMedBaResultat()
+        val saker = migrertsakRepositoryForJsonQuery.finnMedBaResultat("test", "ok")
         assertThat(saker).hasSize(1)
         assertThat(saker[0].id).isEqualTo(targetSak.id)
     }
