@@ -17,8 +17,7 @@ class MigreringTaskTest {
 
     @Test
     fun `Skal insert row til migeringsstatus med status == SUKKESS hvis sakClient ikke kast et unntak`() {
-        val sakNummer: Long = 3
-        every { sakClientMock.migrerPerson(any()) } returns MigreringResponseDto(1, 2, 0, sakNummer)
+        every { sakClientMock.migrerPerson(any()) } returns MigreringResponseDto(1, 2)
         val statusSlotInsert = slot<Migrertsak>()
         val statusSlotUpdate = slot<Migrertsak>()
         every { migrertsakRepositoryMock.insert(capture(statusSlotInsert)) } returns Migrertsak()
@@ -35,11 +34,9 @@ class MigreringTaskTest {
 
         assertThat(statusSlotInsert.captured.status).isEqualTo(MigreringStatus.UKJENT)
         assertThat(statusSlotInsert.captured.personIdent).isEqualTo(personIdent)
-        assertThat(statusSlotInsert.captured.sakNummer).isEmpty()
 
         assertThat(statusSlotUpdate.captured.status).isEqualTo(MigreringStatus.MIGRERT_I_BA)
         assertThat(statusSlotUpdate.captured.personIdent).isEqualTo(personIdent)
-        assertThat(statusSlotUpdate.captured.sakNummer).isEqualTo(sakNummer.toString())
     }
 
     @Test
@@ -63,11 +60,9 @@ class MigreringTaskTest {
 
         assertThat(statusSlotInsert.captured.status).isEqualTo(MigreringStatus.UKJENT)
         assertThat(statusSlotInsert.captured.personIdent).isEqualTo(personIdent)
-        assertThat(statusSlotInsert.captured.sakNummer).isEmpty()
 
         assertThat(statusSlotUpdate.captured.status).isEqualTo(MigreringStatus.FEILET)
         assertThat(statusSlotUpdate.captured.aarsak).isEqualTo(aarsak)
         assertThat(statusSlotUpdate.captured.personIdent).isEqualTo(personIdent)
-        assertThat(statusSlotUpdate.captured.sakNummer).isEmpty()
     }
 }

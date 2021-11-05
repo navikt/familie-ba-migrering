@@ -36,7 +36,6 @@ class MigreringTask(
                 personIdent = payload.personIdent,
                 migreringsdato = LocalDateTime.now(),
                 status = MigreringStatus.UKJENT,
-                sakNummer = "",
             )
         )
 
@@ -47,7 +46,6 @@ class MigreringTask(
                     id = sakId,
                     personIdent = payload.personIdent,
                     status = MigreringStatus.MIGRERT_I_BA,
-                    sakNummer = responseBa.infotrygdSakId.toString(),
                     resultatFraBa = JsonWrapper.of(responseBa),
                 )
             )
@@ -57,7 +55,6 @@ class MigreringTask(
                     id = sakId,
                     personIdent = payload.personIdent,
                     status = MigreringStatus.FEILET,
-                    sakNummer = "",
                     resultatFraBa = null,
                     aarsak = e.message,
                 )
