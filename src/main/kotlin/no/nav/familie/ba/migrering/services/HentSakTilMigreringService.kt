@@ -1,5 +1,6 @@
 package no.nav.familie.ba.migrering.services
 
+import no.nav.familie.ba.migrering.domain.MigreringStatus
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
 import no.nav.familie.ba.migrering.integrasjoner.InfotrygdClient
 import no.nav.familie.ba.migrering.integrasjoner.MigreringRequest
@@ -19,7 +20,7 @@ class HentSakTilMigreringService(
     @Value("\${migrering.aktivert:false}") val migreringAktivert: Boolean
 ) {
 
-    @Scheduled(cron = "0 10 * * * *")
+    @Scheduled(cron = "0 0 10 * * ?")
     fun hentSakTilMigrering() {
         if (!migreringAktivert) {
             Log.info("Migrering deaktivert, stopper videre jobbing")
@@ -43,7 +44,7 @@ class HentSakTilMigreringService(
         Log.info("Fant ${personerForMigrering.size} personer for migrering")
 
         personerForMigrering.forEach {
-            if (!migrertsakRepository.existsByPersonIdent(it)) {
+            if (!migrertsakRepository.existsByPersonIdentAndStatus(it, MigreringStatus.MIGRERT_I_BA)) {
                 taskRepository.save(MigreringTask.opprettTask(MigreringTaskDto(it)))
             }
         }
