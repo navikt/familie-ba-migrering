@@ -45,8 +45,7 @@ class HentSakTilMigreringService(
 
         personerForMigrering.forEach {
             if (!migrertsakRepository.existsByPersonIdentAndStatus(it, MigreringStatus.MIGRERT_I_BA)) {
-                //TODO: set sakNummer
-                taskRepository.save(MigreringTask.opprettTask(MigreringTaskDto(it, "")))
+                taskRepository.save(MigreringTask.opprettTask(MigreringTaskDto(it)))
             }
         }
     }

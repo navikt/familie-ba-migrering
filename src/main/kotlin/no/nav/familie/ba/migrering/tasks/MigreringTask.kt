@@ -29,33 +29,35 @@ class MigreringTask(
         val payload = objectMapper.readValue(task.payload, MigreringTaskDto::class.java)
 
         secureLogger.info("Migrerer sak for person $payload.personIdent")
-        val sak = migrertsakRepository.insert(
+        val sakId = UUID.randomUUID()
+        migrertsakRepository.insert(
             Migrertsak(
-                id = UUID.randomUUID(),
+                id = sakId,
                 personIdent = payload.personIdent,
                 migreringsdato = LocalDateTime.now(),
                 status = MigreringStatus.UKJENT,
-                sakNummer = payload.sakNummer,
+                sakNummer = "",
             )
         )
 
         try {
+            val responseBa = sakClient.migrerPerson(payload.personIdent)
             migrertsakRepository.update(
                 Migrertsak(
-                    id = sak.id,
+                    id = sakId,
                     personIdent = payload.personIdent,
                     status = MigreringStatus.MIGRERT_I_BA,
-                    sakNummer = payload.sakNummer,
-                    resultatFraBa = JsonWrapper.of(sakClient.migrerPerson(payload.personIdent)),
+                    sakNummer = responseBa.infotrygdSakId.toString(),
+                    resultatFraBa = JsonWrapper.of(responseBa),
                 )
             )
         } catch (e: Exception) {
             migrertsakRepository.update(
                 Migrertsak(
-                    id = sak.id,
+                    id = sakId,
                     personIdent = payload.personIdent,
                     status = MigreringStatus.FEILET,
-                    sakNummer = payload.sakNummer,
+                    sakNummer = "",
                     resultatFraBa = null,
                     aarsak = e.message,
                 )
@@ -80,4 +82,4 @@ class MigreringTask(
     }
 }
 
-data class MigreringTaskDto(val personIdent: String, val sakNummer: String)
+data class MigreringTaskDto(val personIdent: String)
