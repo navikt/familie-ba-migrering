@@ -27,19 +27,23 @@ class MigreringTaskTest {
         every { migrertsakRepositoryMock.update(capture(statusSlotUpdate)) } returns Migrertsak()
 
         val personIdent = "ooo"
+        val sakNummer = "111"
         MigreringTask(sakClientMock, migrertsakRepositoryMock).doTask(
             MigreringTask.opprettTask(
                 MigreringTaskDto(
-                    personIdent
+                    personIdent = personIdent,
+                    sakNummer = sakNummer,
                 )
             )
         )
 
         assertThat(statusSlotInsert.captured.status).isEqualTo(MigreringStatus.UKJENT)
         assertThat(statusSlotInsert.captured.personIdent).isEqualTo(personIdent)
+        assertThat(statusSlotInsert.captured.sakNummer).isEqualTo(sakNummer)
 
         assertThat(statusSlotUpdate.captured.status).isEqualTo(MigreringStatus.MIGRERT_I_BA)
         assertThat(statusSlotUpdate.captured.personIdent).isEqualTo(personIdent)
+        assertThat(statusSlotUpdate.captured.sakNummer).isEqualTo(sakNummer)
     }
 
     @Test
@@ -53,19 +57,23 @@ class MigreringTaskTest {
         every { migrertsakRepositoryMock.update(capture(statusSlotUpdate)) } returns Migrertsak()
 
         val personIdent = "ooo"
+        val sakNummer = "111"
         MigreringTask(sakClientMock, migrertsakRepositoryMock).doTask(
             MigreringTask.opprettTask(
                 MigreringTaskDto(
-                    personIdent
+                    personIdent = personIdent,
+                    sakNummer = sakNummer,
                 )
             )
         )
 
         assertThat(statusSlotInsert.captured.status).isEqualTo(MigreringStatus.UKJENT)
         assertThat(statusSlotInsert.captured.personIdent).isEqualTo(personIdent)
+        assertThat(statusSlotInsert.captured.sakNummer).isEqualTo(sakNummer)
 
         assertThat(statusSlotUpdate.captured.status).isEqualTo(MigreringStatus.FEILET)
         assertThat(statusSlotUpdate.captured.aarsak).isEqualTo(aarsak)
         assertThat(statusSlotUpdate.captured.personIdent).isEqualTo(personIdent)
+        assertThat(statusSlotUpdate.captured.sakNummer).isEqualTo(sakNummer)
     }
 }

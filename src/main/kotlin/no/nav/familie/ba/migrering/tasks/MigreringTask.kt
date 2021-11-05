@@ -26,16 +26,16 @@ class MigreringTask(
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
-        val personIdent = objectMapper.readValue(task.payload, MigreringTaskDto::class.java).personIdent
+        val payload = objectMapper.readValue(task.payload, MigreringTaskDto::class.java)
 
-        secureLogger.info("Migrerer sak for person $personIdent")
+        secureLogger.info("Migrerer sak for person $payload.personIdent")
         val sak = migrertsakRepository.insert(
             Migrertsak(
                 id = UUID.randomUUID(),
-                personIdent = personIdent,
+                personIdent = payload.personIdent,
                 migreringsdato = LocalDateTime.now(),
                 status = MigreringStatus.UKJENT,
-                sakNummer = "",
+                sakNummer = payload.sakNummer,
             )
         )
 
@@ -43,19 +43,19 @@ class MigreringTask(
             migrertsakRepository.update(
                 Migrertsak(
                     id = sak.id,
-                    personIdent = personIdent,
+                    personIdent = payload.personIdent,
                     status = MigreringStatus.MIGRERT_I_BA,
-                    sakNummer = "",
-                    resultatFraBa = JsonWrapper.of(sakClient.migrerPerson(personIdent)),
+                    sakNummer = payload.sakNummer,
+                    resultatFraBa = JsonWrapper.of(sakClient.migrerPerson(payload.personIdent)),
                 )
             )
         } catch (e: Exception) {
             migrertsakRepository.update(
                 Migrertsak(
                     id = sak.id,
-                    personIdent = personIdent,
+                    personIdent = payload.personIdent,
                     status = MigreringStatus.FEILET,
-                    sakNummer = "",
+                    sakNummer = payload.sakNummer,
                     resultatFraBa = null,
                     aarsak = e.message,
                 )
@@ -80,4 +80,4 @@ class MigreringTask(
     }
 }
 
-data class MigreringTaskDto(val personIdent: String)
+data class MigreringTaskDto(val personIdent: String, val sakNummer: String)
