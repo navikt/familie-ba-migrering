@@ -2,6 +2,8 @@ package no.nav.familie.ba.migrering.services
 
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
+import no.nav.familie.ba.migrering.domain.MigrertsakRepository
 import no.nav.familie.ba.migrering.integrasjoner.InfotrygdClient
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
@@ -13,6 +15,7 @@ import org.junit.jupiter.api.TestInstance
 class HentSakTilMigreringServiceTest {
     val taskRepositoryMock: TaskRepository = mockk()
     val infotrygdClientMock: InfotrygdClient = mockk()
+    val migertsakRepository: MigrertsakRepository = mockk()
 
     @Test
     fun `Skal opprett task for hver person returns fra InfotrygdClient`() {
@@ -20,7 +23,13 @@ class HentSakTilMigreringServiceTest {
         every { infotrygdClientMock.hentPersonerKlareForMigrering(any()) } returns personIdenter.toSet()
         val tasker = mutableListOf<Task>()
         every { taskRepositoryMock.save(capture(tasker)) } returns Task(type = "", payload = "")
-        HentSakTilMigreringService(infotrygdClientMock, taskRepositoryMock, true).hentSakTilMigrering()
+        every { migertsakRepository.existsByPersonIdent(any()) } returns false
+        HentSakTilMigreringService(
+            infotrygdClientMock,
+            taskRepositoryMock,
+            migertsakRepository,
+            true
+        ).hentSakTilMigrering()
 
         assertThat(tasker).hasSize(2)
         assertThat(
@@ -28,5 +37,22 @@ class HentSakTilMigreringServiceTest {
                 tasker.find { it.payload.contains(personIdent) } != null
             }
         ).isTrue
+    }
+
+    @Test
+    fun `Skal ikke migrer hvis det er en migrert sak for den personen i repository`() {
+        val personIdent = "123"
+        every { infotrygdClientMock.hentPersonerKlareForMigrering(any()) } returns setOf(personIdent)
+        every { migertsakRepository.existsByPersonIdent(personIdent) } returns true
+        every { taskRepositoryMock.save(any()) } returns Task(type = "", payload = "")
+
+        HentSakTilMigreringService(
+            infotrygdClientMock,
+            taskRepositoryMock,
+            migertsakRepository,
+            true
+        ).hentSakTilMigrering()
+
+        verify(exactly = 0) { taskRepositoryMock.save(any()) }
     }
 }

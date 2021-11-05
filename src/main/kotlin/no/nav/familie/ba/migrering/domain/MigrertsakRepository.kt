@@ -13,7 +13,9 @@ import java.util.UUID
 
 @Repository
 @Transactional
-interface MigrertsakRepository : RepositoryInterface<Migrertsak, UUID>, InsertUpdateRepository<Migrertsak>
+interface MigrertsakRepository : RepositoryInterface<Migrertsak, UUID>, InsertUpdateRepository<Migrertsak> {
+    fun existsByPersonIdent(ident: String): Boolean
+}
 
 @Repository
 @Transactional

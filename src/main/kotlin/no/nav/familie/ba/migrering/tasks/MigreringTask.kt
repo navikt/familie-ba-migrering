@@ -27,6 +27,7 @@ class MigreringTask(
 
     override fun doTask(task: Task) {
         val personIdent = objectMapper.readValue(task.payload, MigreringTaskDto::class.java).personIdent
+
         secureLogger.info("Migrerer sak for person $personIdent")
         val sak = migrertsakRepository.insert(
             Migrertsak(

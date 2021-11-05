@@ -1,5 +1,6 @@
 package no.nav.familie.ba.migrering.services
 
+import no.nav.familie.ba.migrering.domain.MigrertsakRepository
 import no.nav.familie.ba.migrering.integrasjoner.InfotrygdClient
 import no.nav.familie.ba.migrering.integrasjoner.MigreringRequest
 import no.nav.familie.ba.migrering.tasks.MigreringTask
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service
 class HentSakTilMigreringService(
     val infotrygdClient: InfotrygdClient,
     val taskRepository: TaskRepository,
+    val migrertsakRepository: MigrertsakRepository,
     @Value("\${migrering.aktivert:false}") val migreringAktivert: Boolean
 ) {
 
@@ -41,7 +43,9 @@ class HentSakTilMigreringService(
         Log.info("Fant ${personerForMigrering.size} personer for migrering")
 
         personerForMigrering.forEach {
-            taskRepository.save(MigreringTask.opprettTask(MigreringTaskDto(it)))
+            if (!migrertsakRepository.existsByPersonIdent(it)) {
+                taskRepository.save(MigreringTask.opprettTask(MigreringTaskDto(it)))
+            }
         }
     }
 
