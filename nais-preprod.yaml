@@ -42,6 +42,7 @@ spec:
     sqlInstances:
       - type: POSTGRES_12
         name: familie-ba-migrering
+        diskAutoresize: true
         autoBackupTime: "03:00"
         databases:
           - name: familie-ba-migrering
