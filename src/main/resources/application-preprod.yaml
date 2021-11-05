@@ -2,6 +2,6 @@ BA_SAK_SCOPE: api://dev-fss.teamfamilie.familie-ba-sak/.default
 BA_SAK_API_URL: https://familie-ba-sak.dev-fss-pub.nais.io/api
 
 FAMILIE_BA_INFOTRYGD_SCOPE: api://dev-fss.teamfamilie.familie-ba-infotrygd/.default
-FAMILIE_BA_INFOTRYGD_API_URL: https://familie-ba-infotrygd.dev-fss.nais.io
+FAMILIE_BA_INFOTRYGD_API_URL: https://familie-ba-infotrygd.dev-fss-pub.nais.io
 
 migrering.aktivert: true
