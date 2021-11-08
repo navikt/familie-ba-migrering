@@ -49,6 +49,21 @@ spec:
   azure:
     application:
       enabled: true
+      rules:
+  accessPolicy:
+    inbound:
+      rules:
+        - application: familie-prosessering
+          namespace: teamfamilie
+          cluster: dev-gcp
+    outbound:
+      rules:
+        - application: familie-ba-infotrygd
+          namespace: teamfamilie
+          cluster: dev-fss
+        - application: familie-ba-sak
+          namespace: teamfamilie
+          cluster: dev-fss
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: preprod
