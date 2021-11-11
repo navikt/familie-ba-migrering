@@ -4,6 +4,7 @@ import no.nav.familie.ba.migrering.domain.MigreringStatus
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
 import no.nav.familie.ba.migrering.services.BekreftMigreringService
 import no.nav.security.token.support.core.api.Unprotected
+import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Profile
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
@@ -21,6 +22,7 @@ class TestController(
 
     @GetMapping(path = ["/triggerBekreft"], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun triggerBekreft(): String? {
+        LOG.info("trigger BekreftMigreringService")
         try {
             bekreftMigreringService.bekreftMigrering()
             return "Ok"
@@ -31,6 +33,7 @@ class TestController(
 
     @GetMapping(path = ["/revertBekreft"], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun triggerRevertBekreft(): String? {
+        LOG.info("trigger revert of verification")
         var revertertSak = 0
         try {
             (
@@ -45,5 +48,9 @@ class TestController(
         } catch (e: Exception) {
             return "Error ${e.message}, og $revertertSak saker revertert"
         }
+    }
+
+    companion object{
+        val LOG = LoggerFactory.getLogger(TestController::class.java)
     }
 }
