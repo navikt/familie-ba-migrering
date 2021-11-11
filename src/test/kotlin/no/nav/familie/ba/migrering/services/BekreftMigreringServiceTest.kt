@@ -37,6 +37,7 @@ class BekreftMigreringServiceTest {
         )
         val migrertsakSlot = slot<Migrertsak>()
         every { migrertsakRepositoryMock.update(capture(migrertsakSlot)) } returns Migrertsak()
+        every { migrertsakRepositoryMock.findAllById(any()) } returns listOf(Migrertsak(status = MigreringStatus.VERIFISERT))
 
         BekreftMigreringService(infotrygdClientMock, migrertsakRepositoryMock).bekreftMigrering()
 
@@ -69,6 +70,10 @@ class BekreftMigreringServiceTest {
 
         every { infotrygdClientMock.hentStønadFraId(suksessStønadId) } returns Stønad(opphørsgrunn = "5")
         every { infotrygdClientMock.hentStønadFraId(feiletStønadId) } returns Stønad(opphørsgrunn = "0")
+        every { migrertsakRepositoryMock.findAllById(any()) } returns listOf(
+            Migrertsak(status = MigreringStatus.VERIFISERT),
+            Migrertsak(status = MigreringStatus.VERIFISERING_FEILET, aarsak = "aarsak")
+        )
 
         every { migrertsakRepositoryMock.findByStatus(any()) } returns listOf(
             Migrertsak(

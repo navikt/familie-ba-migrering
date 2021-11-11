@@ -15,37 +15,41 @@ class BekreftMigreringService(
     val infotrygdClient: InfotrygdClient,
     val migrertTaskRepository: MigrertsakRepository,
 ) {
+
     @Scheduled(cron = "0 0 12 * * ?", zone = "Europe/Oslo")
     fun bekreftMigrering() {
         val saker = migrertTaskRepository.findByStatus(MigreringStatus.MIGRERT_I_BA)
-        LOG.info("Verifiser ${saker.size} migrertsak")
-        var sakerSuksess: Int = 0
+        LOG.info("Verifiser ${saker.size} migrerte saker")
         saker.forEach {
-            sakerSuksess += if (bekreftMigrertSak(it)) 1 else 0
+            bekreftMigrertSak(it)
         }
-        LOG.info("Verifisering er klar. Verifiserte $sakerSuksess saker")
+        val (sakerSuksess, sakerFeilet) = migrertTaskRepository.findAllById(saker.map { it.id })
+            .partition { it.status == MigreringStatus.VERIFISERT }
+
+        val resultat = "Verifisering av migrerte saker resultat: Antall vellykket: ${sakerSuksess.size}. Antall feilet: ${sakerFeilet.size}\n" +
+                sakerFeilet.map { "MigrertSak(id=${it.id}, status=${it.status}, aarsak=${it.aarsak})\n" }
+
+        when (sakerFeilet.size) {
+            0 -> LOG.info(resultat)
+            else -> LOG.error(resultat)
+        }
     }
 
-    fun bekreftMigrertSak(migrertsak: Migrertsak): Boolean {
+    fun bekreftMigrertSak(migrertsak: Migrertsak) {
         val migreringResponseDto =
             objectMapper.readValue(migrertsak.resultatFraBa?.jsonStr, MigreringResponseDto::class.java)
         if (migreringResponseDto.infotrygdStønadId == null) {
-            LOG.error("Verifisering feilet med Migrertsak(id = ${migrertsak.id}): null infotrygdStønadId")
-            migrertTaskRepository.update(migrertsak.copy(status = MigreringStatus.VERIFISERING_FEILET))
-            return false
+            migrertTaskRepository.update(migrertsak.copy(status = MigreringStatus.VERIFISERING_FEILET,
+                                                         aarsak = "null infotrygdStønadId"))
+            return
         }
 
-        return migrertTaskRepository.update(
-            migrertsak.copy(
-                status = when (infotrygdClient.hentStønadFraId(migreringResponseDto.infotrygdStønadId).opphørsgrunn) {
-                    "5" -> MigreringStatus.VERIFISERT
-                    else -> {
-                        LOG.error("Verifisering feilet med Migrertsak(id= ${migrertsak.id}): opphørsgunn is not 5 ")
-                        MigreringStatus.VERIFISERING_FEILET
-                    }
-                }
-            )
-        ).status == MigreringStatus.VERIFISERT
+        migrertTaskRepository.update(
+            when (val opphørsgrunn = infotrygdClient.hentStønadFraId(migreringResponseDto.infotrygdStønadId).opphørsgrunn) {
+                "5" -> migrertsak.copy(status = MigreringStatus.VERIFISERT)
+                else -> migrertsak.copy(status = MigreringStatus.VERIFISERING_FEILET, aarsak = "opphørsgunn ($opphørsgrunn) is not 5 ")
+            }
+        )
     }
 
     companion object {
