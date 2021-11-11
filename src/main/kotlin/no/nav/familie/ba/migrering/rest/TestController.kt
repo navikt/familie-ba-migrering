@@ -15,7 +15,12 @@ import org.springframework.web.bind.annotation.RestController
 class TestController(val bekreftMigreringService: BekreftMigreringService) {
 
     @GetMapping(path = ["/triggerBekreft"], produces = [MediaType.APPLICATION_JSON_VALUE])
-    fun triggerBekreft() {
-        bekreftMigreringService.bekreftMigrering()
+    fun triggerBekreft(): String? {
+        try{
+            bekreftMigreringService.bekreftMigrering()
+            return "Ok"
+        }catch(e: Exception){
+            return e.message
+        }
     }
 }
