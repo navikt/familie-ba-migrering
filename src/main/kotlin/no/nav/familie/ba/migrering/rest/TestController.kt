@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/test")
 @Unprotected
-@Profile("preprod-fake")
+@Profile("preprod")
 class TestController(val bekreftMigreringService: BekreftMigreringService) {
 
     @GetMapping(path = ["/triggerBekreft"], produces = [MediaType.APPLICATION_JSON_VALUE])
