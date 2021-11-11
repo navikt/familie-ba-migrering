@@ -21,13 +21,9 @@ class BekreftMigreringService(
         LOG.info("Verifiser ${saker.size} migrertsak")
         var sakerSuksess: Int = 0
         saker.forEach {
-            if (bekreftMigrertSak(it)) {
-                sakerSuksess++
-            } else {
-                LOG.error("Verifisering feilet med Migrertsak(id= ${it.id})")
-            }
+            sakerSuksess += if (bekreftMigrertSak(it)) 1 else 0
         }
-        LOG.info("Verifiserte $sakerSuksess saker")
+        LOG.info("Verifisering er klar. Verifiserte $sakerSuksess saker")
     }
 
     fun bekreftMigrertSak(migrertsak: Migrertsak): Boolean {
@@ -41,8 +37,13 @@ class BekreftMigreringService(
 
         return migrertTaskRepository.update(
             migrertsak.copy(
-                status = if (infotrygdClient.hentStønadFraId(migreringResponseDto.infotrygdStønadId).opphørsgrunn == "5") MigreringStatus.VERIFISERT
-                else MigreringStatus.VERIFISERING_FEILET
+                status = when (infotrygdClient.hentStønadFraId(migreringResponseDto.infotrygdStønadId).opphørsgrunn) {
+                    "5" -> MigreringStatus.VERIFISERT
+                    else -> {
+                        LOG.error("Verifisering feilet med Migrertsak(id= ${migrertsak.id}): opphørsgunn is not 5 ")
+                        MigreringStatus.VERIFISERING_FEILET
+                    }
+                }
             )
         ).status == MigreringStatus.VERIFISERT
     }
