@@ -33,9 +33,11 @@ class TestController(
     fun triggerRevertBekreft(): String? {
         var revertertSak = 0
         try {
-            (migrertsakRepository.findByStatus(status = MigreringStatus.VERIFISERT) + migrertsakRepository.findByStatus(
-                status = MigreringStatus.VERIFISERING_FEILET
-            )).forEach {
+            (
+                migrertsakRepository.findByStatus(status = MigreringStatus.VERIFISERT) + migrertsakRepository.findByStatus(
+                    status = MigreringStatus.VERIFISERING_FEILET
+                )
+                ).forEach {
                 migrertsakRepository.update(it.copy(status = MigreringStatus.MIGRERT_I_BA))
                 revertertSak++
             }
