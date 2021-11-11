@@ -1,6 +1,7 @@
 package no.nav.familie.ba.migrering.integrasjoner
 
 import no.nav.familie.http.client.AbstractRestClient
+import no.nav.familie.kontrakter.ba.infotrygd.Stønad
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
@@ -13,9 +14,10 @@ import java.net.URI
 private val logger = LoggerFactory.getLogger(InfotrygdClient::class.java)
 
 @Component
-class InfotrygdClient @Autowired constructor(@param:Value("\${FAMILIE_BA_INFOTRYGD_API_URL}") private val infotrygdApiUri: String,
-                                       @Qualifier("azure") restOperations: RestOperations)
-                                        : AbstractRestClient(restOperations, "migrering.infotrygd") {
+class InfotrygdClient @Autowired constructor(
+    @param:Value("\${FAMILIE_BA_INFOTRYGD_API_URL}") private val infotrygdApiUri: String,
+    @Qualifier("azure") restOperations: RestOperations
+) : AbstractRestClient(restOperations, "migrering.infotrygd") {
 
     fun hentPersonerKlareForMigrering(migreringRequest: MigreringRequest): Set<String> {
         val uri = URI.create("$infotrygdApiUri/infotrygd/barnetrygd/migrering")
@@ -24,6 +26,17 @@ class InfotrygdClient @Autowired constructor(@param:Value("\${FAMILIE_BA_INFOTRY
         } catch (ex: Exception) {
             loggFeil(ex, uri)
             throw RuntimeException("Henting av personer for migrering feilet: ${ex.message}", ex)
+        }
+    }
+
+    fun hentStønadFraId(stønadId: Long): Stønad {
+        val uri = URI.create("$infotrygdApiUri/infotrygd/barnetrygd/stonad/$stønadId")
+
+        return try {
+            getForEntity(uri)
+        } catch (ex: Exception) {
+            loggFeil(ex, uri)
+            throw RuntimeException("Henting av stønad(id=$stønadId) feilet: ${ex.message}", ex)
         }
     }
 

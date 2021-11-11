@@ -36,6 +36,7 @@ enum class MigreringStatus {
     MIGRERT_I_BA,
     FEILET,
     VERIFISERT,
+    VERIFISERING_FEILET,
 }
 
 data class JsonWrapper(val jsonStr: String?) {
