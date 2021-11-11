@@ -1,5 +1,7 @@
 package no.nav.familie.ba.migrering.rest
 
+import no.nav.familie.ba.migrering.domain.MigreringStatus
+import no.nav.familie.ba.migrering.domain.MigrertsakRepository
 import no.nav.familie.ba.migrering.services.BekreftMigreringService
 import no.nav.security.token.support.core.api.Unprotected
 import org.springframework.context.annotation.Profile
@@ -12,15 +14,34 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/test")
 @Unprotected
 @Profile("preprod")
-class TestController(val bekreftMigreringService: BekreftMigreringService) {
+class TestController(
+    val bekreftMigreringService: BekreftMigreringService,
+    val migrertsakRepository: MigrertsakRepository
+) {
 
     @GetMapping(path = ["/triggerBekreft"], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun triggerBekreft(): String? {
-        try{
+        try {
             bekreftMigreringService.bekreftMigrering()
             return "Ok"
-        }catch(e: Exception){
+        } catch (e: Exception) {
             return e.message
+        }
+    }
+
+    @GetMapping(path = ["/revertBekreft"], produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun triggerRevertBekreft(): String? {
+        var revertertSak = 0
+        try {
+            migrertsakRepository.findByStatus(status = MigreringStatus.VERIFISERT) + migrertsakRepository.findByStatus(
+                status = MigreringStatus.VERIFISERING_FEILET
+            ).forEach {
+                migrertsakRepository.update(it.copy(status = MigreringStatus.MIGRERT_I_BA))
+                revertertSak++
+            }
+            return "$revertertSak saker revertert ok"
+        } catch (e: Exception) {
+            return "Error ${e.message}, og $revertertSak saker revertert"
         }
     }
 }
