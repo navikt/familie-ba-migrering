@@ -18,7 +18,8 @@ import java.util.UUID
 @TaskStepBeskrivelse(
     taskStepType = VerifiserMigreringTask.TASK_STEP_TYPE,
     beskrivelse = "Verifisering av migrering fra Infotrygd",
-    maxAntallFeil = 3
+    maxAntallFeil = 3,
+    triggerTidVedFeilISekunder = 60
 )
 class VerifiserMigreringTask(
     val infotrygdClient: InfotrygdClient,
