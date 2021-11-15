@@ -9,8 +9,10 @@ import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
+import no.nav.familie.prosessering.domene.TaskRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
@@ -23,7 +25,8 @@ import java.util.*
 class MigreringTask(
     val sakClient: SakClient,
     val migrertsakRepository: MigrertsakRepository,
-) : AsyncTaskStep {
+    val taskRepository: TaskRepository,
+    ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
         val payload = objectMapper.readValue(task.payload, MigreringTaskDto::class.java)
@@ -48,6 +51,9 @@ class MigreringTask(
                     status = MigreringStatus.MIGRERT_I_BA,
                     resultatFraBa = JsonWrapper.of(responseBa),
                 )
+            )
+            taskRepository.save(
+                VerifiserMigreringTask.opprettTaskMedTriggerTid(sakId.toString(), LocalDate.now().atTime(12, 0))
             )
         } catch (e: Exception) {
             migrertsakRepository.update(
