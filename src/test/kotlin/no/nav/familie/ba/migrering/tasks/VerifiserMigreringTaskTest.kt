@@ -12,6 +12,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.springframework.format.annotation.DateTimeFormat
+import java.time.YearMonth
+import java.time.format.DateTimeFormatter
 import java.util.Optional
 import java.util.UUID
 
@@ -21,10 +24,18 @@ class VerifiserMigreringTaskTest {
     val infotrygdClientMock: InfotrygdClient = mockk()
 
     @Test
-    fun `skal oppdatere migrertsak med status VERIFISERT når stønad fra infotrygd har opphørsgrunn 5`() {
-        every { infotrygdClientMock.hentStønadFraId(any()) } returns Stønad(opphørsgrunn = "5")
+    fun `skal oppdatere migrertsak med status VERIFISERT når stønad fra infotrygd har opphørsgrunn 5 og opphørtFom lik virkningFom i BA`() {
+        every { infotrygdClientMock.hentStønadFraId(any()) } returns Stønad(
+            opphørsgrunn = "5", opphørtFom = YearMonth.now().format(
+                DateTimeFormatter.ofPattern("MMyyyy")
+            )
+        )
         every { migrertsakRepositoryMock.findById(any()) } returns Optional.of(
-            Migrertsak(personIdent = "12345678910", resultatFraBa = JsonWrapper.of(MigreringResponseDto(1, 2, 3)))
+            Migrertsak(
+                personIdent = "12345678910", resultatFraBa = JsonWrapper.of(
+                    MigreringResponseDto(1, 2, 3, virkningFom = YearMonth.now())
+                )
+            )
         )
         val statusSlotUpdate = slot<Migrertsak>()
         every { migrertsakRepositoryMock.update(capture(statusSlotUpdate)) } returns Migrertsak()
@@ -60,5 +71,21 @@ class VerifiserMigreringTaskTest {
                 VerifiserMigreringTask.opprettTaskMedTriggerTid(UUID.randomUUID().toString())
             )
         }.hasMessageContaining("Opphørsgrunn")
+    }
+
+    @Test
+    fun `skal feile hvis stønad opphørtFom fra Infotrygd er ulik virkningFom i BA`() {
+        every { infotrygdClientMock.hentStønadFraId(any()) } returns Stønad(opphørsgrunn = "5", opphørtFom = "000000")
+        every { migrertsakRepositoryMock.findById(any()) } returns Optional.of(
+            Migrertsak(personIdent = "12345678910", resultatFraBa = JsonWrapper.of(MigreringResponseDto(1, 2, 3)))
+        )
+        val statusSlotUpdate = slot<Migrertsak>()
+        every { migrertsakRepositoryMock.update(capture(statusSlotUpdate)) } returns Migrertsak()
+
+        assertThatThrownBy {
+            VerifiserMigreringTask(infotrygdClientMock, migrertsakRepositoryMock).doTask(
+                VerifiserMigreringTask.opprettTaskMedTriggerTid(UUID.randomUUID().toString())
+            )
+        }.hasMessageContainingAll("OpphørtFom", "virkningFom")
     }
 }

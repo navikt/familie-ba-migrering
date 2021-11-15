@@ -12,6 +12,7 @@ import no.nav.familie.prosessering.domene.Task
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.UUID
 
 @Service
@@ -42,14 +43,22 @@ class VerifiserMigreringTask(
         }
         val infotrygdStønad = infotrygdClient.hentStønadFraId(resultatFraBa.infotrygdStønadId)
         when (infotrygdStønad.opphørsgrunn) {
-            "5" -> migrertsakRepository.update(migrertsak.copy(status = MigreringStatus.VERIFISERT))
+            "5" -> {
+                val virkningFomIBa = resultatFraBa.virkningFom?.format(DateTimeFormatter.ofPattern("MMyyyy"))
+                if (infotrygdStønad.opphørtFom == virkningFomIBa) {
+                    migrertsakRepository.update(migrertsak.copy(status = MigreringStatus.VERIFISERT))
+                }
+                else {
+                    secureLogger.error("OpphørtFom i Infotrygd var ulik virkningFom i BA:\n$infotrygdStønad\n$migrertsak")
+                    error("OpphørtFom i Infotrygd var ulik virkningFom i BA (${infotrygdStønad.opphørtFom} =/= $virkningFomIBa)")
+                }
+            }
             else -> {
                 secureLogger.error("Migrert sak har ikke blitt oppdatert med opphørsgrunn 5 i Infotrygd:\n$infotrygdStønad")
-                error("Verifisering feilet: Opphørsgrunn i Infotrygd var ${infotrygdStønad.opphørsgrunn}, og ikke 5")
+                error("Opphørsgrunn i Infotrygd var ${infotrygdStønad.opphørsgrunn}, og ikke 5")
             }
         }
     }
-
 
     companion object {
 
