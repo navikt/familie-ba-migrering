@@ -6,6 +6,7 @@ import no.nav.familie.ba.migrering.domain.Migrertsak
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
 import no.nav.familie.ba.migrering.integrasjoner.MigreringResponseDto
 import no.nav.familie.ba.migrering.integrasjoner.SakClient
+import no.nav.familie.prosessering.domene.TaskRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.TestInstance
 class MigreringTaskTest {
     val migrertsakRepositoryMock: MigrertsakRepository = mockk()
     val sakClientMock: SakClient = mockk()
+    val taskRepository: TaskRepository = mockk()
 
     @Test
     fun `Skal insert row til migeringsstatus med status == SUKKESS hvis sakClient ikke kast et unntak`() {
@@ -22,9 +24,10 @@ class MigreringTaskTest {
         val statusSlotUpdate = slot<Migrertsak>()
         every { migrertsakRepositoryMock.insert(capture(statusSlotInsert)) } returns Migrertsak()
         every { migrertsakRepositoryMock.update(capture(statusSlotUpdate)) } returns Migrertsak()
+        every { taskRepository.save(any()) } returns VerifiserMigreringTask.opprettTaskMedTriggerTid("1")
 
         val personIdent = "ooo"
-        MigreringTask(sakClientMock, migrertsakRepositoryMock).doTask(
+        MigreringTask(sakClientMock, migrertsakRepositoryMock, taskRepository).doTask(
             MigreringTask.opprettTask(
                 MigreringTaskDto(
                     personIdent = personIdent
@@ -50,7 +53,7 @@ class MigreringTaskTest {
         every { migrertsakRepositoryMock.update(capture(statusSlotUpdate)) } returns Migrertsak()
 
         val personIdent = "ooo"
-        MigreringTask(sakClientMock, migrertsakRepositoryMock).doTask(
+        MigreringTask(sakClientMock, migrertsakRepositoryMock, taskRepository).doTask(
             MigreringTask.opprettTask(
                 MigreringTaskDto(
                     personIdent = personIdent
