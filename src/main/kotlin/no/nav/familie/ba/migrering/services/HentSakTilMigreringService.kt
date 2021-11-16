@@ -20,7 +20,7 @@ class HentSakTilMigreringService(
     @Value("\${migrering.aktivert:false}") val migreringAktivert: Boolean
 ) {
 
-    @Scheduled(cron = "0 0 8 * * ?", zone = "Europe/Oslo")
+    @Scheduled(cron = "0 0 9 15 * ?", zone = "Europe/Oslo")
     fun hentSakTilMigrering() {
         if (!migreringAktivert) {
             Log.info("Migrering deaktivert, stopper videre jobbing")
@@ -36,7 +36,7 @@ class HentSakTilMigreringService(
             )
         )
 
-        if (personerForMigrering.size > MAX_ANTALL_PERSONER_SOM_SKAL_MIGRERES) {
+        if (personerForMigrering.size > ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD) {
             Log.error("For manger personer (${personerForMigrering.size}) avbryter migrering")
             return
         }
