@@ -42,6 +42,7 @@ spec:
     sqlInstances:
       - type: POSTGRES_12
         name: familie-ba-migrering
+        diskAutoresize: true
         autoBackupTime: "03:00"
         databases:
           - name: familie-ba-migrering
@@ -49,6 +50,20 @@ spec:
   azure:
     application:
       enabled: true
+  accessPolicy:
+    inbound:
+      rules:
+        - application: familie-prosessering
+          namespace: teamfamilie
+          cluster: prod-gcp
+  outbound:
+    rules:
+      - application: familie-ba-infotrygd
+        namespace: teamfamilie
+        cluster: prod-fss
+      - application: familie-ba-sak
+        namespace: teamfamilie
+        cluster: prod-fss
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: prod
