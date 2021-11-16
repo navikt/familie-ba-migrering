@@ -18,9 +18,9 @@
         <revision>1.0</revision>
         <sha1></sha1>
         <changelist>-SNAPSHOT</changelist>
-        <java.version>16</java.version>
-        <jvmTarget>16</jvmTarget>
-        <kotlin.version>1.5.31</kotlin.version>
+        <java.version>17</java.version>
+        <jvmTarget>17</jvmTarget>
+        <kotlin.version>1.6.0</kotlin.version>
 	    <felles.version>1.20210908141943_5f1405d</felles.version>
         <prosessering.version>1.20211025145734_17ac16f</prosessering.version>
         <kontrakter.version>2.0_20211005093942_92ea4e7</kontrakter.version>
