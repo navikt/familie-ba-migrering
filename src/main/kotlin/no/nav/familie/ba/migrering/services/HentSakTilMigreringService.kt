@@ -29,29 +29,34 @@ class HentSakTilMigreringService(
         val personerForMigrering = infotrygdClient.hentPersonerKlareForMigrering(
             MigreringRequest(
                 page = 1,
-                size = MAX_PERSON_FOR_MIGRERING,
+                size = ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                 valg = "OR",
                 undervalg = "OS",
                 maksAntallBarn = 1,
             )
         )
 
-        if (personerForMigrering.size > MAX_PERSON_FOR_MIGRERING) {
+        if (personerForMigrering.size > ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD) {
             Log.error("For manger personer (${personerForMigrering.size}) avbryter migrering")
             return
         }
 
         Log.info("Fant ${personerForMigrering.size} personer for migrering")
 
-        personerForMigrering.forEach {
-            if (!migrertsakRepository.existsByPersonIdentAndStatus(it, MigreringStatus.MIGRERT_I_BA)) {
-                taskRepository.save(MigreringTask.opprettTask(MigreringTaskDto(it)))
+        var antallPersonerMigrert = 0
+        for (person in personerForMigrering) {
+            if (!migrertsakRepository.existsByPersonIdentAndStatus(person, MigreringStatus.MIGRERT_I_BA)) {
+                taskRepository.save(MigreringTask.opprettTask(MigreringTaskDto(person)))
+                antallPersonerMigrert++
             }
+            if (antallPersonerMigrert == MAX_ANTALL_PERSONER_SOM_SKAL_MIGRERES)
+                break
         }
     }
 
     companion object {
         val Log = LoggerFactory.getLogger(HentSakTilMigreringService::class.java)
-        val MAX_PERSON_FOR_MIGRERING = 10
+        val MAX_ANTALL_PERSONER_SOM_SKAL_MIGRERES = 20
+        val ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD = 100
     }
 }
