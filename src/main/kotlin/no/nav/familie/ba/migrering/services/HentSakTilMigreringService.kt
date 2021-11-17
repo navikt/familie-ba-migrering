@@ -44,12 +44,13 @@ class HentSakTilMigreringService(
         Log.info("Fant ${personerForMigrering.size} personer for migrering")
 
         var antallPersonerMigrert = 0
-        personerForMigrering.takeWhile {antallPersonerMigrert < MAX_ANTALL_PERSONER_SOM_SKAL_MIGRERES}.forEach {
-            if (!migrertsakRepository.existsByPersonIdentAndStatus(it, MigreringStatus.MIGRERT_I_BA)) {
-                taskRepository.save(MigreringTask.opprettTask(MigreringTaskDto(it)))
+        for (person in personerForMigrering) {
+            if (!migrertsakRepository.existsByPersonIdentAndStatus(person, MigreringStatus.MIGRERT_I_BA)) {
+                taskRepository.save(MigreringTask.opprettTask(MigreringTaskDto(person)))
                 antallPersonerMigrert++
             }
-
+            if (antallPersonerMigrert == MAX_ANTALL_PERSONER_SOM_SKAL_MIGRERES)
+                break
         }
     }
 
