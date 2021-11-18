@@ -1,3 +1,3 @@
-FROM navikt/java:17-appdynamics
+FROM navikt/java:17
 
 COPY ./target/familie-ba-migrering.jar "app.jar"
