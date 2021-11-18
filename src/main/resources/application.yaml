@@ -60,4 +60,4 @@ no.nav.security.jwt:
 
 migrering:
   aktivert: false
-  antallPersoner: 20
+  antallPersoner: 1
