@@ -1,6 +1,5 @@
 package no.nav.familie.ba.migrering.services
 
-import no.nav.familie.ba.migrering.domain.MigreringStatus
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
 import no.nav.familie.ba.migrering.integrasjoner.InfotrygdClient
 import no.nav.familie.ba.migrering.integrasjoner.MigreringRequest
@@ -45,7 +44,7 @@ class HentSakTilMigreringService(
 
         var antallPersonerMigrert = 0
         for (person in personerForMigrering) {
-            if (!migrertsakRepository.existsByPersonIdentAndStatus(person, MigreringStatus.MIGRERT_I_BA)) {
+            if (migrertsakRepository.findByPersonIdent(person).isEmpty()) {
                 taskRepository.save(MigreringTask.opprettTask(MigreringTaskDto(person)))
                 antallPersonerMigrert++
             }

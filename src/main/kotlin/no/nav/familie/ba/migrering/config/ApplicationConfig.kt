@@ -24,7 +24,7 @@ import java.time.temporal.ChronoUnit
 @SpringBootConfiguration
 @ConfigurationPropertiesScan("no.nav.familie")
 @ComponentScan("no.nav.familie.ba.migrering", "no.nav.familie.prosessering")
-@EnableJwtTokenValidation(ignore = ["org.springframework", "springfox.documentation"])
+@EnableJwtTokenValidation(ignore = ["org.springframework", "org.springdoc"])
 @EnableOAuth2Client
 @Import(RestTemplateAzure::class)
 @EnableScheduling //brukes av prosessering(Tasks)

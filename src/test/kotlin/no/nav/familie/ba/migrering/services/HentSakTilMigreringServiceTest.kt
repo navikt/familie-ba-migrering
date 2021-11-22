@@ -4,6 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import no.nav.familie.ba.migrering.domain.MigreringStatus
+import no.nav.familie.ba.migrering.domain.Migrertsak
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
 import no.nav.familie.ba.migrering.integrasjoner.InfotrygdClient
 import no.nav.familie.prosessering.domene.Task
@@ -24,7 +25,7 @@ class HentSakTilMigreringServiceTest {
         every { infotrygdClientMock.hentPersonerKlareForMigrering(any()) } returns personIdenter.toSet()
         val tasker = mutableListOf<Task>()
         every { taskRepositoryMock.save(capture(tasker)) } returns Task(type = "", payload = "")
-        every { migertsakRepository.existsByPersonIdentAndStatus(any(), any()) } returns false
+        every { migertsakRepository.findByPersonIdent(any()) } returns emptyList()
         HentSakTilMigreringService(
             infotrygdClientMock,
             taskRepositoryMock,
@@ -44,7 +45,7 @@ class HentSakTilMigreringServiceTest {
     fun `Skal ikke migrer hvis det er en migrert sak for den personen i repository`() {
         val personIdent = "123"
         every { infotrygdClientMock.hentPersonerKlareForMigrering(any()) } returns setOf(personIdent)
-        every { migertsakRepository.existsByPersonIdentAndStatus(personIdent, MigreringStatus.MIGRERT_I_BA) } returns true
+        every { migertsakRepository.findByPersonIdent(personIdent) } returns listOf(Migrertsak())
         every { taskRepositoryMock.save(any()) } returns Task(type = "", payload = "")
 
         HentSakTilMigreringService(
