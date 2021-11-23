@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 @Configuration
-class SecurityConfig() {
+class RestSecurityFilterConfig {
 
     @Bean
     fun requestFilter() = object : OncePerRequestFilter() {

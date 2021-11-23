@@ -1,7 +1,8 @@
 BA_SAK_API_URL: https://familie-ba-sak.dev.adeo.no/api
 FAMILIE_BA_INFOTRYGD_API_URL: https://familie-ba-infotrygd.dev.intern.nav.no
 AZURE_OPENID_CONFIG_TOKEN_ENDPOINT: https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/oauth2/v2.0/token
-AZURE_APP_CLIENT_ID: e50c7d59-7183-4978-8d8c-8af7f9a7e6a9
+AZURE_APP_WELL_KNOWN_URL: https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
+AZURE_APP_CLIENT_ID: env-var
 
 logging:
   config: "classpath:logback-test.xml"

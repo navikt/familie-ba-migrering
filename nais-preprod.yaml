@@ -57,9 +57,6 @@ spec:
         - application: familie-prosessering
           namespace: teamfamilie
           cluster: dev-gcp
-        - application: familie-ba-sak
-          namespace: teamfamilie
-          cluster: dev-fss
     outbound:
       rules:
         - application: familie-ba-infotrygd
