@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestOperations
 import java.net.URI
+import java.time.YearMonth
 
 private val logger = LoggerFactory.getLogger(SakClient::class.java)
 
@@ -32,4 +33,5 @@ data class MigreringResponseDto(
     val behandlingId: Long,
     val infotrygdStønadId: Long? = null,
     val infotrygdSakId: Long? = null,
+    val virkningFom: YearMonth? = null,
 )

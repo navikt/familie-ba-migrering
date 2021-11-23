@@ -16,7 +16,8 @@ class HentSakTilMigreringService(
     val infotrygdClient: InfotrygdClient,
     val taskRepository: TaskRepository,
     val migrertsakRepository: MigrertsakRepository,
-    @Value("\${migrering.aktivert:false}") val migreringAktivert: Boolean
+    @Value("\${migrering.aktivert:false}") val migreringAktivert: Boolean,
+    @Value("\${migrering.antallPersoner}") val antallPersoner: Int,
 ) {
 
     @Scheduled(cron = "0 0 8 * * ?", zone = "Europe/Oslo")
@@ -48,14 +49,13 @@ class HentSakTilMigreringService(
                 taskRepository.save(MigreringTask.opprettTask(MigreringTaskDto(person)))
                 antallPersonerMigrert++
             }
-            if (antallPersonerMigrert == MAX_ANTALL_PERSONER_SOM_SKAL_MIGRERES)
+            if (antallPersonerMigrert == antallPersoner)
                 break
         }
     }
 
     companion object {
         val Log = LoggerFactory.getLogger(HentSakTilMigreringService::class.java)
-        val MAX_ANTALL_PERSONER_SOM_SKAL_MIGRERES = 20
         val ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD = 100
     }
 }

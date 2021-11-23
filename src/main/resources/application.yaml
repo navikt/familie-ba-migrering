@@ -72,6 +72,10 @@ no.nav.security.jwt:
           client-secret: ${AZURE_APP_CLIENT_SECRET}
           client-auth-method: client_secret_basic
 
+migrering:
+  aktivert: false
+  antallPersoner: 1
+
 AUTHORIZATION_URL: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/authorize
 TOKEN_URL: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
 API_SCOPE: api://dev-gcp.teamfamilie.familie-ba-migrering/.default
