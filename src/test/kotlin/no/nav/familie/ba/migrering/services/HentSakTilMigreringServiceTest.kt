@@ -29,7 +29,8 @@ class HentSakTilMigreringServiceTest {
             infotrygdClientMock,
             taskRepositoryMock,
             migertsakRepository,
-            true
+            true,
+            20,
         ).hentSakTilMigrering()
 
         assertThat(tasker).hasSize(2)
@@ -51,7 +52,8 @@ class HentSakTilMigreringServiceTest {
             infotrygdClientMock,
             taskRepositoryMock,
             migertsakRepository,
-            true
+            true,
+            20,
         ).hentSakTilMigrering()
 
         verify(exactly = 0) { taskRepositoryMock.save(any()) }
