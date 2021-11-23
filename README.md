@@ -13,4 +13,5 @@ psql -U postgres
 CREATE DATABASE "familie-ba-migrering";
 \l (til å verifisere om databasen er opprettet)
 ```
-### Swagger: http://localhost:8098/swagger-ui.html
+### Swagger
+http://localhost:8098/swagger-ui.html
