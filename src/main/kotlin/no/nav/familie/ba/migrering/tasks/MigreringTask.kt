@@ -4,6 +4,7 @@ import no.nav.familie.ba.migrering.domain.JsonWrapper
 import no.nav.familie.ba.migrering.domain.MigreringStatus
 import no.nav.familie.ba.migrering.domain.Migrertsak
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
+import no.nav.familie.ba.migrering.integrasjoner.KanIkkeMigrereException
 import no.nav.familie.ba.migrering.integrasjoner.SakClient
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.AsyncTaskStep
@@ -14,7 +15,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 @Service
 @TaskStepBeskrivelse(
@@ -56,12 +57,17 @@ class MigreringTask(
                 VerifiserMigreringTask.opprettTaskMedTriggerTid(sakId.toString(), LocalDate.now().atTime(12, 0))
             )
         } catch (e: Exception) {
+            var feiltype: String = "UKJENT"
+            if (e is KanIkkeMigrereException) {
+               feiltype = e.feiltype
+            }
             migrertsakRepository.update(
                 Migrertsak(
                     id = sakId,
                     personIdent = payload.personIdent,
                     status = MigreringStatus.FEILET,
                     resultatFraBa = null,
+                    feiltype = feiltype,
                     aarsak = e.message,
                 )
             )

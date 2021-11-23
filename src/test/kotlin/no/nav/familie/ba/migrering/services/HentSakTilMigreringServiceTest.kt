@@ -45,7 +45,7 @@ class HentSakTilMigreringServiceTest {
     fun `Skal ikke migrer hvis det er en migrert sak for den personen i repository`() {
         val personIdent = "123"
         every { infotrygdClientMock.hentPersonerKlareForMigrering(any()) } returns setOf(personIdent)
-        every { migertsakRepository.existsByPersonIdentAndStatus(personIdent, MigreringStatus.MIGRERT_I_BA) } returns true
+        every { migertsakRepository.existsByPersonIdentAndStatus(personIdent, listOf(MigreringStatus.MIGRERT_I_BA, MigreringStatus.FEILET)) } returns true
         every { taskRepositoryMock.save(any()) } returns Task(type = "", payload = "")
 
         HentSakTilMigreringService(
