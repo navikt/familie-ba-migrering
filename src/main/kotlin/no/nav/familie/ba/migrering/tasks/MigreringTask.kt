@@ -4,6 +4,7 @@ import no.nav.familie.ba.migrering.domain.JsonWrapper
 import no.nav.familie.ba.migrering.domain.MigreringStatus
 import no.nav.familie.ba.migrering.domain.Migrertsak
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
+import no.nav.familie.ba.migrering.integrasjoner.KanIkkeMigrereException
 import no.nav.familie.ba.migrering.integrasjoner.SakClient
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.AsyncTaskStep
@@ -14,7 +15,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 @Service
 @TaskStepBeskrivelse(
@@ -31,37 +32,47 @@ class MigreringTask(
     override fun doTask(task: Task) {
         val payload = objectMapper.readValue(task.payload, MigreringTaskDto::class.java)
 
-        secureLogger.info("Migrerer sak for person $payload.personIdent")
-        val sakId = UUID.randomUUID()
-        migrertsakRepository.insert(
-            Migrertsak(
-                id = sakId,
-                personIdent = payload.personIdent,
-                migreringsdato = LocalDateTime.now(),
-                status = MigreringStatus.UKJENT,
+        secureLogger.info("Migrerer sak for person ${payload.personIdent}")
+
+        var migrertsak = migrertsakRepository.findByStatusAndPersonIdent(MigreringStatus.UKJENT, payload.personIdent).singleOrNull()
+
+        if (migrertsak == null) {
+            val sakId = UUID.randomUUID()
+            migrertsak = migrertsakRepository.insert(
+                Migrertsak(
+                    id = sakId,
+                    personIdent = payload.personIdent,
+                    migreringsdato = LocalDateTime.now(),
+                    status = MigreringStatus.UKJENT,
+                )
             )
-        )
+        }
 
         try {
             val responseBa = sakClient.migrerPerson(payload.personIdent)
             migrertsakRepository.update(
                 Migrertsak(
-                    id = sakId,
+                    id = migrertsak.id,
                     personIdent = payload.personIdent,
                     status = MigreringStatus.MIGRERT_I_BA,
                     resultatFraBa = JsonWrapper.of(responseBa),
                 )
             )
             taskRepository.save(
-                VerifiserMigreringTask.opprettTaskMedTriggerTid(sakId.toString(), LocalDate.now().atTime(12, 0))
+                VerifiserMigreringTask.opprettTaskMedTriggerTid(migrertsak.id.toString(), LocalDate.now().atTime(12, 0))
             )
         } catch (e: Exception) {
+            var feiltype: String = "UKJENT"
+            if (e is KanIkkeMigrereException) {
+               feiltype = e.feiltype
+            }
             migrertsakRepository.update(
                 Migrertsak(
-                    id = sakId,
+                    id = migrertsak.id,
                     personIdent = payload.personIdent,
                     status = MigreringStatus.FEILET,
                     resultatFraBa = null,
+                    feiltype = feiltype,
                     aarsak = e.message,
                 )
             )
