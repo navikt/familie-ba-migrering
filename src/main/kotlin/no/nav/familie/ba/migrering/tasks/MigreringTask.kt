@@ -32,29 +32,34 @@ class MigreringTask(
     override fun doTask(task: Task) {
         val payload = objectMapper.readValue(task.payload, MigreringTaskDto::class.java)
 
-        secureLogger.info("Migrerer sak for person $payload.personIdent")
-        val sakId = UUID.randomUUID()
-        migrertsakRepository.insert(
-            Migrertsak(
-                id = sakId,
-                personIdent = payload.personIdent,
-                migreringsdato = LocalDateTime.now(),
-                status = MigreringStatus.UKJENT,
+        secureLogger.info("Migrerer sak for person ${payload.personIdent}")
+
+        var migrertsak = migrertsakRepository.findByStatusAndPersonIdent(MigreringStatus.UKJENT, payload.personIdent).singleOrNull()
+
+        if (migrertsak == null) {
+            val sakId = UUID.randomUUID()
+            migrertsak = migrertsakRepository.insert(
+                Migrertsak(
+                    id = sakId,
+                    personIdent = payload.personIdent,
+                    migreringsdato = LocalDateTime.now(),
+                    status = MigreringStatus.UKJENT,
+                )
             )
-        )
+        }
 
         try {
             val responseBa = sakClient.migrerPerson(payload.personIdent)
             migrertsakRepository.update(
                 Migrertsak(
-                    id = sakId,
+                    id = migrertsak.id,
                     personIdent = payload.personIdent,
                     status = MigreringStatus.MIGRERT_I_BA,
                     resultatFraBa = JsonWrapper.of(responseBa),
                 )
             )
             taskRepository.save(
-                VerifiserMigreringTask.opprettTaskMedTriggerTid(sakId.toString(), LocalDate.now().atTime(12, 0))
+                VerifiserMigreringTask.opprettTaskMedTriggerTid(migrertsak.id.toString(), LocalDate.now().atTime(12, 0))
             )
         } catch (e: Exception) {
             var feiltype: String = "UKJENT"
@@ -63,7 +68,7 @@ class MigreringTask(
             }
             migrertsakRepository.update(
                 Migrertsak(
-                    id = sakId,
+                    id = migrertsak.id,
                     personIdent = payload.personIdent,
                     status = MigreringStatus.FEILET,
                     resultatFraBa = null,
