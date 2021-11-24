@@ -2,6 +2,10 @@ migrering:
   aktivert: true
   antallPersoner: 20
 
+rolle:
+  teamfamilie:
+    forvalter: "c62e908a-cf20-4ad0-b7b3-3ff6ca4bf38b"
+
 BA_SAK_SCOPE: api://dev-fss.teamfamilie.familie-ba-sak/.default
 BA_SAK_API_URL: https://familie-ba-sak.dev-fss-pub.nais.io/api
 

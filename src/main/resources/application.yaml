@@ -76,4 +76,8 @@ migrering:
   aktivert: false
   antallPersoner: 1
 
+rolle:
+  teamfamilie:
+    forvalter: ""
+
 API_SCOPE: api://${AZURE_APP_CLIENT_ID}/.default

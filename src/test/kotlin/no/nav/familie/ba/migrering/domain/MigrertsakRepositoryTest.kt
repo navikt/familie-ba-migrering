@@ -45,7 +45,7 @@ class MigrertsakRepositoryTest {
 
         val migrertsak = Migrertsak(
             id = UUID.randomUUID(),
-            sakNummer = "",
+            callId = "",
             aarsak = null,
             resultatFraBa = resultatFraBa,
             migreringsdato = LocalDateTime.now(),
@@ -61,7 +61,7 @@ class MigrertsakRepositoryTest {
 
         val migrertsak = Migrertsak(
             id = UUID.randomUUID(),
-            sakNummer = "",
+            callId = "",
             aarsak = null,
             resultatFraBa = resultatFraBa,
             migreringsdato = LocalDateTime.now(),
@@ -81,7 +81,7 @@ class MigrertsakRepositoryTest {
         val targetSak = migrertsakRepository.insert(
             Migrertsak(
                 id = UUID.randomUUID(),
-                sakNummer = "",
+                callId = "",
                 aarsak = null,
                 resultatFraBa = resultatFraBa,
                 migreringsdato = LocalDateTime.now(),
@@ -92,7 +92,7 @@ class MigrertsakRepositoryTest {
         migrertsakRepository.insert(
             Migrertsak(
                 id = UUID.randomUUID(),
-                sakNummer = "",
+                callId = "",
                 aarsak = null,
                 resultatFraBa = null,
                 migreringsdato = LocalDateTime.now(),

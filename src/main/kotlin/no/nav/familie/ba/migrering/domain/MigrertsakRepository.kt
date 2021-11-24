@@ -40,7 +40,7 @@ class MigrertsakRowMapper : RowMapper<Migrertsak?> {
     override fun mapRow(rs: ResultSet, rowNum: Int): Migrertsak {
         val migrertsak = Migrertsak(
             id = UUID.fromString(rs.getString("id")),
-            sakNummer = rs.getString("sak_nummer"),
+            callId = rs.getString("call_id"),
             status = MigreringStatus.valueOf(rs.getString("status")),
             aarsak = rs.getString("aarsak"),
             resultatFraBa = JsonWrapper(rs.getString("resultat_fra_ba")),

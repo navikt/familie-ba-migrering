@@ -27,8 +27,8 @@ data class Migrertsak(
     @Column("aarsak")
     val aarsak: String? = null,
 
-    @Column("sak_nummer")
-    val sakNummer: String = "",
+    @Column("call_id")
+    val callId: String = "",
 
     @Column("resultat_fra_ba")
     val resultatFraBa: JsonWrapper? = null,
