@@ -21,6 +21,9 @@ data class Migrertsak(
     @Column("status")
     val status: MigreringStatus = MigreringStatus.UKJENT,
 
+    @Column("feiltype")
+    val feiltype: String? = null,
+
     @Column("aarsak")
     val aarsak: String? = null,
 

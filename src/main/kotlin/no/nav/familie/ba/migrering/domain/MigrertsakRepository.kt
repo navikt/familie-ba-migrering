@@ -2,6 +2,7 @@ package no.nav.familie.ba.migrering.domain
 
 import no.nav.familie.ba.migrering.domain.common.InsertUpdateRepository
 import no.nav.familie.ba.migrering.domain.common.RepositoryInterface
+import no.nav.familie.kontrakter.felles.PersonIdent
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -14,8 +15,9 @@ import java.util.UUID
 @Repository
 @Transactional
 interface MigrertsakRepository : RepositoryInterface<Migrertsak, UUID>, InsertUpdateRepository<Migrertsak> {
-    fun existsByPersonIdentAndStatus(ident: String, status: MigreringStatus): Boolean
+    fun existsByPersonIdentAndStatusIn(ident: String, status: List<MigreringStatus>): Boolean
     fun findByStatus(status: MigreringStatus): List<Migrertsak>
+    fun findByStatusAndPersonIdent(status: MigreringStatus, personIdent: String): List<Migrertsak>
 }
 
 @Repository

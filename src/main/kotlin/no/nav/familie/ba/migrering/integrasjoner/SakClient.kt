@@ -1,13 +1,16 @@
 package no.nav.familie.ba.migrering.integrasjoner
 
+import com.fasterxml.jackson.databind.JsonNode
 import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.getDataOrThrow
+import no.nav.familie.kontrakter.felles.objectMapper
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
+import org.springframework.web.client.HttpStatusCodeException
 import org.springframework.web.client.RestOperations
 import java.net.URI
 import java.time.YearMonth
@@ -22,9 +25,22 @@ class SakClient @Autowired constructor(
 
     fun migrerPerson(ident: String): MigreringResponseDto {
         val uri = URI.create("$sakApiUri/migrering")
-        val response: Ressurs<MigreringResponseDto> = postForEntity(uri, mapOf("ident" to ident))
-        if (response.status == Ressurs.Status.SUKSESS && response.data == null) error("Ressurs har status suksess, men mangler data")
-        return response.getDataOrThrow()
+        try {
+            val response: Ressurs<MigreringResponseDto> = postForEntity(uri, mapOf("ident" to ident))
+            if (response.status == Ressurs.Status.SUKSESS && response.data == null) error("Ressurs har status suksess, men mangler data")
+            return response.getDataOrThrow()
+        } catch (e: HttpStatusCodeException) {
+            val ressurs = e.getResponseBodyAsString()
+
+            if (!ressurs.isNullOrBlank()) {
+                val actualObj: JsonNode = objectMapper.readTree(ressurs)
+                val data = actualObj.get("data").asText("UKJENT")
+                throw KanIkkeMigrereException(feiltype = data.toString(), melding = ressurs, e)
+            }
+          throw e
+        }
+
+
     }
 }
 

@@ -46,7 +46,7 @@ class HentSakTilMigreringService(
 
         var antallPersonerMigrert = 0
         for (person in personerForMigrering) {
-            if (!migrertsakRepository.existsByPersonIdentAndStatus(person, MigreringStatus.MIGRERT_I_BA)) {
+            if (!migrertsakRepository.existsByPersonIdentAndStatusIn(person, listOf(MigreringStatus.MIGRERT_I_BA, MigreringStatus.FEILET, MigreringStatus.VERIFISERT))) {
                 taskRepository.save(MigreringTask.opprettTask(MigreringTaskDto(person)))
                 antallPersonerMigrert++
             }

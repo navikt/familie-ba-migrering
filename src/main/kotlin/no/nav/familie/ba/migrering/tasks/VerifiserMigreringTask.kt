@@ -1,5 +1,7 @@
 package no.nav.familie.ba.migrering.tasks
 
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.Metrics
 import no.nav.familie.ba.migrering.domain.MigreringStatus
 import no.nav.familie.ba.migrering.domain.Migrertsak
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
@@ -27,6 +29,8 @@ class VerifiserMigreringTask(
     val migrertsakRepository: MigrertsakRepository,
 ) : AsyncTaskStep {
 
+    private val verifiserteMigreringerCounter: Counter =Metrics.counter("verifiserteMigreringer")
+
     override fun doTask(task: Task) {
         val migrertSak = migrertsakRepository.findById(UUID.fromString(task.payload)).get()
         logger.info("Verifiserer Migrertsak(id=${migrertSak.id}")
@@ -47,6 +51,7 @@ class VerifiserMigreringTask(
                 val virkningFomIBa = resultatFraBa.virkningFom?.format(DateTimeFormatter.ofPattern("MMyyyy"))
                 if (infotrygdStønad.opphørtFom == virkningFomIBa) {
                     migrertsakRepository.update(migrertsak.copy(status = MigreringStatus.VERIFISERT))
+                    verifiserteMigreringerCounter.increment()
                 }
                 else {
                     secureLogger.error("OpphørtFom i Infotrygd var ulik virkningFom i BA:\n$infotrygdStønad\n$migrertsak")
