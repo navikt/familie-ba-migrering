@@ -46,13 +46,17 @@ class HentSakTilMigreringService(
 
         var antallPersonerMigrert = 0
         for (person in personerForMigrering) {
-            if (!migrertsakRepository.existsByPersonIdentAndStatusIn(person, listOf(MigreringStatus.MIGRERT_I_BA, MigreringStatus.FEILET, MigreringStatus.VERIFISERT))) {
+            if (!existByPersonIdentAndStatusIn(person, listOf(MigreringStatus.MIGRERT_I_BA, MigreringStatus.FEILET, MigreringStatus.VERIFISERT))) {
                 taskRepository.save(MigreringTask.opprettTask(MigreringTaskDto(person)))
                 antallPersonerMigrert++
             }
             if (antallPersonerMigrert == antallPersoner)
                 break
         }
+    }
+
+    private fun existByPersonIdentAndStatusIn(ident: String, status: List<MigreringStatus>): Boolean {
+        return status.any { migrertsakRepository.findByStatusAndPersonIdent(it, ident).isNotEmpty() }
     }
 
     companion object {
