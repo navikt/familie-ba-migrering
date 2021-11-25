@@ -21,7 +21,7 @@ class HentSakTilMigreringService(
     @Value("\${migrering.antallPersoner}") val antallPersoner: Int,
 ) {
 
-    @Scheduled(cron = "0 0 8 * * ?", zone = "Europe/Oslo")
+    @Scheduled(cron = "0 0 9 * * ?", zone = "Europe/Oslo")
     fun hentSakTilMigrering() {
         if (!migreringAktivert) {
             Log.info("Migrering deaktivert, stopper videre jobbing")
@@ -29,7 +29,7 @@ class HentSakTilMigreringService(
         }
         val personerForMigrering = infotrygdClient.hentPersonerKlareForMigrering(
             MigreringRequest(
-                page = 1,
+                page = 4,
                 size = ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                 valg = "OR",
                 undervalg = "OS",
@@ -57,6 +57,6 @@ class HentSakTilMigreringService(
 
     companion object {
         val Log = LoggerFactory.getLogger(HentSakTilMigreringService::class.java)
-        val ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD = 100
+        val ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD = 200
     }
 }
