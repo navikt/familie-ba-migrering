@@ -1,3 +1,7 @@
+migrering:
+  aktivert: true
+  antallPersoner: 1
+
 spring:
   flyway:
     placeholders:
