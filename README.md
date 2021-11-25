@@ -12,3 +12,6 @@ winpty docker exec -it <container_id> bash(fra git-bash windows)
 psql -U postgres
 CREATE DATABASE "familie-ba-migrering";
 \l (til å verifisere om databasen er opprettet)
+```
+### Swagger
+http://localhost:8098/swagger-ui.html

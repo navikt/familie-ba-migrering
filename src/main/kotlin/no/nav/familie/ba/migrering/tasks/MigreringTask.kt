@@ -44,6 +44,7 @@ class MigreringTask(
                     personIdent = payload.personIdent,
                     migreringsdato = LocalDateTime.now(),
                     status = MigreringStatus.UKJENT,
+                    callId = task.callId
                 )
             )
         }
@@ -56,6 +57,7 @@ class MigreringTask(
                     personIdent = payload.personIdent,
                     status = MigreringStatus.MIGRERT_I_BA,
                     resultatFraBa = JsonWrapper.of(responseBa),
+                    callId = task.callId
                 )
             )
             taskRepository.save(
@@ -74,6 +76,7 @@ class MigreringTask(
                     resultatFraBa = null,
                     feiltype = feiltype,
                     aarsak = e.message,
+                    callId = task.callId
                 )
             )
         }

@@ -1,10 +1,6 @@
 package no.nav.familie.ba.migrering.config
 
 import no.nav.familie.http.config.RestTemplateAzure
-import no.nav.familie.http.interceptor.BearerTokenClientInterceptor
-import no.nav.familie.http.interceptor.ConsumerIdClientInterceptor
-import no.nav.familie.http.interceptor.InternLoggerInterceptor
-import no.nav.familie.http.interceptor.MdcValuesPropagatingClientInterceptor
 import no.nav.familie.log.filter.LogFilter
 import no.nav.security.token.support.client.core.http.OAuth2HttpClient
 import no.nav.security.token.support.client.spring.oauth2.DefaultOAuth2HttpClient
@@ -22,14 +18,13 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Primary
 import org.springframework.scheduling.annotation.EnableScheduling
-import org.springframework.web.client.RestOperations
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 
 @SpringBootConfiguration
 @ConfigurationPropertiesScan("no.nav.familie")
 @ComponentScan("no.nav.familie.ba.migrering", "no.nav.familie.prosessering")
-@EnableJwtTokenValidation(ignore = ["org.springframework", "springfox.documentation.swagger"])
+@EnableJwtTokenValidation(ignore = ["org.springframework", "org.springdoc"])
 @EnableOAuth2Client
 @Import(RestTemplateAzure::class)
 @EnableScheduling //brukes av prosessering(Tasks)

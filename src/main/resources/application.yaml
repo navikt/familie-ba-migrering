@@ -24,6 +24,7 @@ spring:
       connection-test-query: "select 1"
       max-lifetime: 30000
       minimum-idle: 1
+  data.rest.basePath: /api/data
 management:
   endpoint.health.show-details: always
   endpoint.health.probes.enabled: true
@@ -35,8 +36,21 @@ management:
     base-path: "/internal"
   metrics.export.prometheus.enabled: true
 
+springdoc:
+  packages-to-scan: no.nav.familie.ba.migrering, no.nav.familie.prosessering
+  paths-to-match: "/api/**"
+  swagger-ui:
+    oauth:
+      use-pkce-with-authorization-code-grant: true
+      client-id: ${AZURE_APP_CLIENT_ID}
+      scope-separator: ","
+    disable-swagger-default-url: true
 
 no.nav.security.jwt:
+  issuer.azuread:
+    discoveryurl: ${AZURE_APP_WELL_KNOWN_URL}
+    accepted_audience: ${AZURE_APP_CLIENT_ID}
+    cookie_name: azure_token
   client:
     registration:
       ba-sak-clientcredentials:
@@ -61,3 +75,9 @@ no.nav.security.jwt:
 migrering:
   aktivert: false
   antallPersoner: 1
+
+rolle:
+  teamfamilie:
+    forvalter: ""
+
+API_SCOPE: api://${AZURE_APP_CLIENT_ID}/.default

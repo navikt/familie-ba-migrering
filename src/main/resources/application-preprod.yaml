@@ -1,15 +1,16 @@
+migrering:
+  aktivert: true
+  antallPersoner: 20
+
+rolle:
+  teamfamilie:
+    forvalter: "c62e908a-cf20-4ad0-b7b3-3ff6ca4bf38b"
+
 BA_SAK_SCOPE: api://dev-fss.teamfamilie.familie-ba-sak/.default
 BA_SAK_API_URL: https://familie-ba-sak.dev-fss-pub.nais.io/api
 
 FAMILIE_BA_INFOTRYGD_SCOPE: api://dev-fss.teamfamilie.familie-ba-infotrygd/.default
 FAMILIE_BA_INFOTRYGD_API_URL: https://familie-ba-infotrygd.dev-fss-pub.nais.io
 
-migrering:
-  aktivert: true
-  antallPersoner: 20
-
-no.nav.security.jwt:
-  issuer.azuread:
-    discoveryurl: ${AZURE_APP_WELL_KNOWN_URL}
-    accepted_audience: ${AZURE_APP_CLIENT_ID}
-    cookie_name: azure_token
+AUTHORIZATION_URL: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/authorize
+TOKEN_URL: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
