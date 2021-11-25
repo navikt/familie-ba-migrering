@@ -80,4 +80,6 @@ rolle:
   teamfamilie:
     forvalter: ""
 
+AUTHORIZATION_URL: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/oauth2/v2.0/authorize
+TOKEN_URL: ${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}
 API_SCOPE: api://${AZURE_APP_CLIENT_ID}/.default

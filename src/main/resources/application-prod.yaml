@@ -16,6 +16,3 @@ BA_SAK_API_URL: https://familie-ba-sak.prod-fss-pub.nais.io/api
 
 FAMILIE_BA_INFOTRYGD_SCOPE: api://prod-fss.teamfamilie.familie-ba-infotrygd/.default
 FAMILIE_BA_INFOTRYGD_API_URL: https://familie-ba-infotrygd.prod-fss-pub.nais.io
-
-AUTHORIZATION_URL: https://login.microsoftonline.com/navno.onmicrosoft.com/oauth2/v2.0/authorize
-TOKEN_URL: https://login.microsoftonline.com/navno.onmicrosoft.com/oauth2/v2.0/token
