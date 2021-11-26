@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
+import java.util.Properties
 
 @Service
 @TaskStepBeskrivelse(
@@ -60,8 +61,15 @@ class MigreringTask(
                     callId = task.callId
                 )
             )
+
+            val properties = Properties().apply {
+                put("personIdent", payload.personIdent)
+                put("fagsakId", responseBa.fagsakId.toString())
+                put("behandlingId", responseBa.behandlingId.toString())
+                put("callId", task.callId)
+            }
             taskRepository.save(
-                VerifiserMigreringTask.opprettTaskMedTriggerTid(migrertsak.id.toString(), LocalDate.now().atTime(12, 0))
+                VerifiserMigreringTask.opprettTaskMedTriggerTid(migrertsak.id.toString(), LocalDate.now().plusDays(1).atTime(11, 0), properties)
             )
         } catch (e: Exception) {
             var feiltype: String = "UKJENT"
@@ -79,6 +87,7 @@ class MigreringTask(
                     callId = task.callId
                 )
             )
+            task.metadata.put("feiltype", feiltype)
         }
     }
 
@@ -94,6 +103,9 @@ class MigreringTask(
                 payload = objectMapper.writeValueAsString(
                     migreringTaskDto
                 ),
+                properties = Properties().apply {
+                    put("personIdent", migreringTaskDto.personIdent)
+                }
             )
         }
     }
