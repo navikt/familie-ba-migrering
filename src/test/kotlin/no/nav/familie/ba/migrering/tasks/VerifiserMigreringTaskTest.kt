@@ -12,11 +12,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
-import org.springframework.format.annotation.DateTimeFormat
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
-import java.util.Optional
-import java.util.UUID
+import java.util.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class VerifiserMigreringTaskTest {
@@ -41,7 +39,7 @@ class VerifiserMigreringTaskTest {
         every { migrertsakRepositoryMock.update(capture(statusSlotUpdate)) } returns Migrertsak()
 
         VerifiserMigreringTask(infotrygdClientMock, migrertsakRepositoryMock).doTask(
-            VerifiserMigreringTask.opprettTaskMedTriggerTid(UUID.randomUUID().toString())
+            VerifiserMigreringTask.opprettTaskMedTriggerTid(UUID.randomUUID().toString(), properties = Properties())
         )
         assertThat(statusSlotUpdate.captured.status).isEqualTo(MigreringStatus.VERIFISERT)
     }
@@ -57,7 +55,7 @@ class VerifiserMigreringTaskTest {
 
         assertThatThrownBy {
             VerifiserMigreringTask(infotrygdClientMock, migrertsakRepositoryMock).doTask(
-                VerifiserMigreringTask.opprettTaskMedTriggerTid(UUID.randomUUID().toString())
+                VerifiserMigreringTask.opprettTaskMedTriggerTid(UUID.randomUUID().toString(), properties = Properties())
             )
         }.hasMessageContaining("infotrygdStønadId")
 
@@ -68,7 +66,7 @@ class VerifiserMigreringTaskTest {
 
         assertThatThrownBy {
             VerifiserMigreringTask(infotrygdClientMock, migrertsakRepositoryMock).doTask(
-                VerifiserMigreringTask.opprettTaskMedTriggerTid(UUID.randomUUID().toString())
+                VerifiserMigreringTask.opprettTaskMedTriggerTid(UUID.randomUUID().toString(), properties = Properties())
             )
         }.hasMessageContaining("Opphørsgrunn")
     }
@@ -84,7 +82,7 @@ class VerifiserMigreringTaskTest {
 
         assertThatThrownBy {
             VerifiserMigreringTask(infotrygdClientMock, migrertsakRepositoryMock).doTask(
-                VerifiserMigreringTask.opprettTaskMedTriggerTid(UUID.randomUUID().toString())
+                VerifiserMigreringTask.opprettTaskMedTriggerTid(UUID.randomUUID().toString(), properties = Properties())
             )
         }.hasMessageContainingAll("OpphørtFom", "virkningFom")
     }

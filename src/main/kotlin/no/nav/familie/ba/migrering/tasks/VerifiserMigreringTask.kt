@@ -10,12 +10,14 @@ import no.nav.familie.ba.migrering.integrasjoner.MigreringResponseDto
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
+import no.nav.familie.prosessering.domene.PropertiesWrapper
 import no.nav.familie.prosessering.domene.Task
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.UUID
+import java.util.Properties
 
 @Service
 @TaskStepBeskrivelse(
@@ -71,11 +73,16 @@ class VerifiserMigreringTask(
         private val logger = LoggerFactory.getLogger(VerifiserMigreringTask::class.java)
         private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
-        fun opprettTaskMedTriggerTid(migrertsakId: String, triggerTid: LocalDateTime = LocalDateTime.now()): Task {
+        fun opprettTaskMedTriggerTid(
+            migrertsakId: String,
+            triggerTid: LocalDateTime = LocalDateTime.now(),
+            properties: Properties
+        ): Task {
             return Task(
                 type = TASK_STEP_TYPE,
                 payload = migrertsakId,
-                triggerTid = triggerTid
+                triggerTid = triggerTid,
+                metadataWrapper = PropertiesWrapper(properties),
             )
         }
     }
