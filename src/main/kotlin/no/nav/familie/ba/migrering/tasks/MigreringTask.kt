@@ -61,7 +61,7 @@ class MigreringTask(
                 )
             )
             taskRepository.save(
-                VerifiserMigreringTask.opprettTaskMedTriggerTid(migrertsak.id.toString(), LocalDate.now().atTime(12, 0))
+                VerifiserMigreringTask.opprettTaskMedTriggerTid(migrertsak.id.toString(), LocalDate.now().plusDays(1).atTime(11, 0)) // dagen etter kl 11
             )
         } catch (e: Exception) {
             var feiltype: String = "UKJENT"
