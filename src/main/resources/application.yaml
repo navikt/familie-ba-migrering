@@ -37,7 +37,7 @@ management:
   metrics.export.prometheus.enabled: true
 
 springdoc:
-  packages-to-scan: no.nav.familie.ba.migrering, no.nav.familie.prosessering
+  packages-to-scan: no.nav.familie.ba.migrering
   paths-to-match: "/api/**"
   swagger-ui:
     oauth:
@@ -80,4 +80,6 @@ rolle:
   teamfamilie:
     forvalter: ""
 
+AUTHORIZATION_URL: https://login.microsoftonline.com/${AZURE_APP_TENANT_ID}/oauth2/v2.0/authorize
+TOKEN_URL: ${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}
 API_SCOPE: api://${AZURE_APP_CLIENT_ID}/.default
