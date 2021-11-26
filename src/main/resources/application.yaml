@@ -37,7 +37,7 @@ management:
   metrics.export.prometheus.enabled: true
 
 springdoc:
-  packages-to-scan: no.nav.familie.ba.migrering, no.nav.familie.prosessering
+  packages-to-scan: no.nav.familie.ba.migrering
   paths-to-match: "/api/**"
   swagger-ui:
     oauth:
