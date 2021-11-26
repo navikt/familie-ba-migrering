@@ -21,7 +21,7 @@ class HentSakTilMigreringService(
     @Value("\${migrering.antallPersoner}") val antallPersoner: Int,
 ) {
 
-    @Scheduled(cron = "0 0 8 * * MON-FRI", zone = "Europe/Oslo")
+    @Scheduled(cron = "0 0 13 * * MON-FRI", zone = "Europe/Oslo")
     fun hentSakTilMigrering() {
         if (!migreringAktivert) {
             Log.info("Migrering deaktivert, stopper videre jobbing")
