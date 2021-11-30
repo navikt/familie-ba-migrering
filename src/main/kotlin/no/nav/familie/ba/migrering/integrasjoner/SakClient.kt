@@ -27,6 +27,7 @@ class SakClient @Autowired constructor(
         val uri = URI.create("$sakApiUri/migrering")
         try {
             val response: Ressurs<MigreringResponseDto> = postForEntity(uri, mapOf("ident" to ident))
+            secureLogger.info("Response fra ba-sak ved migrering $response")
             if (response.status == Ressurs.Status.SUKSESS && response.data == null) error("Ressurs har status suksess, men mangler data")
             return response.getDataOrThrow()
         } catch (e: HttpStatusCodeException) {
