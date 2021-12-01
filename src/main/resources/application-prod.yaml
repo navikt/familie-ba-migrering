@@ -1,5 +1,5 @@
 migrering:
-  aktivert: false
+  aktivert: true
   antallPersoner: 1
 
 spring:
