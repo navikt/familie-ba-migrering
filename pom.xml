@@ -176,7 +176,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-data-rest</artifactId>
-            <version>1.5.12</version>
+            <version>1.5.13</version>
         </dependency>
     </dependencies>
 
