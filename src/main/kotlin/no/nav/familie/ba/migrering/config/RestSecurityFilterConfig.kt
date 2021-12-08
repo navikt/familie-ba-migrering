@@ -28,11 +28,13 @@ class RestSecurityFilterConfig(@Value("\${rolle.teamfamilie.forvalter}")
             }
         }
 
-        override fun shouldNotFilter(request: HttpServletRequest) =
-            request.requestURI.contains("/internal") ||
+        override fun shouldNotFilter(request: HttpServletRequest): Boolean {
+            logger.info("shouldNotFilter kjøres på url ${request.requestURI}")
+            return request.requestURI.contains("/internal") ||
                     request.requestURI.startsWith("/api/task") ||
                     request.requestURI.startsWith("/swagger") ||
-                    request.requestURI.startsWith("/v3") // i bruk av swagger
+                    request.requestURI.startsWith("/v3")
+        } // i bruk av swagger
     }
 
     private fun hentGrupper(): List<String> {
