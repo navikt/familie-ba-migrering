@@ -22,10 +22,14 @@ class HentSakTilMigreringService(
 ) {
 
     @Scheduled(cron = "0 0 13 * * MON-FRI", zone = "Europe/Oslo")
-    fun hentSakTilMigrering() {
+    fun hentSakTilMigreringScheduler() {
+        migrer()
+    }
+
+    fun migrer(antallPersoner: Int = this.antallPersoner) : String {
         if (!migreringAktivert) {
             Log.info("Migrering deaktivert, stopper videre jobbing")
-            return
+            return "Migrering deaktivert, stopper videre jobbing"
         }
         val personerForMigrering = infotrygdClient.hentPersonerKlareForMigrering(
             MigreringRequest(
@@ -39,20 +43,29 @@ class HentSakTilMigreringService(
 
         if (personerForMigrering.size > ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD) {
             Log.error("For manger personer (${personerForMigrering.size}) avbryter migrering")
-            return
+            return "For manger personer (${personerForMigrering.size}) avbryter migrering"
         }
 
         Log.info("Fant ${personerForMigrering.size} personer for migrering")
 
         var antallPersonerMigrert = 0
         for (person in personerForMigrering) {
-            if (!existByPersonIdentAndStatusIn(person, listOf(MigreringStatus.MIGRERT_I_BA, MigreringStatus.FEILET, MigreringStatus.VERIFISERT))) {
+            if (!existByPersonIdentAndStatusIn(
+                    person,
+                    listOf(
+                        MigreringStatus.MIGRERT_I_BA,
+                        MigreringStatus.FEILET,
+                        MigreringStatus.VERIFISERT
+                    )
+                )
+            ) {
                 taskRepository.save(MigreringTask.opprettTask(MigreringTaskDto(person)))
                 antallPersonerMigrert++
             }
             if (antallPersonerMigrert == antallPersoner)
                 break
         }
+        return "Migrerte $antallPersoner"
     }
 
     private fun existByPersonIdentAndStatusIn(ident: String, status: List<MigreringStatus>): Boolean {

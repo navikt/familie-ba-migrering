@@ -32,7 +32,7 @@ class HentSakTilMigreringServiceTest {
             migertsakRepository,
             true,
             20,
-        ).hentSakTilMigrering()
+        ).hentSakTilMigreringScheduler()
 
         assertThat(tasker).hasSize(2)
         assertThat(
@@ -55,7 +55,7 @@ class HentSakTilMigreringServiceTest {
             migertsakRepository,
             true,
             20,
-        ).hentSakTilMigrering()
+        ).hentSakTilMigreringScheduler()
 
         verify(exactly = 0) { taskRepositoryMock.save(any()) }
     }
