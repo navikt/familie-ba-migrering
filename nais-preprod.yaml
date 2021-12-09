@@ -66,12 +66,6 @@ spec:
         - application: familie-prosessering
           namespace: teamfamilie
           cluster: dev-gcp
-        - application: familie-ba-infotrygd
-          namespace: teamfamilie
-          cluster: dev-fss
-        - application: familie-ba-sak-lokal
-          namespace: teamfamilie
-          cluster: dev-fss
         - application: ida
           namespace: traktor
           cluster: prod-fss

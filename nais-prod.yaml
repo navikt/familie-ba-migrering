@@ -65,9 +65,6 @@ spec:
         - application: familie-prosessering
           namespace: teamfamilie
           cluster: prod-gcp
-        - application: familie-ba-infotrygd
-          namespace: teamfamilie
-          cluster: prod-fss
   outbound:
     rules:
       - application: familie-ba-infotrygd
