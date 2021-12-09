@@ -29,14 +29,14 @@ class InfotrygdClient @Autowired constructor(
         }
     }
 
-    fun hentStønadFraId(stønadId: Long): Stønad {
-        val uri = URI.create("$infotrygdApiUri/infotrygd/barnetrygd/stonad/$stønadId")
+    fun hentStønad(stønadRequest: StønadRequest): Stønad {
+        val uri = URI.create("$infotrygdApiUri/infotrygd/barnetrygd/stonad/sok")
 
         return try {
-            getForEntity(uri)
+            postForEntity(uri, stønadRequest)
         } catch (ex: Exception) {
             loggFeil(ex, uri)
-            throw RuntimeException("Henting av stønad(id=$stønadId) feilet: ${ex.message}", ex)
+            throw RuntimeException("Henting av stønad for migrert person feilet: ${ex.message}", ex)
         }
     }
 
@@ -56,4 +56,12 @@ data class MigreringRequest(
     val undervalg: String,
     val maksAntallBarn: Int = 99,
     val minimumAlder: Int = 7,
+)
+
+class StønadRequest(
+    val personIdent: String,
+    val tknr: String,
+    val iverksattFom: String,
+    val virkningFom: String,
+    val region: String
 )

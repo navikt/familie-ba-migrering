@@ -72,6 +72,10 @@ no.nav.security.jwt:
           client-secret: ${AZURE_APP_CLIENT_SECRET}
           client-auth-method: client_secret_basic
 
+ribbon:
+  ReadTimeout: 120000
+  ConnectTimeout: 120000
+
 migrering:
   aktivert: false
   antallPersoner: 1

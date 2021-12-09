@@ -23,16 +23,15 @@ class VerifiserMigreringTaskTest {
 
     @Test
     fun `skal oppdatere migrertsak med status VERIFISERT når stønad fra infotrygd har opphørsgrunn 5 og opphørtFom lik virkningFom i BA`() {
-        every { infotrygdClientMock.hentStønadFraId(any()) } returns Stønad(
+        every { infotrygdClientMock.hentStønad(any()) } returns Stønad(
             opphørsgrunn = "5", opphørtFom = YearMonth.now().format(
                 DateTimeFormatter.ofPattern("MMyyyy")
             )
         )
         every { migrertsakRepositoryMock.findById(any()) } returns Optional.of(
             Migrertsak(
-                personIdent = "12345678910", resultatFraBa = JsonWrapper.of(
-                    MigreringResponseDto(1, 2, 3, virkningFom = YearMonth.now())
-                )
+                personIdent = "12345678910",
+                resultatFraBa = JsonWrapper.of(mockMigreringResponse.copy(virkningFom = YearMonth.now()))
             )
         )
         val statusSlotUpdate = slot<Migrertsak>()
@@ -45,10 +44,10 @@ class VerifiserMigreringTaskTest {
     }
 
     @Test
-    fun `skal feile hvis stønadId mangler eller stønad IKKE har opphørsgrunn 5`() {
-        every { infotrygdClientMock.hentStønadFraId(any()) } returns Stønad(opphørsgrunn = "5")
+    fun `skal feile hvis stønad id-data mangler eller stønad IKKE har opphørsgrunn 5`() {
+        every { infotrygdClientMock.hentStønad(any()) } returns Stønad(opphørsgrunn = "5")
         every { migrertsakRepositoryMock.findById(any()) } returns Optional.of(
-            Migrertsak(personIdent = "12345678910", resultatFraBa = JsonWrapper.of(MigreringResponseDto(1, 2, null)))
+            Migrertsak(personIdent = "12345678910", resultatFraBa = JsonWrapper.of(mockMigreringResponse.copy(infotrygdTkNr = null)))
         )
         val statusSlotUpdate = slot<Migrertsak>()
         every { migrertsakRepositoryMock.update(capture(statusSlotUpdate)) } returns Migrertsak()
@@ -57,11 +56,11 @@ class VerifiserMigreringTaskTest {
             VerifiserMigreringTask(infotrygdClientMock, migrertsakRepositoryMock).doTask(
                 VerifiserMigreringTask.opprettTaskMedTriggerTid(UUID.randomUUID().toString(), properties = Properties())
             )
-        }.hasMessageContaining("infotrygdStønadId")
+        }.hasMessageContaining("tkNr, iverksattFom, virkningFom og/eller region fra responseDto var null")
 
-        every { infotrygdClientMock.hentStønadFraId(any()) } returns Stønad(opphørsgrunn = "0")
+        every { infotrygdClientMock.hentStønad(any()) } returns Stønad(opphørsgrunn = "0")
         every { migrertsakRepositoryMock.findById(any()) } returns Optional.of(
-            Migrertsak(personIdent = "12345678910", resultatFraBa = JsonWrapper.of(MigreringResponseDto(1, 2, 3)))
+            Migrertsak(personIdent = "12345678910", resultatFraBa = JsonWrapper.of(mockMigreringResponse))
         )
 
         assertThatThrownBy {
@@ -73,9 +72,9 @@ class VerifiserMigreringTaskTest {
 
     @Test
     fun `skal feile hvis stønad opphørtFom fra Infotrygd er ulik virkningFom i BA`() {
-        every { infotrygdClientMock.hentStønadFraId(any()) } returns Stønad(opphørsgrunn = "5", opphørtFom = "000000")
+        every { infotrygdClientMock.hentStønad(any()) } returns Stønad(opphørsgrunn = "5", opphørtFom = "000000")
         every { migrertsakRepositoryMock.findById(any()) } returns Optional.of(
-            Migrertsak(personIdent = "12345678910", resultatFraBa = JsonWrapper.of(MigreringResponseDto(1, 2, 3)))
+            Migrertsak(personIdent = "12345678910", resultatFraBa = JsonWrapper.of(mockMigreringResponse))
         )
         val statusSlotUpdate = slot<Migrertsak>()
         every { migrertsakRepositoryMock.update(capture(statusSlotUpdate)) } returns Migrertsak()
@@ -85,5 +84,17 @@ class VerifiserMigreringTaskTest {
                 VerifiserMigreringTask.opprettTaskMedTriggerTid(UUID.randomUUID().toString(), properties = Properties())
             )
         }.hasMessageContainingAll("OpphørtFom", "virkningFom")
+    }
+
+    companion object {
+
+        private val mockMigreringResponse = MigreringResponseDto(
+            fagsakId = 1,
+            behandlingId = 2,
+            infotrygdTkNr = "infotrygdTkNr",
+            infotrygdIverksattFom = "infotrygdIverksattFom",
+            infotrygdVirkningFom = "infotrygdVirkningFom",
+            infotrygdRegion = "infotrygdRegion",
+        )
     }
 }

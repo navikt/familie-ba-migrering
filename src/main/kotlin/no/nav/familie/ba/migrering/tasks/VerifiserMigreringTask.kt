@@ -7,6 +7,7 @@ import no.nav.familie.ba.migrering.domain.Migrertsak
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
 import no.nav.familie.ba.migrering.integrasjoner.InfotrygdClient
 import no.nav.familie.ba.migrering.integrasjoner.MigreringResponseDto
+import no.nav.familie.ba.migrering.integrasjoner.StønadRequest
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
@@ -43,11 +44,24 @@ class VerifiserMigreringTask(
     fun bekreftMigrertSak(migrertsak: Migrertsak) {
         val resultatFraBa =
             objectMapper.readValue(migrertsak.resultatFraBa?.jsonStr, MigreringResponseDto::class.java)
-        if (resultatFraBa.infotrygdStønadId == null) {
-            secureLogger.error("Migrert sak mangler infotrygdStønadId:\n${migrertsak}")
-            error("Verifisering feilet: infotrygdStønadId = null")
+        checkNotNull(
+            resultatFraBa.infotrygdTkNr,
+            resultatFraBa.infotrygdIverksattFom,
+            resultatFraBa.infotrygdVirkningFom,
+            resultatFraBa.infotrygdRegion
+        ) {
+            secureLogger.error("Migrert sak mangler infotrygdstønad id-nøkler:\n${migrertsak}")
+            "Verifisering feilet: tkNr, iverksattFom, virkningFom og/eller region fra responseDto var null"
         }
-        val infotrygdStønad = infotrygdClient.hentStønadFraId(resultatFraBa.infotrygdStønadId)
+        val infotrygdStønad = infotrygdClient.hentStønad(
+            StønadRequest(
+                migrertsak.personIdent,
+                resultatFraBa.infotrygdTkNr!!,
+                resultatFraBa.infotrygdIverksattFom!!,
+                resultatFraBa.infotrygdVirkningFom!!,
+                resultatFraBa.infotrygdRegion!!
+            )
+        )
         when (infotrygdStønad.opphørsgrunn) {
             "5" -> {
                 val virkningFomIBa = resultatFraBa.virkningFom?.format(DateTimeFormatter.ofPattern("MMyyyy"))
@@ -65,6 +79,10 @@ class VerifiserMigreringTask(
                 error("Opphørsgrunn i Infotrygd var ${infotrygdStønad.opphørsgrunn}, og ikke 5")
             }
         }
+    }
+
+    private fun checkNotNull(vararg values: Any?, lazyMessage: () -> Any) {
+        values.forEach { checkNotNull(it, lazyMessage) }
     }
 
     companion object {
