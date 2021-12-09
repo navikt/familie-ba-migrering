@@ -70,7 +70,7 @@ class HentSakTilMigreringService(
                     )
                 )
             ) {
-//                taskRepository.save(MigreringTask.opprettTask(MigreringTaskDto(person)))
+                taskRepository.save(MigreringTask.opprettTask(MigreringTaskDto(person)))
                 secureLogger.info("Oppretter migrering for person $person")
                 antallPersonerMigrert++
             } else secureLogger.info("Personen $person er allerede forsøkt migrert")
@@ -88,6 +88,6 @@ class HentSakTilMigreringService(
     companion object {
         val Log = LoggerFactory.getLogger(HentSakTilMigreringService::class.java)
         private val secureLogger = LoggerFactory.getLogger("secureLogger")
-        val ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD = 200
+        val ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD = 300
     }
 }

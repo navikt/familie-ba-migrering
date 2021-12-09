@@ -14,13 +14,12 @@ import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Disabled
 class HentSakTilMigreringServiceTest {
+
     val taskRepositoryMock: TaskRepository = mockk()
     val infotrygdClientMock: InfotrygdClient = mockk()
     val migertsakRepository: MigrertsakRepository = mockk()
@@ -33,8 +32,28 @@ class HentSakTilMigreringServiceTest {
     @Test
     fun `Skal opprett task for hver person returns fra InfotrygdClient`() {
         val personIdenter = arrayOf("123", "223")
-        every { infotrygdClientMock.hentPersonerKlareForMigrering(MigreringRequest(4,ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD, "OR", "OS", 1)) } returns personIdenter.toSet()
-        every { infotrygdClientMock.hentPersonerKlareForMigrering(MigreringRequest(5,ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD, "OR", "OS", 1)) } returns emptySet()
+        every {
+            infotrygdClientMock.hentPersonerKlareForMigrering(
+                MigreringRequest(
+                    4,
+                    ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
+                    "OR",
+                    "OS",
+                    1
+                )
+            )
+        } returns personIdenter.toSet()
+        every {
+            infotrygdClientMock.hentPersonerKlareForMigrering(
+                MigreringRequest(
+                    5,
+                    ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
+                    "OR",
+                    "OS",
+                    1
+                )
+            )
+        } returns emptySet()
         val tasker = mutableListOf<Task>()
         every { taskRepositoryMock.save(capture(tasker)) } returns Task(type = "", payload = "")
         every { migertsakRepository.findByStatusAndPersonIdent(any(), any()) } returns emptyList()
@@ -57,18 +76,42 @@ class HentSakTilMigreringServiceTest {
     @Test
     fun `Skal ikke migrer hvis det er en migrert sak for den personen i repository`() {
         val personIdent = "123"
-        every { infotrygdClientMock.hentPersonerKlareForMigrering(MigreringRequest(4,ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD, "OR", "OS", 1)) } returns setOf(personIdent)
-        every { infotrygdClientMock.hentPersonerKlareForMigrering(MigreringRequest(5,ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD, "OR", "OS", 1)) } returns emptySet()
-        every { migertsakRepository.findByStatusAndPersonIdent(MigreringStatus.MIGRERT_I_BA, personIdent) } returns listOf(Migrertsak())
+        every {
+            infotrygdClientMock.hentPersonerKlareForMigrering(
+                MigreringRequest(
+                    4,
+                    ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
+                    "OR",
+                    "OS",
+                    1
+                )
+            )
+        } returns setOf(personIdent)
+        every {
+            infotrygdClientMock.hentPersonerKlareForMigrering(
+                MigreringRequest(
+                    5,
+                    ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
+                    "OR",
+                    "OS",
+                    1
+                )
+            )
+        } returns emptySet()
+        every { migertsakRepository.findByStatusAndPersonIdent(MigreringStatus.MIGRERT_I_BA, personIdent) } returns listOf(
+            Migrertsak()
+        )
         every { taskRepositoryMock.save(any()) } returns Task(type = "", payload = "")
 
-        println(HentSakTilMigreringService(
-            infotrygdClientMock,
-            taskRepositoryMock,
-            migertsakRepository,
-            true,
-            1,
-        ).migrer())
+        println(
+            HentSakTilMigreringService(
+                infotrygdClientMock,
+                taskRepositoryMock,
+                migertsakRepository,
+                true,
+                1,
+            ).migrer()
+        )
 
         verify(exactly = 0) { taskRepositoryMock.save(any()) }
     }
