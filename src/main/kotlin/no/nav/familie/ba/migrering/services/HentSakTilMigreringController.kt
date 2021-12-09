@@ -20,8 +20,8 @@ class HentSakTilMigreringController(
 
 
     @PostMapping("/start")
-    fun migrer(@Valid @RequestBody startMigreringRequest: StartMigreringRequest) {
-        hentSakTilMigreringService.migrer(startMigreringRequest.antallPersoner)
+    fun migrer(@Valid @RequestBody startMigreringRequest: StartMigreringRequest): String {
+        return hentSakTilMigreringService.migrer(startMigreringRequest.antallPersoner)
     }
 
     data class StartMigreringRequest(@Min(1) @Max(20) val antallPersoner: Int)
