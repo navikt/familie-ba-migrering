@@ -47,7 +47,7 @@ class HentSakTilMigreringService(
             Log.info("Fant ${personerForMigrering.size} personer for migrering på side $startSide")
             if (personerForMigrering.isEmpty()) break
 
-            antallPersonerMigrert = oppretteEllerSkipMigrering(personerForMigrering, antallPersonerMigrert)
+            antallPersonerMigrert = oppretteEllerSkipMigrering(personerForMigrering, antallPersonerMigrert, antallPersoner)
             if (antallPersonerMigrert < antallPersoner) {
                 startSide++
             }
@@ -58,7 +58,7 @@ class HentSakTilMigreringService(
         return "Migrerte $antallPersoner"
     }
 
-    private fun oppretteEllerSkipMigrering(personerForMigrering: Set<String>, antallAlleredeMigret: Int): Int {
+    private fun oppretteEllerSkipMigrering(personerForMigrering: Set<String>, antallAlleredeMigret: Int, antallPersonerSomSkalMigreres: Int): Int {
         var antallPersonerMigrert = antallAlleredeMigret
         for (person in personerForMigrering) {
             if (!existByPersonIdentAndStatusIn(
