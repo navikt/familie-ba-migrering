@@ -75,7 +75,7 @@ class HentSakTilMigreringService(
                 antallPersonerMigrert++
             } else secureLogger.info("Personen $person er allerede forsøkt migrert")
 
-            if (antallPersonerMigrert == antallPersoner)
+            if (antallPersonerMigrert == antallPersonerSomSkalMigreres)
                 return antallPersonerMigrert
         }
         return antallPersonerMigrert
