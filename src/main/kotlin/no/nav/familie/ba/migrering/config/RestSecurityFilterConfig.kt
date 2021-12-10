@@ -40,12 +40,10 @@ class RestSecurityFilterConfig(@Value("\${rolle.teamfamilie.forvalter}")
         }
 
         override fun shouldNotFilter(request: HttpServletRequest): Boolean {
-            val shouldNotFilter = request.requestURI.contains("/internal") ||
+            return request.requestURI.contains("/internal") ||
                     request.requestURI.startsWith("/api/task") ||
                     request.requestURI.startsWith("/swagger") ||
                     request.requestURI.startsWith("/v3")
-            logger.info("Should not filter returns $shouldNotFilter for ${request.requestURI}")
-            return shouldNotFilter
         } // i bruk av swagger
     }
 
