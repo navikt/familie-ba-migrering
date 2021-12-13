@@ -91,8 +91,12 @@ class MigreringTask(
             )
             task.metadata.put("feiltype", feiltype)
 
-            // forsøker å migrere en ny person for å kompensere for det mislykkede migreringsforsøket
-            hentSakTilMigreringService.migrer(1)
+            secureLogger.info("Migrering av sak for person ${payload.personIdent} feilet. Forsøker å migerere en annen person isteden", e)
+            runCatching {
+                hentSakTilMigreringService.migrer(1)
+            }.onFailure {
+                secureLogger.warn("Opprettelse av ny migrering feilet", it)
+            }
         }
     }
 
