@@ -95,7 +95,7 @@ class MigreringTask(
             runCatching {
                 hentSakTilMigreringService.migrer(1)
             }.onFailure {
-                secureLogger.warn("Opprettelse av ny migrering feilet", it)
+                secureLogger.error("Opprettelse av ny migrering feilet", it)
             }
         }
     }
