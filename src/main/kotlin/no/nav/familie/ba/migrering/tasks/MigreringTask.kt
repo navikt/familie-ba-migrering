@@ -6,6 +6,7 @@ import no.nav.familie.ba.migrering.domain.Migrertsak
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
 import no.nav.familie.ba.migrering.integrasjoner.KanIkkeMigrereException
 import no.nav.familie.ba.migrering.integrasjoner.SakClient
+import no.nav.familie.ba.migrering.services.HentSakTilMigreringService
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
@@ -28,6 +29,7 @@ class MigreringTask(
     val sakClient: SakClient,
     val migrertsakRepository: MigrertsakRepository,
     val taskRepository: TaskRepository,
+    val hentSakTilMigreringService: HentSakTilMigreringService,
     ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
@@ -88,6 +90,13 @@ class MigreringTask(
                 )
             )
             task.metadata.put("feiltype", feiltype)
+
+            secureLogger.info("Migrering av sak for person ${payload.personIdent} feilet. Forsøker å migerere en annen person isteden", e)
+            runCatching {
+                hentSakTilMigreringService.migrer(1)
+            }.onFailure {
+                secureLogger.error("Opprettelse av ny migrering feilet", it)
+            }
         }
     }
 
