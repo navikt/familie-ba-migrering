@@ -1,5 +1,6 @@
-package no.nav.familie.ba.migrering.services
+package no.nav.familie.ba.migrering.rest
 
+import no.nav.familie.ba.migrering.services.HentSakTilMigreringService
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PostMapping
