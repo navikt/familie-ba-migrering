@@ -30,8 +30,7 @@ class RestSecurityFilterConfig(@Value("\${rolle.teamfamilie.forvalter}")
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Handling krever teamfamilie forvalter rolle")
             } else {
                 try {
-                    val clientTokenValidationFilter = ClientTokenValidationFilter(true, true)
-                    clientTokenValidationFilter.doFilter(request, response, filterChain)
+                    filterChain.doFilter(request, response)
                 } catch (e: Exception) {
                     secureLogger.warn("Uventet feil i doFilter for url=${request.requestURI} grupper=$grupper", e)
                     throw e

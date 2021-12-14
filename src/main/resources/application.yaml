@@ -24,7 +24,6 @@ spring:
       connection-test-query: "select 1"
       max-lifetime: 30000
       minimum-idle: 1
-  data.rest.basePath: /api/data
 management:
   endpoint.health.show-details: always
   endpoint.health.probes.enabled: true
