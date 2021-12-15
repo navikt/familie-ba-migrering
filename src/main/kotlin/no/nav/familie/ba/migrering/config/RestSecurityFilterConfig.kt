@@ -1,6 +1,5 @@
 package no.nav.familie.ba.migrering.config
 
-import no.nav.familie.sikkerhet.ClientTokenValidationFilter
 import no.nav.security.token.support.spring.SpringTokenValidationContextHolder
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -12,8 +11,10 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 @Configuration
-class RestSecurityFilterConfig(@Value("\${rolle.teamfamilie.forvalter}")
-                               val forvalterRolleTeamfamilie: String) {
+class RestSecurityFilterConfig(
+    @Value("\${rolle.teamfamilie.forvalter}")
+    val forvalterRolleTeamfamilie: String
+) {
 
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
