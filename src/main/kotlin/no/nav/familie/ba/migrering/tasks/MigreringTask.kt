@@ -8,11 +8,13 @@ import no.nav.familie.ba.migrering.integrasjoner.KanIkkeMigrereException
 import no.nav.familie.ba.migrering.integrasjoner.SakClient
 import no.nav.familie.ba.migrering.services.HentSakTilMigreringService
 import no.nav.familie.kontrakter.felles.objectMapper
+import no.nav.familie.log.mdc.MDCConstants
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -93,6 +95,7 @@ class MigreringTask(
 
             secureLogger.info("Migrering av sak for person ${payload.personIdent} feilet. Forsøker å migerere en annen person isteden", e)
             runCatching {
+                MDC.put(MDCConstants.MDC_CALL_ID, UUID.randomUUID().toString())
                 hentSakTilMigreringService.migrer(1)
             }.onFailure {
                 secureLogger.error("Opprettelse av ny migrering feilet", it)

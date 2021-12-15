@@ -66,7 +66,8 @@ class HentSakTilMigreringService(
                     listOf(
                         MigreringStatus.MIGRERT_I_BA,
                         MigreringStatus.FEILET,
-                        MigreringStatus.VERIFISERT
+                        MigreringStatus.VERIFISERT,
+                        MigreringStatus.UKJENT
                     )
                 )
             ) {
