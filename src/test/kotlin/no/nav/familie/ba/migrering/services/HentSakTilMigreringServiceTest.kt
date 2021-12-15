@@ -110,7 +110,7 @@ class HentSakTilMigreringServiceTest {
                 migertsakRepository,
                 true,
                 1,
-            ).migrer()
+            ).migrer(10)
         )
 
         verify(exactly = 0) { taskRepositoryMock.save(any()) }

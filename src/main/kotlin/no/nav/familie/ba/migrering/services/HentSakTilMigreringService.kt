@@ -23,10 +23,11 @@ class HentSakTilMigreringService(
 
     @Scheduled(cron = "0 0 13 * * MON-FRI", zone = "Europe/Oslo")
     fun hentSakTilMigreringScheduler() {
-        migrer()
+        Log.info("Trigger migrering av $antallPersoner")
+        migrer(antallPersoner)
     }
 
-    fun migrer(antallPersoner: Int = this.antallPersoner) : String {
+    fun migrer(antallPersoner: Int) : String {
         if (!migreringAktivert) {
             Log.info("Migrering deaktivert, stopper videre jobbing")
             return "Migrering deaktivert, stopper videre jobbing"
@@ -45,11 +46,12 @@ class HentSakTilMigreringService(
                 )
             )
             Log.info("Fant ${personerForMigrering.size} personer for migrering på side $startSide")
+            secureLogger.info("Resultat fra infotrygd: $personerForMigrering")
             if (personerForMigrering.isEmpty()) break
 
             antallPersonerMigrert = oppretteEllerSkipMigrering(personerForMigrering, antallPersonerMigrert, antallPersoner)
             if (antallPersonerMigrert < antallPersoner) {
-                startSide++
+                startSide = startSide.inc()
             }
         }
 
@@ -72,9 +74,9 @@ class HentSakTilMigreringService(
                 )
             ) {
                 taskRepository.save(MigreringTask.opprettTask(MigreringTaskDto(person)))
-                secureLogger.info("Oppretter migrering for person $person")
+                secureLogger.info("Oppretter MigreringTask for person $person")
                 antallPersonerMigrert++
-            } else secureLogger.info("Personen $person er allerede forsøkt migrert")
+            } else secureLogger.info("Skipper oppretting av MigreringTask for $person har treff i MigrertSak")
 
             if (antallPersonerMigrert == antallPersonerSomSkalMigreres)
                 return antallPersonerMigrert
