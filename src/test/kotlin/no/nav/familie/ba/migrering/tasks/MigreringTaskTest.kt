@@ -13,6 +13,7 @@ import no.nav.familie.prosessering.domene.asString
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import java.lang.RuntimeException
 import java.util.*
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -89,17 +90,16 @@ class MigreringTaskTest {
     }
 
     @Test
-    fun `Skal trigge en ny migrering dersom migreringen feiler`() {
+    fun `Skal trigge en ny migrering med fire and forge og feil inne i den påvirker ikke gjeldende task`() {
         val aarsak = "en god aarsak"
         every { sakClientMock.migrerPerson(any()) } throws Exception(aarsak)
         val statusSlotInsert = slot<Migrertsak>()
         val statusSlotUpdate = slot<Migrertsak>()
-        val nyttMigreringsforsøk = slot<Int>()
 
         every { migrertsakRepositoryMock.findByStatusAndPersonIdent(MigreringStatus.UKJENT, "ooo") } returns emptyList()
         every { migrertsakRepositoryMock.insert(capture(statusSlotInsert)) } returns Migrertsak()
         every { migrertsakRepositoryMock.update(capture(statusSlotUpdate)) } returns Migrertsak()
-        every { hentSakTilMigreringService.migrer(capture(nyttMigreringsforsøk)) } returns ""
+        every { hentSakTilMigreringService.migrer(any()) } throws RuntimeException("Denne skal ikke catches fordi det er trigget i fire and forget")
 
         val personIdent = "ooo"
         MigreringTask(sakClientMock, migrertsakRepositoryMock, taskRepository, hentSakTilMigreringService).doTask(
@@ -108,10 +108,9 @@ class MigreringTaskTest {
                     personIdent = personIdent
                 )
             )
-        )
+        ) // do task skal ikke kaste feil fordi feilen skjer i egen context
 
         assertThat(statusSlotUpdate.captured.status).isEqualTo(MigreringStatus.FEILET)
-        assertThat(nyttMigreringsforsøk.captured).isEqualTo(1)
     }
 
 

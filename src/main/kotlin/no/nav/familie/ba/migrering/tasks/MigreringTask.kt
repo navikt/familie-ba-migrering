@@ -1,5 +1,7 @@
 package no.nav.familie.ba.migrering.tasks
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import no.nav.familie.ba.migrering.domain.JsonWrapper
 import no.nav.familie.ba.migrering.domain.MigreringStatus
 import no.nav.familie.ba.migrering.domain.Migrertsak
@@ -93,15 +95,14 @@ class MigreringTask(
             )
             task.metadata.put("feiltype", feiltype)
 
-            secureLogger.info("Migrering av sak for person ${payload.personIdent} feilet. Forsøker å migerere en annen person isteden", e)
-            runCatching {
+            secureLogger.info("Migrering av sak for person ${payload.personIdent} feilet med feiltype=$feiltype. Starter migrering av annen person", e)
+            GlobalScope.launch { //fire and forget
                 MDC.put(MDCConstants.MDC_CALL_ID, UUID.randomUUID().toString())
                 hentSakTilMigreringService.migrer(1)
-            }.onFailure {
-                secureLogger.error("Opprettelse av ny migrering feilet", it)
             }
         }
     }
+
 
     companion object {
 
