@@ -1,6 +1,7 @@
 package no.nav.familie.ba.migrering.tasks
 
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import no.nav.familie.ba.migrering.domain.JsonWrapper
 import no.nav.familie.ba.migrering.domain.MigreringStatus
@@ -98,6 +99,7 @@ class MigreringTask(
             secureLogger.info("Migrering av sak for person ${payload.personIdent} feilet med feiltype=$feiltype. Starter migrering av annen person", e)
             GlobalScope.launch { //fire and forget
                 MDC.put(MDCConstants.MDC_CALL_ID, UUID.randomUUID().toString())
+                delay(15 *1000)
                 hentSakTilMigreringService.migrer(1)
             }
         }
