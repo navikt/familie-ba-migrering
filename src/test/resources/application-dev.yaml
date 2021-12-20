@@ -1,10 +1,9 @@
-BA_SAK_API_URL: https://familie-ba-sak.dev.adeo.no/api
-FAMILIE_BA_INFOTRYGD_API_URL: https://familie-ba-infotrygd.dev.intern.nav.no
-AZURE_OPENID_CONFIG_TOKEN_ENDPOINT: https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/oauth2/v2.0/token
-AZURE_APP_WELL_KNOWN_URL: https://login.microsoftonline.com/navq.onmicrosoft.com/v2.0/.well-known/openid-configuration
+BA_SAK_API_URL: http://localhost:8300/basak/
+FAMILIE_BA_INFOTRYGD_API_URL: http://localhost:8300/infotrygd
+AZURE_OPENID_CONFIG_TOKEN_ENDPOINT: http://localhost:1111/v2.0/token
+AZURE_APP_WELL_KNOWN_URL: http://localhost:1111/v2.0/.well-known/openid-configuration
 AZURE_APP_CLIENT_ID: env-var
-AUTHORIZATION_URL: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/authorize
-TOKEN_URL: https://login.microsoftonline.com/navq.onmicrosoft.com/oauth2/v2.0/token
+AUTHORIZATION_URL: http://localhost:1111/v2.0/authorize
 
 logging:
   config: "classpath:logback-test.xml"
@@ -13,7 +12,7 @@ spring:
   flyway:
     enabled: true
   datasource:
-    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/familie-ba-migrering
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/familiebamigrering
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     hikari:
@@ -24,6 +23,9 @@ spring:
 
 
 DB_HOST: localhost
-DB_PORT: 5432
-DB_USERNAME: postgres
-DB_PASSWORD: test
+DB_PORT: 5439
+DB_USERNAME: familie
+DB_PASSWORD: familie-pwd
+
+migrering:
+  aktivert: true
