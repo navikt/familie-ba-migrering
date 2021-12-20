@@ -3,6 +3,7 @@ package no.nav.familie.ba.migrering.domain
 import no.nav.familie.ba.migrering.DevLauncher
 import no.nav.familie.ba.migrering.database.DatabaseCleanUpService
 import no.nav.familie.ba.migrering.database.DbContainerInitializer
+import no.nav.security.token.support.spring.test.EnableMockOAuth2Server
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -18,7 +19,11 @@ import java.util.UUID
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(initializers = [DbContainerInitializer::class])
 @ActiveProfiles("dev")
-@SpringBootTest(classes = [DevLauncher::class])
+@SpringBootTest(classes = [DevLauncher::class],
+                properties = [
+                    "no.nav.security.jwt.issuer.azuread.discoveryUrl: http://localhost:\${mock-oauth2-server.port}/azuread/.well-known/openid-configuration"])
+
+@EnableMockOAuth2Server
 class MigrertsakRepositoryTest {
 
     @Autowired
