@@ -1,5 +1,3 @@
-@file:Suppress("unused")
-
 package no.nav.familie.ba.migrering.rest
 
 import no.nav.familie.ba.migrering.domain.MigreringStatus
