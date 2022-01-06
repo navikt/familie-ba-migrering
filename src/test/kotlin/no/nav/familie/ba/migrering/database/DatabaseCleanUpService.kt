@@ -17,7 +17,7 @@ class DatabaseCleanUpService(
 
     private val logger = LoggerFactory.getLogger(DatabaseCleanUpService::class.java)
 
-    private fun getJdbcTableNames(): List<String> = relationalMappingContext.persistentEntities.map { entity ->
+    private fun getJdbcTableNames(): List<String> = relationalMappingContext.persistentEntities.filter { it.hasIdProperty() }.map { entity ->
         entity.tableName.toSql(IdentifierProcessing.NONE)
     }
 
