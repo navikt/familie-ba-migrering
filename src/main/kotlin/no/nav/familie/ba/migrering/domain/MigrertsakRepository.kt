@@ -16,11 +16,13 @@ import java.util.UUID
 @Transactional
 interface MigrertsakRepository : RepositoryInterface<Migrertsak, UUID>, InsertUpdateRepository<Migrertsak> {
     fun findByStatusAndPersonIdent(status: MigreringStatus, personIdent: String): List<Migrertsak>
-
+    fun findByStatusInAndPersonIdentOrderByMigreringsdato(status: List<MigreringStatus>, personIdent: String): List<Migrertsak>
     fun findByStatusIn(status: List<MigreringStatus>): List<Migrertsak>
 
     @Query("""SELECT ms.feiltype, count(ms.feiltype) as antall from migrertesaker ms where ms.status = 'FEILET' group by ms.feiltype""")
     fun tellFeiledeMigrerteSaker(): List<TellFeilResponse>
+
+    fun findByStatusAndFeiltype(status: MigreringStatus, feiltype: String): List<Migrertsak>
 
 }
 

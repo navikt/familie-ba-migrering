@@ -65,6 +65,7 @@ class MigrertSakController(
 }
 
 class MigrertSakResponse(migrerteSaker: List<Migrertsak>) {
+
     val total: Int = migrerteSaker.size
     val data: List<Migrertsak> = migrerteSaker
 }

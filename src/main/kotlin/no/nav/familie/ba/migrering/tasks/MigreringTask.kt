@@ -3,6 +3,8 @@ package no.nav.familie.ba.migrering.tasks
 import no.nav.familie.ba.migrering.domain.JsonWrapper
 import no.nav.familie.ba.migrering.domain.MigreringStatus
 import no.nav.familie.ba.migrering.domain.Migrertsak
+import no.nav.familie.ba.migrering.domain.MigrertsakLogg
+import no.nav.familie.ba.migrering.domain.MigrertsakLoggRepository
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
 import no.nav.familie.ba.migrering.integrasjoner.KanIkkeMigrereException
 import no.nav.familie.ba.migrering.integrasjoner.SakClient
@@ -27,16 +29,17 @@ import java.util.UUID
 class MigreringTask(
     val sakClient: SakClient,
     val migrertsakRepository: MigrertsakRepository,
+    val migrertsakLoggRepository: MigrertsakLoggRepository,
     val taskRepository: TaskRepository
-) : AsyncTaskStep {
+    ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
         val payload = objectMapper.readValue(task.payload, MigreringTaskDto::class.java)
 
         secureLogger.info("Migrerer sak for person ${payload.personIdent}")
 
-        var migrertsak =
-            migrertsakRepository.findByStatusAndPersonIdent(MigreringStatus.UKJENT, payload.personIdent).singleOrNull()
+
+        var migrertsak = migrertsakRepository.findByStatusInAndPersonIdentOrderByMigreringsdato(listOf(MigreringStatus.UKJENT, MigreringStatus.FEILET), payload.personIdent).lastOrNull()
 
         if (migrertsak == null) {
             val sakId = UUID.randomUUID()
@@ -49,6 +52,8 @@ class MigreringTask(
                     callId = task.callId
                 )
             )
+        } else {
+            migrertsakLoggRepository.insert(MigrertsakLogg.tilMigrertsakLogg(migrertsak))
         }
 
         try {
