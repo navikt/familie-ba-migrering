@@ -2,6 +2,7 @@ package no.nav.familie.ba.migrering.domain
 
 import no.nav.familie.ba.migrering.domain.common.InsertUpdateRepository
 import no.nav.familie.ba.migrering.domain.common.RepositoryInterface
+import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -15,7 +16,15 @@ import java.util.UUID
 @Transactional
 interface MigrertsakRepository : RepositoryInterface<Migrertsak, UUID>, InsertUpdateRepository<Migrertsak> {
     fun findByStatusAndPersonIdent(status: MigreringStatus, personIdent: String): List<Migrertsak>
+
+    fun findByStatusIn(status: List<MigreringStatus>): List<Migrertsak>
+
+    @Query("""SELECT ms.feiltype, count(ms.feiltype) as antall from migrertesaker ms where ms.status = 'FEILET' group by ms.feiltype""")
+    fun tellFeiledeMigrerteSaker(): List<TellFeilResponse>
+
 }
+
+class TellFeilResponse(val feiltype: String, val antall: Int)
 
 @Repository
 @Transactional
@@ -38,7 +47,8 @@ class MigrertsakRowMapper : RowMapper<Migrertsak?> {
 
     @Throws(SQLException::class)
     override fun mapRow(rs: ResultSet, rowNum: Int): Migrertsak {
-        val migrertsak = Migrertsak(
+
+        return Migrertsak(
             id = UUID.fromString(rs.getString("id")),
             callId = rs.getString("call_id"),
             status = MigreringStatus.valueOf(rs.getString("status")),
@@ -47,7 +57,5 @@ class MigrertsakRowMapper : RowMapper<Migrertsak?> {
             migreringsdato = rs.getTimestamp("migreringsdato").toLocalDateTime(),
             personIdent = rs.getString("person_ident")
         )
-
-        return migrertsak
     }
 }
