@@ -1,28 +1,22 @@
 package no.nav.familie.ba.migrering.tasks
 
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import no.nav.familie.ba.migrering.domain.JsonWrapper
 import no.nav.familie.ba.migrering.domain.MigreringStatus
 import no.nav.familie.ba.migrering.domain.Migrertsak
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
 import no.nav.familie.ba.migrering.integrasjoner.KanIkkeMigrereException
 import no.nav.familie.ba.migrering.integrasjoner.SakClient
-import no.nav.familie.ba.migrering.services.HentSakTilMigreringService
 import no.nav.familie.kontrakter.felles.objectMapper
-import no.nav.familie.log.mdc.MDCConstants
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.slf4j.LoggerFactory
-import org.slf4j.MDC
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.UUID
 import java.util.Properties
+import java.util.UUID
 
 @Service
 @TaskStepBeskrivelse(
@@ -33,16 +27,16 @@ import java.util.Properties
 class MigreringTask(
     val sakClient: SakClient,
     val migrertsakRepository: MigrertsakRepository,
-    val taskRepository: TaskRepository,
-    val hentSakTilMigreringService: HentSakTilMigreringService,
-    ) : AsyncTaskStep {
+    val taskRepository: TaskRepository
+) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
         val payload = objectMapper.readValue(task.payload, MigreringTaskDto::class.java)
 
         secureLogger.info("Migrerer sak for person ${payload.personIdent}")
 
-        var migrertsak = migrertsakRepository.findByStatusAndPersonIdent(MigreringStatus.UKJENT, payload.personIdent).singleOrNull()
+        var migrertsak =
+            migrertsakRepository.findByStatusAndPersonIdent(MigreringStatus.UKJENT, payload.personIdent).singleOrNull()
 
         if (migrertsak == null) {
             val sakId = UUID.randomUUID()
@@ -76,12 +70,16 @@ class MigreringTask(
                 put("callId", task.callId)
             }
             taskRepository.save(
-                VerifiserMigreringTask.opprettTaskMedTriggerTid(migrertsak.id.toString(), LocalDate.now().plusDays(1).atTime(11, 0), properties)
+                VerifiserMigreringTask.opprettTaskMedTriggerTid(
+                    migrertsak.id.toString(),
+                    LocalDate.now().plusDays(1).atTime(11, 0),
+                    properties
+                )
             )
         } catch (e: Exception) {
             var feiltype: String = "UKJENT"
             if (e is KanIkkeMigrereException) {
-               feiltype = e.feiltype
+                feiltype = e.feiltype
             }
             migrertsakRepository.update(
                 Migrertsak(
@@ -96,12 +94,10 @@ class MigreringTask(
             )
             task.metadata.put("feiltype", feiltype)
 
-            secureLogger.info("Migrering av sak for person ${payload.personIdent} feilet med feiltype=$feiltype. Starter migrering av annen person", e)
-            GlobalScope.launch { //fire and forget
-                MDC.put(MDCConstants.MDC_CALL_ID, UUID.randomUUID().toString())
-                delay(15 *1000)
-                hentSakTilMigreringService.migrer(1)
-            }
+            secureLogger.info(
+                "Migrering av sak for person ${payload.personIdent} feilet med feiltype=$feiltype. Starter migrering av annen person",
+                e
+            )
         }
     }
 
