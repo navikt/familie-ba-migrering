@@ -21,7 +21,6 @@
         <java.version>17</java.version>
         <jvmTarget>17</jvmTarget>
         <kotlin.version>1.6.10</kotlin.version>
-        <kotlinx.coruoutines.version>1.6.0</kotlinx.coruoutines.version>
 	    <felles.version>1.20211217154554_3bb883e</felles.version>
         <prosessering.version>1.20211125150647_a7c6f64</prosessering.version>
         <kontrakter.version>2.0_20220105124543_5666f57</kontrakter.version>
@@ -47,11 +46,6 @@
           <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-reflect</artifactId>
       </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlinx</groupId>
-            <artifactId>kotlinx-coroutines-core-jvm</artifactId>
-            <version>${kotlinx.coruoutines.version}</version>
-        </dependency>
         <!-- Spring Boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

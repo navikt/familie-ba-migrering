@@ -39,7 +39,7 @@ class MigreringTaskTest {
         )
 
         val personIdent = "ooo"
-        MigreringTask(sakClientMock, migrertsakRepositoryMock, taskRepository, hentSakTilMigreringService).doTask(
+        MigreringTask(sakClientMock, migrertsakRepositoryMock, taskRepository).doTask(
             MigreringTask.opprettTask(
                 MigreringTaskDto(
                     personIdent = personIdent
@@ -73,7 +73,7 @@ class MigreringTaskTest {
         every { migrertsakRepositoryMock.update(capture(statusSlotUpdate)) } returns Migrertsak()
 
         val personIdent = "ooo"
-        MigreringTask(sakClientMock, migrertsakRepositoryMock, taskRepository, hentSakTilMigreringService).doTask(
+        MigreringTask(sakClientMock, migrertsakRepositoryMock, taskRepository).doTask(
             MigreringTask.opprettTask(
                 MigreringTaskDto(
                     personIdent = personIdent
@@ -102,7 +102,7 @@ class MigreringTaskTest {
         every { hentSakTilMigreringService.migrer(any()) } throws RuntimeException("Denne skal ikke catches fordi det er trigget i fire and forget")
 
         val personIdent = "ooo"
-        MigreringTask(sakClientMock, migrertsakRepositoryMock, taskRepository, hentSakTilMigreringService).doTask(
+        MigreringTask(sakClientMock, migrertsakRepositoryMock, taskRepository).doTask(
             MigreringTask.opprettTask(
                 MigreringTaskDto(
                     personIdent = personIdent
@@ -139,7 +139,7 @@ class MigreringTaskTest {
         every { taskRepository.save(capture(taskSlot)) } returns task
 
 
-        MigreringTask(sakClientMock, migrertsakRepositoryMock, taskRepository, hentSakTilMigreringService).doTask(
+        MigreringTask(sakClientMock, migrertsakRepositoryMock, taskRepository).doTask(
             task
         )
         assertThat(statusSlotUpdate.captured.id).isEqualTo(uuidGammelSak)
