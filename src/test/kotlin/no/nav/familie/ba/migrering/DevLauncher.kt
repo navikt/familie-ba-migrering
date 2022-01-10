@@ -4,7 +4,12 @@ import no.nav.familie.ba.migrering.config.ApplicationConfig
 import org.springframework.boot.SpringApplication
 import org.springframework.context.annotation.Import
 
-
+/**
+ * Start opp docker-compose up for å starte database og wiremock
+ *
+ * Kjør main i [no.nav.familie.ba.migrering.testdata.GenererTestdataWiremock] for å
+ * generere testdata.
+ **/
 @Import(ApplicationConfig::class)
 class DevLauncher
 

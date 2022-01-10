@@ -14,8 +14,8 @@ class HentSakTilMigreringDevService(
     val hentSakTilMigreringService: HentSakTilMigreringService,
 ) {
 
-    @Scheduled(fixedRate = 60 * 1000)
+    @Scheduled(fixedRate = 60 * 10000)
     fun hentSakTilMigreringScheduler() {
-        hentSakTilMigreringService.migrer(10)
+        hentSakTilMigreringService.migrer(5)
     }
 }
