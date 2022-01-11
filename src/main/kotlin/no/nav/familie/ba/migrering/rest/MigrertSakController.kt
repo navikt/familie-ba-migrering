@@ -43,6 +43,16 @@ class MigrertSakController(
 
     }
 
+    @GetMapping("/list-alle-feilet")
+    @Transactional(readOnly = true)
+    fun listFeiledMigreringer(): Map<String, Set<String>> {
+        return migrertsakRepository.findByStatusIn(listOf(MigreringStatus.FEILET))
+            .filter { it.feiltype != null }
+            .groupBy { it.feiltype!! }
+            .mapValues { it.value.map { it.personIdent }.toSet() }
+
+    }
+
     @GetMapping("/{id}")
     @Transactional(readOnly = true)
     fun hentMigrertSakerById(@PathVariable("id") id: UUID): Migrertsak? {
