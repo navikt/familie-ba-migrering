@@ -28,11 +28,11 @@ class MigrertSakController(
 
     @GetMapping("/")
     @Transactional(readOnly = true)
-    fun hentAlleSaker(@RequestParam(required = false) status: List<MigreringStatus>): MigrertSakResponse {
-        return if (status.isEmpty()) {
+    fun hentAlleSaker(@RequestParam(required = false) status: List<MigreringStatus>?, @RequestParam(required = false) feiltype: List<MigreringsfeilType>?): MigrertSakResponse {
+        return if (status.isNullOrEmpty()) {
             MigrertSakResponse(migrertsakRepository.findAll().toList())
         } else {
-            MigrertSakResponse(migrertsakRepository.findByStatusIn(status))
+            MigrertSakResponse(migrertsakRepository.findByStatusIn(status).filter { feiltype.isNullOrEmpty() || it.feiltype in feiltype.map { it.name } }.toList())
         }
     }
 
@@ -40,6 +40,16 @@ class MigrertSakController(
     @Transactional(readOnly = true)
     fun tellAntallFeiledeMigrering(): List<TellFeilResponse> {
         return migrertsakRepository.tellFeiledeMigrerteSaker()
+
+    }
+
+    @GetMapping("/list-alle-feilet")
+    @Transactional(readOnly = true)
+    fun listFeiledMigreringer(): Map<String, Set<String>> {
+        return migrertsakRepository.findByStatusIn(listOf(MigreringStatus.FEILET))
+            .filter { it.feiltype != null }
+            .groupBy { it.feiltype!! }
+            .mapValues { it.value.map { it.personIdent }.toSet() }
 
     }
 
@@ -69,3 +79,5 @@ class MigrertSakResponse(migrerteSaker: List<Migrertsak>) {
     val total: Int = migrerteSaker.size
     val data: List<Migrertsak> = migrerteSaker
 }
+
+
