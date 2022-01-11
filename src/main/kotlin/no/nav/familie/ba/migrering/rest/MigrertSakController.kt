@@ -28,11 +28,11 @@ class MigrertSakController(
 
     @GetMapping("/")
     @Transactional(readOnly = true)
-    fun hentAlleSaker(@RequestParam(required = false) status: List<MigreringStatus>): MigrertSakResponse {
+    fun hentAlleSaker(@RequestParam(required = false) status: List<MigreringStatus>, @RequestParam(required = false) feiltype: List<MigreringsfeilType>): MigrertSakResponse {
         return if (status.isEmpty()) {
             MigrertSakResponse(migrertsakRepository.findAll().toList())
         } else {
-            MigrertSakResponse(migrertsakRepository.findByStatusIn(status))
+            MigrertSakResponse(migrertsakRepository.findByStatusIn(status).filter { feiltype.isEmpty() || it.feiltype in feiltype.map { it.name } }.toList())
         }
     }
 
@@ -69,3 +69,5 @@ class MigrertSakResponse(migrerteSaker: List<Migrertsak>) {
     val total: Int = migrerteSaker.size
     val data: List<Migrertsak> = migrerteSaker
 }
+
+
