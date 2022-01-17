@@ -1,15 +1,18 @@
 package no.nav.familie.ba.migrering.rest
 
+import io.swagger.v3.oas.annotations.media.Schema
 import no.nav.familie.ba.migrering.domain.MigreringStatus
 import no.nav.familie.ba.migrering.domain.Migrertsak
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
 import no.nav.familie.ba.migrering.domain.TellFeilResponse
 import no.nav.security.token.support.core.api.ProtectedWithClaims
+import org.springframework.data.domain.Pageable
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -28,13 +31,21 @@ class MigrertSakController(
 
     @GetMapping("/")
     @Transactional(readOnly = true)
-    fun hentAlleSaker(@RequestParam(required = false) status: List<MigreringStatus>?, @RequestParam(required = false) feiltype: List<MigreringsfeilType>?): MigrertSakResponse {
+    fun hentAlleSaker(@RequestParam(required = false) status: List<MigreringStatus>?, @RequestParam(required = false) feiltype: List<MigreringsfeilType>?, @Schema(defaultValue = "0") @RequestParam(required = true) page: Int): MigrertSakResponse {
+        val pageable = Pageable.ofSize(500).withPage(page)
         return if (status.isNullOrEmpty()) {
-            MigrertSakResponse(migrertsakRepository.findAll().toList())
+            MigrertSakResponse(migrertsakRepository.findAll(pageable).toList())
         } else {
-            MigrertSakResponse(migrertsakRepository.findByStatusIn(status).filter { feiltype.isNullOrEmpty() || it.feiltype in feiltype.map { it.name } }.toList())
+            MigrertSakResponse(migrertsakRepository.findByStatusIn(status, pageable).filter { feiltype.isNullOrEmpty() || it.feiltype in feiltype.map { it.name } }.toList())
         }
     }
+
+    @PostMapping("/")
+    @Transactional(readOnly = true)
+    fun hentAlleSakerForPerson(@Valid @RequestBody body: PersondIdentRequest): MigrertSakResponse {
+       return MigrertSakResponse(migrertsakRepository.findByStatusInAndPersonIdentOrderByMigreringsdato(MigreringStatus.values().toList(), body.personIdent))
+    }
+
 
     @GetMapping("/tell-feilet")
     @Transactional(readOnly = true)
@@ -46,7 +57,7 @@ class MigrertSakController(
     @GetMapping("/list-alle-feilet")
     @Transactional(readOnly = true)
     fun listFeiledMigreringer(): Map<String, Set<String>> {
-        return migrertsakRepository.findByStatusIn(listOf(MigreringStatus.FEILET))
+        return migrertsakRepository.findByStatusIn(listOf(MigreringStatus.FEILET), Pageable.unpaged())
             .filter { it.feiltype != null }
             .groupBy { it.feiltype!! }
             .mapValues { it.value.map { it.personIdent }.toSet() }
@@ -73,6 +84,8 @@ class MigrertSakController(
 
 
 }
+
+data class PersondIdentRequest(val personIdent: String)
 
 class MigrertSakResponse(migrerteSaker: List<Migrertsak>) {
 

@@ -2,6 +2,8 @@ package no.nav.familie.ba.migrering.domain
 
 import no.nav.familie.ba.migrering.domain.common.InsertUpdateRepository
 import no.nav.familie.ba.migrering.domain.common.RepositoryInterface
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
@@ -17,7 +19,7 @@ import java.util.UUID
 interface MigrertsakRepository : RepositoryInterface<Migrertsak, UUID>, InsertUpdateRepository<Migrertsak> {
     fun findByStatusAndPersonIdent(status: MigreringStatus, personIdent: String): List<Migrertsak>
     fun findByStatusInAndPersonIdentOrderByMigreringsdato(status: List<MigreringStatus>, personIdent: String): List<Migrertsak>
-    fun findByStatusIn(status: List<MigreringStatus>): List<Migrertsak>
+    fun findByStatusIn(status: List<MigreringStatus>, page: Pageable): List<Migrertsak>
 
     @Query("""SELECT ms.feiltype, count(ms.feiltype) as antall from migrertesaker ms where ms.status = 'FEILET' group by ms.feiltype""")
     fun tellFeiledeMigrerteSaker(): List<TellFeilResponse>
