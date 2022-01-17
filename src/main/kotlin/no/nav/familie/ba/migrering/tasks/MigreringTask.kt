@@ -6,6 +6,7 @@ import no.nav.familie.ba.migrering.domain.Migrertsak
 import no.nav.familie.ba.migrering.domain.MigrertsakLogg
 import no.nav.familie.ba.migrering.domain.MigrertsakLoggRepository
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
+import no.nav.familie.ba.migrering.integrasjoner.InfotrygdClient
 import no.nav.familie.ba.migrering.integrasjoner.KanIkkeMigrereException
 import no.nav.familie.ba.migrering.integrasjoner.SakClient
 import no.nav.familie.kontrakter.felles.objectMapper
@@ -28,6 +29,7 @@ import java.util.UUID
 )
 class MigreringTask(
     val sakClient: SakClient,
+    val infotrygdClient: InfotrygdClient,
     val migrertsakRepository: MigrertsakRepository,
     val migrertsakLoggRepository: MigrertsakLoggRepository,
     val taskRepository: TaskRepository
@@ -57,6 +59,8 @@ class MigreringTask(
         }
 
         try {
+            if (infotrygdClient.harÅpenSak(payload.personIdent))
+                throw KanIkkeMigrereException(ÅPEN_SAK_INFOTRYGD, "Fant Åpen sak i Infotrygd", null)
             val responseBa = sakClient.migrerPerson(payload.personIdent)
             migrertsakRepository.update(
                 Migrertsak(
@@ -110,6 +114,7 @@ class MigreringTask(
     companion object {
 
         const val TASK_STEP_TYPE = "MigreringTask"
+        const val ÅPEN_SAK_INFOTRYGD = "ÅPEN_SAK_INFOTRYGD"
         private val logger = LoggerFactory.getLogger(MigreringTask::class.java)
         private val secureLogger = LoggerFactory.getLogger("secureLogger")
 

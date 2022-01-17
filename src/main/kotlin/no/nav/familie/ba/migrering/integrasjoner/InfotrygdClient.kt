@@ -1,6 +1,7 @@
 package no.nav.familie.ba.migrering.integrasjoner
 
 import no.nav.familie.http.client.AbstractRestClient
+import no.nav.familie.kontrakter.ba.infotrygd.InfotrygdSøkRequest
 import no.nav.familie.kontrakter.ba.infotrygd.Stønad
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -40,6 +41,17 @@ class InfotrygdClient @Autowired constructor(
         }
     }
 
+    fun harÅpenSak(personIdent: String): Boolean {
+        val uri = URI.create("$infotrygdApiUri/infotrygd/barnetrygd/aapen-sak")
+
+        return try {
+            postForEntity<InfotrygdÅpenSakResponse>(uri, InfotrygdSøkRequest(listOf(personIdent))).harÅpenSak
+        } catch (ex: Exception) {
+            loggFeil(ex, uri)
+            throw RuntimeException("Feil mot $uri: ${ex.message}", ex)
+        }
+    }
+
     private fun loggFeil(ex: Exception, uri: URI) {
         val secureLogMessage = if (ex is HttpClientErrorException)
             "Http feil mot ${uri.path}: httpkode: ${ex.statusCode}, feilmelding ${ex.message}" else
@@ -65,3 +77,5 @@ class StønadRequest(
     val virkningFom: String,
     val region: String
 )
+
+data class InfotrygdÅpenSakResponse(val harÅpenSak: Boolean)
