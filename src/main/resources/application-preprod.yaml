@@ -7,7 +7,7 @@ rolle:
     forvalter: "928636f4-fd0d-4149-978e-a6fb68bb19de"
 
 BA_SAK_SCOPE: api://dev-gcp.teamfamilie.familie-ba-sak/.default
-BA_SAK_API_URL: https://familie-ba-sak/api
+BA_SAK_API_URL: http://familie-ba-sak/api
 
 FAMILIE_BA_INFOTRYGD_SCOPE: api://dev-fss.teamfamilie.familie-ba-infotrygd/.default
 FAMILIE_BA_INFOTRYGD_API_URL: https://familie-ba-infotrygd.dev-fss-pub.nais.io
