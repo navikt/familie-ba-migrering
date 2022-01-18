@@ -9,6 +9,7 @@ import no.nav.familie.ba.migrering.domain.Migrertsak
 import no.nav.familie.ba.migrering.domain.MigrertsakLogg
 import no.nav.familie.ba.migrering.domain.MigrertsakLoggRepository
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
+import no.nav.familie.ba.migrering.integrasjoner.InfotrygdClient
 import no.nav.familie.ba.migrering.integrasjoner.MigreringResponseDto
 import no.nav.familie.ba.migrering.integrasjoner.SakClient
 import no.nav.familie.prosessering.domene.Task
@@ -26,6 +27,7 @@ class MigreringTaskTest {
     private val migrertsakRepositoryMock: MigrertsakRepository = mockk()
     private val migrertsakLoggRepositoryMock: MigrertsakLoggRepository = mockk()
     private val sakClientMock: SakClient = mockk()
+    private val infotrygdClient: InfotrygdClient = mockk()
     private val taskRepository: TaskRepository = mockk()
 
     @BeforeEach
@@ -49,6 +51,7 @@ class MigreringTaskTest {
         val personIdent = "ooo"
         MigreringTask(
             sakClientMock,
+            infotrygdClient,
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
             taskRepository,
@@ -89,6 +92,7 @@ class MigreringTaskTest {
         val personIdent = "ooo"
         MigreringTask(
             sakClientMock,
+            infotrygdClient,
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
             taskRepository,
@@ -129,6 +133,7 @@ class MigreringTaskTest {
         val personIdent = "ooo"
         MigreringTask(
             sakClientMock,
+            infotrygdClient,
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
             taskRepository,
@@ -171,6 +176,7 @@ class MigreringTaskTest {
 
         MigreringTask(
             sakClientMock,
+            infotrygdClient,
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
             taskRepository,
@@ -214,6 +220,7 @@ class MigreringTaskTest {
 
         MigreringTask(
             sakClientMock,
+            infotrygdClient,
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
             taskRepository,
