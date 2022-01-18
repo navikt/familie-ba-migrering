@@ -4,12 +4,14 @@ import no.nav.familie.ba.migrering.domain.MigreringStatus
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
 import no.nav.familie.ba.migrering.integrasjoner.InfotrygdClient
 import no.nav.familie.ba.migrering.integrasjoner.MigreringRequest
+import no.nav.familie.ba.migrering.skalKjøreMigering
 import no.nav.familie.ba.migrering.tasks.MigreringTask
 import no.nav.familie.ba.migrering.tasks.MigreringTaskDto
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 
 @Service
 class HentSakTilMigreringService(
@@ -19,8 +21,8 @@ class HentSakTilMigreringService(
     @Value("\${migrering.aktivert:false}") val migreringAktivert: Boolean
 ) {
 
-    fun migrer(antallPersoner: Int): String {
-        if (!migreringAktivert) {
+    fun migrer(antallPersoner: Int, migreringsDato: LocalDate = LocalDate.now()): String { //migreringsDato skal kun brukes fra tester
+        if (!skalKjøreMigering(migreringAktivert, migreringsDato)) {
             Log.info("Migrering deaktivert, stopper videre jobbing")
             return "Migrering deaktivert, stopper videre jobbing"
         }
@@ -78,7 +80,7 @@ class HentSakTilMigreringService(
             migrertsakRepository.findByStatusAndFeiltype(MigreringStatus.FEILET, feiltype).map { it.personIdent }.toSet()
         migrertsakMedFeiltype.forEach {
             taskRepository.save(MigreringTask.opprettTask(MigreringTaskDto(it)))
-            secureLogger.info("Oppretter MigreringTask for person ${it}")
+            secureLogger.info("Oppretter MigreringTask for person $it")
         }
         return "Rekjørt ${migrertsakMedFeiltype.size} med feiltype=$feiltype"
     }
