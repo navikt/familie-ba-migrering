@@ -8,6 +8,7 @@ import no.nav.familie.ba.migrering.domain.MigrertsakRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.data.domain.Pageable
 import java.util.UUID
 
 internal class MigrertSakControllerTest {
@@ -22,7 +23,7 @@ internal class MigrertSakControllerTest {
 
     @Test
     fun listFeiledMigreringer() {
-        every { migrertsakRepository.findByStatusIn(listOf(MigreringStatus.FEILET)) } returns listOf(
+        every { migrertsakRepository.findByStatusIn(listOf(MigreringStatus.FEILET), Pageable.unpaged()) } returns listOf(
             Migrertsak(
                 UUID.randomUUID(),
                 personIdent = "1",
