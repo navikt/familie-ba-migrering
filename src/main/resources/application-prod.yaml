@@ -11,8 +11,8 @@ rolle:
   teamfamilie:
     forvalter: "3d718ae5-f25e-47a4-b4b3-084a97604c1d"
 
-BA_SAK_SCOPE: api://prod-fss.teamfamilie.familie-ba-sak/.default
-BA_SAK_API_URL: https://familie-ba-sak.prod-fss-pub.nais.io/api
+BA_SAK_SCOPE: api://prod-gcp.teamfamilie.familie-ba-sak/.default
+BA_SAK_API_URL: http://familie-ba-sak/api
 
 FAMILIE_BA_INFOTRYGD_SCOPE: api://prod-fss.teamfamilie.familie-ba-infotrygd/.default
 FAMILIE_BA_INFOTRYGD_API_URL: https://familie-ba-infotrygd.prod-fss-pub.nais.io
