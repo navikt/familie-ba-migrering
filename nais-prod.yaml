@@ -72,7 +72,7 @@ spec:
         cluster: prod-fss
       - application: familie-ba-sak
         namespace: teamfamilie
-        cluster: prod-fss
+        cluster: prod-gcp
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: prod
