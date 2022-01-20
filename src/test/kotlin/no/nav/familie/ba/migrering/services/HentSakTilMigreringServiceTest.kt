@@ -16,6 +16,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import java.time.LocalDate
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class HentSakTilMigreringServiceTest {
@@ -28,7 +29,7 @@ class HentSakTilMigreringServiceTest {
     @BeforeEach
     fun setUp() {
         clearAllMocks()
-        service = HentSakTilMigreringService(infotrygdClientMock, taskRepositoryMock, migertsakRepository, true)
+        service = HentSakTilMigreringService(infotrygdClientMock, OpprettMigreringstaskService(taskRepositoryMock), migertsakRepository, true)
     }
 
     @Test
@@ -59,7 +60,7 @@ class HentSakTilMigreringServiceTest {
         val tasker = mutableListOf<Task>()
         every { taskRepositoryMock.save(capture(tasker)) } returns Task(type = "", payload = "")
         every { migertsakRepository.findByStatusAndPersonIdent(any(), any()) } returns emptyList()
-        service.migrer(10)
+        service.migrer(10, GYLDIG_MIGRERINGSKJØRETIDSPUNKT)
 
         assertThat(tasker).hasSize(2)
         assertThat(
@@ -100,7 +101,7 @@ class HentSakTilMigreringServiceTest {
         every { taskRepositoryMock.save(any()) } returns Task(type = "", payload = "")
 
         println(
-            service.migrer(10)
+            service.migrer(10, GYLDIG_MIGRERINGSKJØRETIDSPUNKT)
         )
 
         verify(exactly = 0) { taskRepositoryMock.save(any()) }
@@ -108,6 +109,7 @@ class HentSakTilMigreringServiceTest {
 
     @Test
     fun `Skal kjøre migrering til maks antall er nådd`() {
+
         every {
             infotrygdClientMock.hentPersonerKlareForMigrering(
                 MigreringRequest(
@@ -146,7 +148,7 @@ class HentSakTilMigreringServiceTest {
         every { migertsakRepository.findByStatusAndPersonIdent(any(), any()) } returns emptyList()
         every { migertsakRepository.findByStatusAndPersonIdent(MigreringStatus.MIGRERT_I_BA, "4") } returns listOf(Migrertsak())
         every { migertsakRepository.findByStatusAndPersonIdent(MigreringStatus.MIGRERT_I_BA, "9") } returns listOf(Migrertsak())
-        service.migrer(10)
+        service.migrer(10, GYLDIG_MIGRERINGSKJØRETIDSPUNKT)
 
         assertThat(tasker).hasSize(10)
 
@@ -251,5 +253,9 @@ class HentSakTilMigreringServiceTest {
         }
 
         verify(exactly = 1) { taskRepositoryMock.save(any()) }
+    }
+
+    companion object {
+        private val GYLDIG_MIGRERINGSKJØRETIDSPUNKT:LocalDate = LocalDate.of(2022,1  ,1)
     }
 }

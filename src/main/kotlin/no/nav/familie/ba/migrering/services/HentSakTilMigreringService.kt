@@ -4,25 +4,27 @@ import no.nav.familie.ba.migrering.domain.MigreringStatus
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
 import no.nav.familie.ba.migrering.integrasjoner.InfotrygdClient
 import no.nav.familie.ba.migrering.integrasjoner.MigreringRequest
-import no.nav.familie.ba.migrering.tasks.MigreringTask
-import no.nav.familie.ba.migrering.tasks.MigreringTaskDto
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.ba.migrering.skalKjøreMigering
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 
 @Service
 class HentSakTilMigreringService(
     val infotrygdClient: InfotrygdClient,
-    val taskRepository: TaskRepository,
+    val opprettMigreringstaskService: OpprettMigreringstaskService,
     val migrertsakRepository: MigrertsakRepository,
     @Value("\${migrering.aktivert:false}") val migreringAktivert: Boolean
 ) {
 
-    fun migrer(antallPersoner: Int): String {
-        if (!migreringAktivert) {
-            Log.info("Migrering deaktivert, stopper videre jobbing")
-            return "Migrering deaktivert, stopper videre jobbing"
+    fun migrer(
+        antallPersoner: Int,
+        migreringsDato: LocalDate = LocalDate.now()
+    ): String { //migreringsDato skal kun brukes fra tester
+        if (!skalKjøreMigering(migreringAktivert, migreringsDato)) {
+            Log.info(MIGRERING_DEAKTIVERT_MELDING)
+            return MIGRERING_DEAKTIVERT_MELDING
         }
 
         var antallPersonerMigrert = 0
@@ -53,15 +55,13 @@ class HentSakTilMigreringService(
 
     fun rekjørMigreringer(identer: Set<String>): String {
         if (!migreringAktivert) {
-            Log.info("Migrering deaktivert, stopper videre jobbing")
-            return "Migrering deaktivert, stopper videre jobbing"
+            Log.info(MIGRERING_DEAKTIVERT_MELDING)
+            return MIGRERING_DEAKTIVERT_MELDING
         }
         var antallRekjøringer = 0
         identer.forEach { peronident ->
-            //sjekk infotrygd
             if (migrertsakRepository.findByStatusAndPersonIdent(MigreringStatus.FEILET, peronident).isNotEmpty()) {
-                taskRepository.save(MigreringTask.opprettTask(MigreringTaskDto(peronident)))
-                secureLogger.info("Oppretter MigreringTask for person $peronident")
+                opprettMigreringstaskService.opprettMigreringtask(peronident)
                 antallRekjøringer++
             }
         }
@@ -70,15 +70,14 @@ class HentSakTilMigreringService(
 
     fun rekjørMigreringerMedFeiltype(feiltype: String): String {
         if (!migreringAktivert) {
-            Log.info("Migrering deaktivert, stopper videre jobbing")
-            return "Migrering deaktivert, stopper videre jobbing"
+            Log.info(MIGRERING_DEAKTIVERT_MELDING)
+            return MIGRERING_DEAKTIVERT_MELDING
         }
 
         val migrertsakMedFeiltype =
             migrertsakRepository.findByStatusAndFeiltype(MigreringStatus.FEILET, feiltype).map { it.personIdent }.toSet()
         migrertsakMedFeiltype.forEach {
-            taskRepository.save(MigreringTask.opprettTask(MigreringTaskDto(it)))
-            secureLogger.info("Oppretter MigreringTask for person ${it}")
+            opprettMigreringstaskService.opprettMigreringtask(it)
         }
         return "Rekjørt ${migrertsakMedFeiltype.size} med feiltype=$feiltype"
     }
@@ -100,8 +99,7 @@ class HentSakTilMigreringService(
                     )
                 )
             ) {
-                taskRepository.save(MigreringTask.opprettTask(MigreringTaskDto(person)))
-                secureLogger.info("Oppretter MigreringTask for person $person")
+                opprettMigreringstaskService.opprettMigreringtask(person)
                 antallPersonerMigrert++
             } else secureLogger.info("Skipper oppretting av MigreringTask for $person har treff i MigrertSak")
 
@@ -121,5 +119,7 @@ class HentSakTilMigreringService(
         val Log = LoggerFactory.getLogger(HentSakTilMigreringService::class.java)
         private val secureLogger = LoggerFactory.getLogger("secureLogger")
         const val ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD = 300
+        const val MIGRERING_DEAKTIVERT_MELDING = "Migrering deaktivert, stopper videre jobbing"
+
     }
 }
