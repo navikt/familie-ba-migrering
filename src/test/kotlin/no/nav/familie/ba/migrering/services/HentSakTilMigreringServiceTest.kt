@@ -29,7 +29,7 @@ class HentSakTilMigreringServiceTest {
     @BeforeEach
     fun setUp() {
         clearAllMocks()
-        service = HentSakTilMigreringService(infotrygdClientMock, taskRepositoryMock, migertsakRepository, true)
+        service = HentSakTilMigreringService(infotrygdClientMock, OpprettMigreringstaskService(taskRepositoryMock), migertsakRepository, true)
     }
 
     @Test
