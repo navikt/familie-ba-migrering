@@ -27,7 +27,7 @@ class MigreringTaskTest {
     private val migrertsakRepositoryMock: MigrertsakRepository = mockk()
     private val migrertsakLoggRepositoryMock: MigrertsakLoggRepository = mockk()
     private val sakClientMock: SakClient = mockk()
-    private val infotrygdClient: InfotrygdClient = mockk()
+    private val infotrygdClient: InfotrygdClient = mockk(relaxed = true)
     private val taskRepository: TaskRepository = mockk()
 
     @BeforeEach
