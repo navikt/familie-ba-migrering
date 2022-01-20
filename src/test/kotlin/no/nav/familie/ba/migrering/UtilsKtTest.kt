@@ -14,7 +14,7 @@ internal class UtilsKtTest {
         "2022-01-17, true",
         "2022-01-18, false",
         "2022-01-19, false",
-        "2022-01-20, false",
+        "2022-01-20, true",
         "2022-05-16, false",
     )
     fun `skal returnere false hvis dato ikke er kjøredato og true hvis det er kjøredato`(input: LocalDate, expected: Boolean) {
@@ -31,7 +31,7 @@ internal class UtilsKtTest {
         "true, 2022-01-17, true",
         "true, 2022-01-18, false",
         "true, 2022-01-19, false",
-        "true, 2022-01-20, false",
+        "true, 2022-01-20, true",
         "true, 2022-01-21, true",
         "false, 2022-01-17, false",
         "false, 2022-01-18, false",
