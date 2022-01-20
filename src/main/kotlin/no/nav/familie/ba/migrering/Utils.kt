@@ -22,7 +22,7 @@ fun erIkkeKjøredato(dato: LocalDate = LocalDate.now() ): Boolean {
                 Month.DECEMBER -> 5
             }.run { YearMonth.from(dato).atDay(this) }
 
-    return (dato.isBefore(kjøredato) || dato.isAfter(kjøredato.plusDays(2)))
+    return (dato.isBefore(kjøredato) || dato.isAfter(kjøredato.plusDays(1)))
 
 }
 
