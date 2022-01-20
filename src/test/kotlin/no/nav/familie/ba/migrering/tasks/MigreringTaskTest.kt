@@ -12,6 +12,7 @@ import no.nav.familie.ba.migrering.domain.MigrertsakRepository
 import no.nav.familie.ba.migrering.integrasjoner.InfotrygdClient
 import no.nav.familie.ba.migrering.integrasjoner.MigreringResponseDto
 import no.nav.familie.ba.migrering.integrasjoner.SakClient
+import no.nav.familie.ba.migrering.rest.MigreringsfeilType.ÅPEN_SAK_INFOTRYGD
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -236,5 +237,39 @@ class MigreringTaskTest {
         assertThat(migrertsakLoggSlot.captured.migreringsdato).isEqualTo(migrertSak.migreringsdato)
 
 
+    }
+
+    @Test
+    fun `Skal sette migeringsstatus til FEILET når bruker har åpen sak i Infotrygd, og sette feiltype og aarsak fra tilhørende enum`() {
+        every { infotrygdClient.harÅpenSak(any()) } returns true
+        val statusSlotInsert = slot<Migrertsak>()
+        val statusSlotUpdate = slot<Migrertsak>()
+
+        every { migrertsakRepositoryMock.findByStatusInAndPersonIdentOrderByMigreringsdato(any(), "ooo") } returns emptyList()
+        every { migrertsakRepositoryMock.insert(capture(statusSlotInsert)) } returns Migrertsak()
+        every { migrertsakRepositoryMock.update(capture(statusSlotUpdate)) } returns Migrertsak()
+        every { migrertsakLoggRepositoryMock.insert(any()) } returns MigrertsakLogg.tilMigrertsakLogg(Migrertsak(UUID.randomUUID()))
+
+        val personIdent = "ooo"
+        MigreringTask(
+            sakClientMock,
+            infotrygdClient,
+            migrertsakRepositoryMock,
+            migrertsakLoggRepositoryMock,
+            taskRepository,
+        ).doTask(
+            MigreringTask.opprettTask(
+                MigreringTaskDto(
+                    personIdent = personIdent
+                )
+            )
+        )
+
+        assertThat(statusSlotInsert.captured.status).isEqualTo(MigreringStatus.UKJENT)
+        assertThat(statusSlotInsert.captured.personIdent).isEqualTo(personIdent)
+
+        assertThat(statusSlotUpdate.captured.status).isEqualTo(MigreringStatus.FEILET)
+        assertThat(statusSlotUpdate.captured.feiltype).isEqualTo(ÅPEN_SAK_INFOTRYGD.name)
+        assertThat(statusSlotUpdate.captured.aarsak).isEqualTo(ÅPEN_SAK_INFOTRYGD.beskrivelse)
     }
 }
