@@ -1,5 +1,7 @@
 package no.nav.familie.ba.migrering.tasks
 
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.Metrics
 import no.nav.familie.ba.migrering.domain.JsonWrapper
 import no.nav.familie.ba.migrering.domain.MigreringStatus
 import no.nav.familie.ba.migrering.domain.Migrertsak
@@ -9,7 +11,7 @@ import no.nav.familie.ba.migrering.domain.MigrertsakRepository
 import no.nav.familie.ba.migrering.integrasjoner.InfotrygdClient
 import no.nav.familie.ba.migrering.integrasjoner.KanIkkeMigrereException
 import no.nav.familie.ba.migrering.integrasjoner.SakClient
-import no.nav.familie.ba.migrering.rest.MigreringsfeilType.ÅPEN_SAK_INFOTRYGD
+import no.nav.familie.ba.migrering.rest.MigreringsfeilType
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
@@ -61,7 +63,9 @@ class MigreringTask(
 
         try {
             if (infotrygdClient.harÅpenSak(payload.personIdent))
-                throw KanIkkeMigrereException(ÅPEN_SAK_INFOTRYGD.name, ÅPEN_SAK_INFOTRYGD.beskrivelse, null)
+                kastOgTellMigreringsFeil(MigreringsfeilType.ÅPEN_SAK_TIL_BESLUTNING_I_INFOTRYGD)
+            else if (infotrygdClient.hentSaker(payload.personIdent).any { it.status != "FB" })
+                kastOgTellMigreringsFeil(MigreringsfeilType.ÅPEN_SAK_INFOTRYGD)
             val responseBa = sakClient.migrerPerson(payload.personIdent)
             migrertsakRepository.update(
                 Migrertsak(
@@ -133,3 +137,14 @@ class MigreringTask(
 }
 
 data class MigreringTaskDto(val personIdent: String)
+
+val migreringsFeilCounter = mutableMapOf<String, Counter>()
+fun kastOgTellMigreringsFeil(feiltype: MigreringsfeilType
+): Nothing =
+    throw KanIkkeMigrereException(feiltype.name, feiltype.beskrivelse, null).also {
+        if (migreringsFeilCounter[feiltype.name] == null) {
+            migreringsFeilCounter[feiltype.name] = Metrics.counter("migrering.feil", "type", feiltype.name)
+        }
+
+        migreringsFeilCounter[feiltype.name]?.increment()
+    }
