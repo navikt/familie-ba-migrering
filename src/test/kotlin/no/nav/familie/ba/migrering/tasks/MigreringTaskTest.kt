@@ -9,8 +9,10 @@ import no.nav.familie.ba.migrering.domain.Migrertsak
 import no.nav.familie.ba.migrering.domain.MigrertsakLogg
 import no.nav.familie.ba.migrering.domain.MigrertsakLoggRepository
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
+import no.nav.familie.ba.migrering.integrasjoner.InfotrygdClient
 import no.nav.familie.ba.migrering.integrasjoner.MigreringResponseDto
 import no.nav.familie.ba.migrering.integrasjoner.SakClient
+import no.nav.familie.ba.migrering.rest.MigreringsfeilType.ÅPEN_SAK_TIL_BESLUTNING_I_INFOTRYGD
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -26,6 +28,7 @@ class MigreringTaskTest {
     private val migrertsakRepositoryMock: MigrertsakRepository = mockk()
     private val migrertsakLoggRepositoryMock: MigrertsakLoggRepository = mockk()
     private val sakClientMock: SakClient = mockk()
+    private val infotrygdClient: InfotrygdClient = mockk(relaxed = true)
     private val taskRepository: TaskRepository = mockk()
 
     @BeforeEach
@@ -49,6 +52,7 @@ class MigreringTaskTest {
         val personIdent = "ooo"
         MigreringTask(
             sakClientMock,
+            infotrygdClient,
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
             taskRepository,
@@ -89,6 +93,7 @@ class MigreringTaskTest {
         val personIdent = "ooo"
         MigreringTask(
             sakClientMock,
+            infotrygdClient,
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
             taskRepository,
@@ -129,6 +134,7 @@ class MigreringTaskTest {
         val personIdent = "ooo"
         MigreringTask(
             sakClientMock,
+            infotrygdClient,
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
             taskRepository,
@@ -171,6 +177,7 @@ class MigreringTaskTest {
 
         MigreringTask(
             sakClientMock,
+            infotrygdClient,
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
             taskRepository,
@@ -214,6 +221,7 @@ class MigreringTaskTest {
 
         MigreringTask(
             sakClientMock,
+            infotrygdClient,
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
             taskRepository,
@@ -229,5 +237,39 @@ class MigreringTaskTest {
         assertThat(migrertsakLoggSlot.captured.migreringsdato).isEqualTo(migrertSak.migreringsdato)
 
 
+    }
+
+    @Test
+    fun `Skal sette migeringsstatus til FEILET når bruker har åpen sak i Infotrygd, og sette feiltype og aarsak fra tilhørende enum`() {
+        every { infotrygdClient.harÅpenSak(any()) } returns true
+        val statusSlotInsert = slot<Migrertsak>()
+        val statusSlotUpdate = slot<Migrertsak>()
+
+        every { migrertsakRepositoryMock.findByStatusInAndPersonIdentOrderByMigreringsdato(any(), "ooo") } returns emptyList()
+        every { migrertsakRepositoryMock.insert(capture(statusSlotInsert)) } returns Migrertsak()
+        every { migrertsakRepositoryMock.update(capture(statusSlotUpdate)) } returns Migrertsak()
+        every { migrertsakLoggRepositoryMock.insert(any()) } returns MigrertsakLogg.tilMigrertsakLogg(Migrertsak(UUID.randomUUID()))
+
+        val personIdent = "ooo"
+        MigreringTask(
+            sakClientMock,
+            infotrygdClient,
+            migrertsakRepositoryMock,
+            migrertsakLoggRepositoryMock,
+            taskRepository,
+        ).doTask(
+            MigreringTask.opprettTask(
+                MigreringTaskDto(
+                    personIdent = personIdent
+                )
+            )
+        )
+
+        assertThat(statusSlotInsert.captured.status).isEqualTo(MigreringStatus.UKJENT)
+        assertThat(statusSlotInsert.captured.personIdent).isEqualTo(personIdent)
+
+        assertThat(statusSlotUpdate.captured.status).isEqualTo(MigreringStatus.FEILET)
+        assertThat(statusSlotUpdate.captured.feiltype).isEqualTo(ÅPEN_SAK_TIL_BESLUTNING_I_INFOTRYGD.name)
+        assertThat(statusSlotUpdate.captured.aarsak).isEqualTo(ÅPEN_SAK_TIL_BESLUTNING_I_INFOTRYGD.beskrivelse)
     }
 }

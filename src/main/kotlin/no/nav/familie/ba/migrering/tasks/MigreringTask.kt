@@ -1,13 +1,17 @@
 package no.nav.familie.ba.migrering.tasks
 
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.Metrics
 import no.nav.familie.ba.migrering.domain.JsonWrapper
 import no.nav.familie.ba.migrering.domain.MigreringStatus
 import no.nav.familie.ba.migrering.domain.Migrertsak
 import no.nav.familie.ba.migrering.domain.MigrertsakLogg
 import no.nav.familie.ba.migrering.domain.MigrertsakLoggRepository
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
+import no.nav.familie.ba.migrering.integrasjoner.InfotrygdClient
 import no.nav.familie.ba.migrering.integrasjoner.KanIkkeMigrereException
 import no.nav.familie.ba.migrering.integrasjoner.SakClient
+import no.nav.familie.ba.migrering.rest.MigreringsfeilType
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
@@ -28,6 +32,7 @@ import java.util.UUID
 )
 class MigreringTask(
     val sakClient: SakClient,
+    val infotrygdClient: InfotrygdClient,
     val migrertsakRepository: MigrertsakRepository,
     val migrertsakLoggRepository: MigrertsakLoggRepository,
     val taskRepository: TaskRepository
@@ -57,6 +62,10 @@ class MigreringTask(
         }
 
         try {
+            if (infotrygdClient.harÅpenSak(payload.personIdent))
+                kastOgTellMigreringsFeil(MigreringsfeilType.ÅPEN_SAK_TIL_BESLUTNING_I_INFOTRYGD)
+            else if (infotrygdClient.hentSaker(payload.personIdent).any { it.status != "FB" })
+                kastOgTellMigreringsFeil(MigreringsfeilType.ÅPEN_SAK_INFOTRYGD)
             val responseBa = sakClient.migrerPerson(payload.personIdent)
             migrertsakRepository.update(
                 Migrertsak(
@@ -100,7 +109,7 @@ class MigreringTask(
             task.metadata.put("feiltype", feiltype)
 
             secureLogger.info(
-                "Migrering av sak for person ${payload.personIdent} feilet med feiltype=$feiltype. Starter migrering av annen person",
+                "Migrering av sak for person ${payload.personIdent} feilet med feiltype=$feiltype.",
                 e
             )
         }
@@ -128,3 +137,14 @@ class MigreringTask(
 }
 
 data class MigreringTaskDto(val personIdent: String)
+
+val migreringsFeilCounter = mutableMapOf<String, Counter>()
+fun kastOgTellMigreringsFeil(feiltype: MigreringsfeilType
+): Nothing =
+    throw KanIkkeMigrereException(feiltype.name, feiltype.beskrivelse, null).also {
+        if (migreringsFeilCounter[feiltype.name] == null) {
+            migreringsFeilCounter[feiltype.name] = Metrics.counter("migrering.feil", "type", feiltype.name)
+        }
+
+        migreringsFeilCounter[feiltype.name]?.increment()
+    }
