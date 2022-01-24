@@ -109,7 +109,7 @@ class MigreringTask(
             task.metadata.put("feiltype", feiltype)
 
             secureLogger.info(
-                "Migrering av sak for person ${payload.personIdent} feilet med feiltype=$feiltype. Starter migrering av annen person",
+                "Migrering av sak for person ${payload.personIdent} feilet med feiltype=$feiltype.",
                 e
             )
         }
