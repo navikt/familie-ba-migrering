@@ -43,7 +43,8 @@ class RestSecurityFilterConfig(
             return request.requestURI.contains("/internal") ||
                     request.requestURI.startsWith("/api/task") ||
                     request.requestURI.startsWith("/swagger") ||
-                    request.requestURI.startsWith("/v3")
+                    request.requestURI.startsWith("/v3") ||
+                    request.requestURI.startsWith("/api/migrer/migrert-av-saksbehandler")
         } // i bruk av swagger
     }
 
