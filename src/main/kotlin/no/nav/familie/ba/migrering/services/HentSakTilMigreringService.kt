@@ -36,7 +36,7 @@ class HentSakTilMigreringService(
                     size = ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     valg = "OR",
                     undervalg = "OS",
-                    maksAntallBarn = 1,
+                    maksAntallBarn = 2,
                 )
             )
             Log.info("Fant ${personerForMigrering.size} personer for migrering på side $startSide")
@@ -118,7 +118,7 @@ class HentSakTilMigreringService(
 
         val Log = LoggerFactory.getLogger(HentSakTilMigreringService::class.java)
         private val secureLogger = LoggerFactory.getLogger("secureLogger")
-        const val ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD = 300
+        const val ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD = 500
         const val MIGRERING_DEAKTIVERT_MELDING = "Migrering deaktivert, stopper videre jobbing"
 
     }
