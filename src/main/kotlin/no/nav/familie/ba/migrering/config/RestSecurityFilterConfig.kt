@@ -25,6 +25,7 @@ class RestSecurityFilterConfig(
             response: HttpServletResponse,
             filterChain: FilterChain
         ) {
+            secureLogger.info("Request received: ${request.getHeader("Authorization")}")
             val grupper = hentGrupper()
             if (!grupper.contains(forvalterRolleTeamfamilie) && !environment.activeProfiles.contains("dev")) {
                 secureLogger.info("Ugyldig rolle for url=${request.requestURI} grupper=$grupper, forvalterRolleTeamfamilie=$forvalterRolleTeamfamilie")
@@ -43,8 +44,7 @@ class RestSecurityFilterConfig(
             return request.requestURI.contains("/internal") ||
                     request.requestURI.startsWith("/api/task") ||
                     request.requestURI.startsWith("/swagger") ||
-                    request.requestURI.startsWith("/v3") ||
-                    request.requestURI.startsWith("/api/migrer/migrert-av-saksbehandler")
+                    request.requestURI.startsWith("/v3")
         } // i bruk av swagger
     }
 
