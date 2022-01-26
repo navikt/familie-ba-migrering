@@ -86,7 +86,7 @@ class MigreringTask(
             taskRepository.save(
                 VerifiserMigreringTask.opprettTaskMedTriggerTid(
                     migrertsak.id.toString(),
-                    LocalDate.now().plusDays(1).atTime(11, 0),
+                    LocalDate.now().plusDays(1).atTime(7, 0),
                     properties
                 )
             )
