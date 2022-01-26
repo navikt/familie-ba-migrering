@@ -13,6 +13,7 @@ import no.nav.familie.ba.migrering.integrasjoner.InfotrygdClient
 import no.nav.familie.ba.migrering.integrasjoner.MigreringResponseDto
 import no.nav.familie.ba.migrering.integrasjoner.SakClient
 import no.nav.familie.ba.migrering.rest.MigreringsfeilType.ÅPEN_SAK_TIL_BESLUTNING_I_INFOTRYGD
+import no.nav.familie.ba.migrering.services.OpprettTaskService
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -42,7 +43,7 @@ class MigreringTaskTest {
         val statusSlotUpdate = slot<Migrertsak>()
         val slotTask = slot<Task>()
         every { migrertsakRepositoryMock.findByStatusInAndPersonIdentOrderByMigreringsdato(any(), "ooo") } returns emptyList()
-        every { migrertsakRepositoryMock.insert(capture(statusSlotInsert)) } returns Migrertsak()
+        every { migrertsakRepositoryMock.insert(capture(statusSlotInsert)) } returns Migrertsak(personIdent = "ooo")
         every { migrertsakRepositoryMock.update(capture(statusSlotUpdate)) } returns Migrertsak()
         every { taskRepository.save(capture(slotTask)) } returns VerifiserMigreringTask.opprettTaskMedTriggerTid(
             "1",
@@ -56,6 +57,7 @@ class MigreringTaskTest {
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
             taskRepository,
+            OpprettTaskService(taskRepository)
         ).doTask(
             MigreringTask.opprettTask(
                 MigreringTaskDto(
@@ -97,6 +99,7 @@ class MigreringTaskTest {
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
             taskRepository,
+            OpprettTaskService(taskRepository)
         ).doTask(
             MigreringTask.opprettTask(
                 MigreringTaskDto(
@@ -138,6 +141,7 @@ class MigreringTaskTest {
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
             taskRepository,
+            OpprettTaskService(taskRepository)
         ).doTask(
             MigreringTask.opprettTask(
                 MigreringTaskDto(
@@ -181,6 +185,7 @@ class MigreringTaskTest {
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
             taskRepository,
+            OpprettTaskService(taskRepository)
         ).doTask(
             task
         )
@@ -225,6 +230,7 @@ class MigreringTaskTest {
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
             taskRepository,
+            OpprettTaskService(taskRepository)
         ).doTask(
             task
         )
@@ -257,6 +263,7 @@ class MigreringTaskTest {
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
             taskRepository,
+            OpprettTaskService(taskRepository)
         ).doTask(
             MigreringTask.opprettTask(
                 MigreringTaskDto(

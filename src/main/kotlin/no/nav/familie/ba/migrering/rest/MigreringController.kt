@@ -1,6 +1,9 @@
 package no.nav.familie.ba.migrering.rest
 
+import no.nav.familie.ba.migrering.integrasjoner.MigreringResponseDto
 import no.nav.familie.ba.migrering.services.HentSakTilMigreringService
+import no.nav.familie.ba.migrering.services.VerifiserMigeringService
+import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PathVariable
@@ -18,6 +21,7 @@ import javax.validation.constraints.Min
 @Validated
 class MigreringController(
     private val hentSakTilMigreringService: HentSakTilMigreringService,
+    private val verifiserMigeringService: VerifiserMigeringService
 ) {
 
 
@@ -37,7 +41,14 @@ class MigreringController(
         return hentSakTilMigreringService.rekjørMigreringerMedFeiltype(feiltype)
     }
 
+    @PostMapping("/migrert-av-saksbehandler")
+    fun migrer(@Valid @RequestBody request: MigrertAvSaksbehandlerRequest): String {
+        verifiserMigeringService.verifiserMigrering(request.personIdent, request.migreringsResponse)
+        return "OK"
+    }
+
+
     data class StartMigreringRequest(@Min(1) @Max(20) val antallPersoner: Int)
 
-
+    data class MigrertAvSaksbehandlerRequest(val personIdent: String, val migreringsResponse: MigreringResponseDto)
 }

@@ -69,6 +69,9 @@ spec:
         - application: ida
           namespace: traktor
           cluster: prod-fss
+        - application: familie-ba-sak
+          namespace: teamfamilie
+          cluster: dev-gcp
     outbound:
       rules:
         - application: familie-ba-infotrygd
