@@ -12,6 +12,7 @@ import no.nav.familie.ba.migrering.integrasjoner.InfotrygdClient
 import no.nav.familie.ba.migrering.integrasjoner.KanIkkeMigrereException
 import no.nav.familie.ba.migrering.integrasjoner.SakClient
 import no.nav.familie.ba.migrering.rest.MigreringsfeilType
+import no.nav.familie.ba.migrering.services.OpprettTaskService
 import no.nav.familie.kontrakter.felles.objectMapper
 import no.nav.familie.prosessering.AsyncTaskStep
 import no.nav.familie.prosessering.TaskStepBeskrivelse
@@ -35,7 +36,8 @@ class MigreringTask(
     val infotrygdClient: InfotrygdClient,
     val migrertsakRepository: MigrertsakRepository,
     val migrertsakLoggRepository: MigrertsakLoggRepository,
-    val taskRepository: TaskRepository
+    val taskRepository: TaskRepository,
+    val opprettTaskService: OpprettTaskService
     ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
@@ -76,20 +78,7 @@ class MigreringTask(
                     callId = task.callId
                 )
             )
-
-            val properties = Properties().apply {
-                put("personIdent", payload.personIdent)
-                put("fagsakId", responseBa.fagsakId.toString())
-                put("behandlingId", responseBa.behandlingId.toString())
-                put("callId", task.callId)
-            }
-            taskRepository.save(
-                VerifiserMigreringTask.opprettTaskMedTriggerTid(
-                    migrertsak.id.toString(),
-                    LocalDate.now().plusDays(1).atTime(11, 0),
-                    properties
-                )
-            )
+            opprettTaskService.opprettVerifiserMigreringTask(migrertsak, responseBa)
         } catch (e: Exception) {
             var feiltype: String = "UKJENT"
             if (e is KanIkkeMigrereException) {

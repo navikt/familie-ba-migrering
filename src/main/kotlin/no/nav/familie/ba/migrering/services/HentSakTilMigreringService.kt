@@ -13,7 +13,7 @@ import java.time.LocalDate
 @Service
 class HentSakTilMigreringService(
     val infotrygdClient: InfotrygdClient,
-    val opprettMigreringstaskService: OpprettMigreringstaskService,
+    val opprettTaskService: OpprettTaskService,
     val migrertsakRepository: MigrertsakRepository,
     @Value("\${migrering.aktivert:false}") val migreringAktivert: Boolean
 ) {
@@ -61,7 +61,7 @@ class HentSakTilMigreringService(
         var antallRekjøringer = 0
         identer.forEach { peronident ->
             if (migrertsakRepository.findByStatusAndPersonIdent(MigreringStatus.FEILET, peronident).isNotEmpty()) {
-                opprettMigreringstaskService.opprettMigreringtask(peronident)
+                opprettTaskService.opprettMigreringtask(peronident)
                 antallRekjøringer++
             }
         }
@@ -77,7 +77,7 @@ class HentSakTilMigreringService(
         val migrertsakMedFeiltype =
             migrertsakRepository.findByStatusAndFeiltype(MigreringStatus.FEILET, feiltype).map { it.personIdent }.toSet()
         migrertsakMedFeiltype.forEach {
-            opprettMigreringstaskService.opprettMigreringtask(it)
+            opprettTaskService.opprettMigreringtask(it)
         }
         return "Rekjørt ${migrertsakMedFeiltype.size} med feiltype=$feiltype"
     }
@@ -99,7 +99,7 @@ class HentSakTilMigreringService(
                     )
                 )
             ) {
-                opprettMigreringstaskService.opprettMigreringtask(person)
+                opprettTaskService.opprettMigreringtask(person)
                 antallPersonerMigrert++
             } else secureLogger.info("Skipper oppretting av MigreringTask for $person har treff i MigrertSak")
 
