@@ -25,9 +25,7 @@ class RestSecurityFilterConfig(
             response: HttpServletResponse,
             filterChain: FilterChain
         ) {
-            secureLogger.info("Request received: ${request.getHeader("Authorization")}")
             val grupper = hentGrupper()
-            logger.info("Grupper: $grupper ${!tilgangSomApp()} ${!grupper.contains(forvalterRolleTeamfamilie)} ${(!tilgangSomApp() || !grupper.contains(forvalterRolleTeamfamilie))}")
             if ((!tilgangSomApp() && !grupper.contains(forvalterRolleTeamfamilie)) && !environment.activeProfiles.contains("dev")) {
                 secureLogger.info("Ugyldig rolle for url=${request.requestURI} grupper=$grupper, forvalterRolleTeamfamilie=$forvalterRolleTeamfamilie")
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Handling krever teamfamilie forvalter rolle")
@@ -66,7 +64,6 @@ class RestSecurityFilterConfig(
                 onSuccess = {
                     @Suppress("UNCHECKED_CAST")
                     val roller = it.getClaims("azuread")?.get("roles") as List<String>?
-                    secureLogger.info("Roller $roller")
                     if (roller.isNullOrEmpty()) {
                         false
                     } else {
