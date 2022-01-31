@@ -4,6 +4,7 @@ import no.nav.familie.ba.migrering.integrasjoner.MigreringResponseDto
 import no.nav.familie.ba.migrering.services.HentSakTilMigreringService
 import no.nav.familie.ba.migrering.services.VerifiserMigeringService
 import no.nav.familie.kontrakter.felles.PersonIdent
+import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PathVariable
@@ -42,9 +43,9 @@ class MigreringController(
     }
 
     @PostMapping("/migrert-av-saksbehandler")
-    fun migrer(@Valid @RequestBody request: MigrertAvSaksbehandlerRequest): String {
+    fun migrer(@Valid @RequestBody request: MigrertAvSaksbehandlerRequest): Ressurs<String> {
         verifiserMigeringService.verifiserMigrering(request.personIdent, request.migreringsResponse)
-        return "OK"
+        return Ressurs.success("OK")
     }
 
 

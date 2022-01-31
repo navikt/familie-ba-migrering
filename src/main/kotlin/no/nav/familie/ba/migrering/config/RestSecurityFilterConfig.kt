@@ -26,7 +26,7 @@ class RestSecurityFilterConfig(
             filterChain: FilterChain
         ) {
             val grupper = hentGrupper()
-            if (!grupper.contains(forvalterRolleTeamfamilie) && !environment.activeProfiles.contains("dev")) {
+            if ((!tilgangSomApp() && !grupper.contains(forvalterRolleTeamfamilie)) && !environment.activeProfiles.contains("dev")) {
                 secureLogger.info("Ugyldig rolle for url=${request.requestURI} grupper=$grupper, forvalterRolleTeamfamilie=$forvalterRolleTeamfamilie")
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Handling krever teamfamilie forvalter rolle")
             } else {
@@ -55,6 +55,22 @@ class RestSecurityFilterConfig(
                     it.getClaims("azuread")?.get("groups") as List<String>? ?: emptyList()
                 },
                 onFailure = { emptyList() }
+            )
+    }
+
+    private fun tilgangSomApp(): Boolean {
+        return Result.runCatching { SpringTokenValidationContextHolder().tokenValidationContext }
+            .fold(
+                onSuccess = {
+                    @Suppress("UNCHECKED_CAST")
+                    val roller = it.getClaims("azuread")?.get("roles") as List<String>?
+                    if (roller.isNullOrEmpty()) {
+                        false
+                    } else {
+                        roller.contains("access_as_application")
+                    }
+                },
+                onFailure = { false }
             )
     }
 }
