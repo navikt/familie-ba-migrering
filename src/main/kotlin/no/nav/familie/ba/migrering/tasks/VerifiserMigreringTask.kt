@@ -6,6 +6,7 @@ import no.nav.familie.ba.migrering.domain.MigreringStatus
 import no.nav.familie.ba.migrering.domain.Migrertsak
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
 import no.nav.familie.ba.migrering.integrasjoner.InfotrygdClient
+import no.nav.familie.ba.migrering.integrasjoner.InfotrygdFeedClient
 import no.nav.familie.ba.migrering.integrasjoner.MigreringResponseDto
 import no.nav.familie.ba.migrering.integrasjoner.StønadRequest
 import no.nav.familie.kontrakter.felles.objectMapper
@@ -16,6 +17,7 @@ import no.nav.familie.prosessering.domene.Task
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 import java.util.Properties
@@ -29,6 +31,7 @@ import java.util.Properties
 )
 class VerifiserMigreringTask(
     val infotrygdClient: InfotrygdClient,
+    val infotrygdFeedClient: InfotrygdFeedClient,
     val migrertsakRepository: MigrertsakRepository,
 ) : AsyncTaskStep {
 
@@ -76,9 +79,20 @@ class VerifiserMigreringTask(
             }
             else -> {
                 secureLogger.error("Migrert sak har ikke blitt oppdatert med opphørsgrunn 5 i Infotrygd:\n$infotrygdStønad")
-                error("Opphørsgrunn i Infotrygd var ${infotrygdStønad.opphørsgrunn}, og ikke 5")
+                if (erVedtaksmeldingSendt(migrertsak, resultatFraBa.virkningFom)) {
+                    error("Vedtakssmelding er sendt, men opphørsgrunn i Infotrygd er ${infotrygdStønad.opphørsgrunn}, og ikke 5")
+                } else {
+                    error("Det har ikke blitt opprettet vedtaksmelding i infotrygd-feed på denne personidenten etter migrering")
+                }
             }
         }
+    }
+
+    private fun erVedtaksmeldingSendt(
+        migrertsak: Migrertsak,
+        virkningFom: YearMonth?
+    ) = infotrygdFeedClient.hentOversiktOverVedtaksmeldingerSendtTilFeed(migrertsak.personIdent).any {
+        it.opprettetDato.isAfter(migrertsak.migreringsdato) && YearMonth.from(it.datoStartNyBa!!) == virkningFom
     }
 
     private fun checkNotNull(vararg values: Any?, lazyMessage: () -> Any) {
