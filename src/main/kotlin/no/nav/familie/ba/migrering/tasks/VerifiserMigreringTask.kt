@@ -80,9 +80,9 @@ class VerifiserMigreringTask(
             else -> {
                 secureLogger.error("Migrert sak har ikke blitt oppdatert med opphørsgrunn 5 i Infotrygd:\n$infotrygdStønad")
                 if (erVedtaksmeldingSendt(migrertsak, resultatFraBa.virkningFom)) {
-                    error("Vedtakssmelding er sendt, men opphørsgrunn i Infotrygd er ${infotrygdStønad.opphørsgrunn}, og ikke 5")
+                    error("Opphørsgrunn i Infotrygd var ${infotrygdStønad.opphørsgrunn} og ikke 5, selv om vedtaksmelding er sendt")
                 } else {
-                    error("Det har ikke blitt opprettet vedtaksmelding i infotrygd-feed på denne personidenten etter migrering")
+                    error("Det har IKKE blitt sendt vedtaksmelding med denne personidenten til infotrygd-feed etter migrering")
                 }
             }
         }
