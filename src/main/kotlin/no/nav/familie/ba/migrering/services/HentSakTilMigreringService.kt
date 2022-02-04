@@ -28,7 +28,7 @@ class HentSakTilMigreringService(
         }
 
         var antallPersonerMigrert = 0
-        var startSide = 1
+        var startSide = 0
         while (antallPersonerMigrert < antallPersoner) {
             val personerForMigrering = infotrygdClient.hentPersonerKlareForMigrering(
                 MigreringRequest(
@@ -37,6 +37,7 @@ class HentSakTilMigreringService(
                     valg = "OR",
                     undervalg = "OS",
                     maksAntallBarn = MAX_ANTALL_BARN,
+                    minimumAlder = MINIMUM_ALDER
                 )
             )
             Log.info("Fant ${personerForMigrering.size} personer for migrering på side $startSide")
@@ -118,8 +119,9 @@ class HentSakTilMigreringService(
 
         val Log = LoggerFactory.getLogger(HentSakTilMigreringService::class.java)
         private val secureLogger = LoggerFactory.getLogger("secureLogger")
-        const val ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD = 2000
-        const val MAX_ANTALL_BARN = 5
+        const val ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD = 5000
+        const val MAX_ANTALL_BARN = 6
+        const val MINIMUM_ALDER = 3
         const val MIGRERING_DEAKTIVERT_MELDING = "Migrering deaktivert, stopper videre jobbing"
 
     }

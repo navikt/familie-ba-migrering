@@ -38,22 +38,24 @@ class HentSakTilMigreringServiceTest {
         every {
             infotrygdClientMock.hentPersonerKlareForMigrering(
                 MigreringRequest(
-                    1,
+                    0,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
                     "OS",
-                    HentSakTilMigreringService.MAX_ANTALL_BARN
+                    HentSakTilMigreringService.MAX_ANTALL_BARN,
+                    HentSakTilMigreringService.MINIMUM_ALDER,
                 )
             )
         } returns personIdenter.toSet()
         every {
             infotrygdClientMock.hentPersonerKlareForMigrering(
                 MigreringRequest(
-                    2,
+                    1,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
                     "OS",
-                    HentSakTilMigreringService.MAX_ANTALL_BARN
+                    HentSakTilMigreringService.MAX_ANTALL_BARN,
+                    HentSakTilMigreringService.MINIMUM_ALDER,
                 )
             )
         } returns emptySet()
@@ -76,22 +78,24 @@ class HentSakTilMigreringServiceTest {
         every {
             infotrygdClientMock.hentPersonerKlareForMigrering(
                 MigreringRequest(
-                    1,
+                    0,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
                     "OS",
-                    HentSakTilMigreringService.MAX_ANTALL_BARN
+                    HentSakTilMigreringService.MAX_ANTALL_BARN,
+                    HentSakTilMigreringService.MINIMUM_ALDER,
                 )
             )
         } returns setOf(personIdent)
         every {
             infotrygdClientMock.hentPersonerKlareForMigrering(
                 MigreringRequest(
-                    2,
+                    1,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
                     "OS",
-                    HentSakTilMigreringService.MAX_ANTALL_BARN
+                    HentSakTilMigreringService.MAX_ANTALL_BARN,
+                    HentSakTilMigreringService.MINIMUM_ALDER,
                 )
             )
         } returns emptySet()
@@ -113,14 +117,27 @@ class HentSakTilMigreringServiceTest {
         every {
             infotrygdClientMock.hentPersonerKlareForMigrering(
                 MigreringRequest(
+                    0,
+                    ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
+                    "OR",
+                    "OS",
+                    HentSakTilMigreringService.MAX_ANTALL_BARN,
+                    HentSakTilMigreringService.MINIMUM_ALDER,
+                )
+            )
+        } returns arrayOf("1", "2", "3").toSet()
+        every {
+            infotrygdClientMock.hentPersonerKlareForMigrering(
+                MigreringRequest(
                     1,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
                     "OS",
-                    HentSakTilMigreringService.MAX_ANTALL_BARN
+                    HentSakTilMigreringService.MAX_ANTALL_BARN,
+                    HentSakTilMigreringService.MINIMUM_ALDER,
                 )
             )
-        } returns arrayOf("1", "2", "3").toSet()
+        } returns arrayOf("4", "5", "6", "7", "8").toSet()
         every {
             infotrygdClientMock.hentPersonerKlareForMigrering(
                 MigreringRequest(
@@ -128,18 +145,8 @@ class HentSakTilMigreringServiceTest {
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
                     "OS",
-                    HentSakTilMigreringService.MAX_ANTALL_BARN
-                )
-            )
-        } returns arrayOf("4", "5", "6", "7", "8").toSet()
-        every {
-            infotrygdClientMock.hentPersonerKlareForMigrering(
-                MigreringRequest(
-                    3,
-                    ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
-                    "OR",
-                    "OS",
-                    HentSakTilMigreringService.MAX_ANTALL_BARN
+                    HentSakTilMigreringService.MAX_ANTALL_BARN,
+                    HentSakTilMigreringService.MINIMUM_ALDER,
                 )
             )
         } returns arrayOf("9", "10", "11", "12", "13").toSet()
