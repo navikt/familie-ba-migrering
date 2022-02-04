@@ -101,11 +101,6 @@ class HentSakTilMigreringService(
         return antallPersonerMigrert
     }
 
-    private fun existByPersonIdentAndStatusIn(ident: String): Boolean {
-        return migrertsakRepository.findByPersonIdent(ident).isNotEmpty()
-    }
-
-
     companion object {
 
         val Log = LoggerFactory.getLogger(HentSakTilMigreringService::class.java)
