@@ -90,7 +90,7 @@ class HentSakTilMigreringService(
     ): Int {
         var antallPersonerMigrert = antallAlleredeMigret
         for (person in personerForMigrering) {
-            if (migrertsakRepository.findByPersonIdent(person).isNullOrEmpty()) {
+            if (migrertsakRepository.findByPersonIdent(person).isEmpty()) {
                 opprettTaskService.opprettMigreringtask(person)
                 antallPersonerMigrert++
             } else secureLogger.info("Skipper oppretting av MigreringTask for $person har treff i MigrertSak")
