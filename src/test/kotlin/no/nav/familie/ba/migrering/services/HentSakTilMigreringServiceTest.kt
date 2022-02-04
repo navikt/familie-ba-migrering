@@ -38,7 +38,7 @@ class HentSakTilMigreringServiceTest {
         every {
             infotrygdClientMock.hentPersonerKlareForMigrering(
                 MigreringRequest(
-                    1,
+                    0,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
                     "OS",
@@ -49,7 +49,7 @@ class HentSakTilMigreringServiceTest {
         every {
             infotrygdClientMock.hentPersonerKlareForMigrering(
                 MigreringRequest(
-                    2,
+                    1,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
                     "OS",
@@ -76,7 +76,7 @@ class HentSakTilMigreringServiceTest {
         every {
             infotrygdClientMock.hentPersonerKlareForMigrering(
                 MigreringRequest(
-                    1,
+                    0,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
                     "OS",
@@ -87,7 +87,7 @@ class HentSakTilMigreringServiceTest {
         every {
             infotrygdClientMock.hentPersonerKlareForMigrering(
                 MigreringRequest(
-                    2,
+                    1,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
                     "OS",
@@ -113,7 +113,7 @@ class HentSakTilMigreringServiceTest {
         every {
             infotrygdClientMock.hentPersonerKlareForMigrering(
                 MigreringRequest(
-                    1,
+                    0,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
                     "OS",
@@ -124,7 +124,7 @@ class HentSakTilMigreringServiceTest {
         every {
             infotrygdClientMock.hentPersonerKlareForMigrering(
                 MigreringRequest(
-                    2,
+                    1,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
                     "OS",
@@ -135,7 +135,7 @@ class HentSakTilMigreringServiceTest {
         every {
             infotrygdClientMock.hentPersonerKlareForMigrering(
                 MigreringRequest(
-                    3,
+                    2,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
                     "OS",
