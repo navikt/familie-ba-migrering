@@ -23,7 +23,7 @@ class InfotrygdFeedClient @Autowired constructor(
 ) : AbstractRestClient(restOperations, "migrering.infotrygd.feed") {
 
     fun hentOversiktOverVedtaksmeldingerSendtTilFeed(personIdent: String): List<FeedOpprettetDto> {
-        val uri = URI.create("$infotrygdFeedApiUri/barnetrygd/v1/feed/ba_vedtak_v1/opprettet")
+        val uri = URI.create("$infotrygdFeedApiUri/barnetrygd/v1/feed/BA_Vedtak_v1/opprettet")
         try {
             val response: Ressurs<List<FeedOpprettetDto>> = postForEntity(uri, personIdent)
             return response.getDataOrThrow().also { logger.info("Vedtaksmeldinger sendt for person: $it") }
