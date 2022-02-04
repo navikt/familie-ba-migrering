@@ -90,16 +90,7 @@ class HentSakTilMigreringService(
     ): Int {
         var antallPersonerMigrert = antallAlleredeMigret
         for (person in personerForMigrering) {
-            if (!existByPersonIdentAndStatusIn(
-                    person,
-                    listOf(
-                        MigreringStatus.MIGRERT_I_BA,
-                        MigreringStatus.FEILET,
-                        MigreringStatus.VERIFISERT,
-                        MigreringStatus.UKJENT
-                    )
-                )
-            ) {
+            if (migrertsakRepository.findByPersonIdent(person).isNullOrEmpty()) {
                 opprettTaskService.opprettMigreringtask(person)
                 antallPersonerMigrert++
             } else secureLogger.info("Skipper oppretting av MigreringTask for $person har treff i MigrertSak")
@@ -110,8 +101,8 @@ class HentSakTilMigreringService(
         return antallPersonerMigrert
     }
 
-    private fun existByPersonIdentAndStatusIn(ident: String, status: List<MigreringStatus>): Boolean {
-        return status.any { migrertsakRepository.findByStatusAndPersonIdent(it, ident).isNotEmpty() } //TODO
+    private fun existByPersonIdentAndStatusIn(ident: String): Boolean {
+        return migrertsakRepository.findByPersonIdent(ident).isNotEmpty()
     }
 
 
