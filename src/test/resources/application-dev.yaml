@@ -1,5 +1,6 @@
 BA_SAK_API_URL: http://localhost:8300/basak/
 FAMILIE_BA_INFOTRYGD_API_URL: http://localhost:8300/infotrygd
+FAMILIE_BA_INFOTRYGD_FEED_API_URL: http://localhost:8300/infotrygd-feed
 AZURE_OPENID_CONFIG_TOKEN_ENDPOINT: http://localhost:1111/v2.0/token
 AZURE_APP_WELL_KNOWN_URL: http://localhost:1111/v2.0/.well-known/openid-configuration
 AZURE_APP_CLIENT_ID: env-var
