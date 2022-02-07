@@ -61,7 +61,7 @@ class HentSakTilMigreringServiceTest {
         } returns emptySet()
         val tasker = mutableListOf<Task>()
         every { taskRepositoryMock.save(capture(tasker)) } returns Task(type = "", payload = "")
-        every { migertsakRepository.findByStatusAndPersonIdent(any(), any()) } returns emptyList()
+        every { migertsakRepository.findByPersonIdent(any()) } returns emptyList()
         service.migrer(10, GYLDIG_MIGRERINGSKJØRETIDSPUNKT)
 
         assertThat(tasker).hasSize(2)
@@ -99,7 +99,7 @@ class HentSakTilMigreringServiceTest {
                 )
             )
         } returns emptySet()
-        every { migertsakRepository.findByStatusAndPersonIdent(MigreringStatus.MIGRERT_I_BA, personIdent) } returns listOf(
+        every { migertsakRepository.findByPersonIdent(personIdent) } returns listOf(
             Migrertsak()
         )
         every { taskRepositoryMock.save(any()) } returns Task(type = "", payload = "")
@@ -152,9 +152,9 @@ class HentSakTilMigreringServiceTest {
         } returns arrayOf("9", "10", "11", "12", "13").toSet()
         val tasker = mutableListOf<Task>()
         every { taskRepositoryMock.save(capture(tasker)) } returns Task(type = "", payload = "")
-        every { migertsakRepository.findByStatusAndPersonIdent(any(), any()) } returns emptyList()
-        every { migertsakRepository.findByStatusAndPersonIdent(MigreringStatus.MIGRERT_I_BA, "4") } returns listOf(Migrertsak())
-        every { migertsakRepository.findByStatusAndPersonIdent(MigreringStatus.MIGRERT_I_BA, "9") } returns listOf(Migrertsak())
+        every { migertsakRepository.findByPersonIdent(any()) } returns emptyList()
+        every { migertsakRepository.findByPersonIdent( "4") } returns listOf(Migrertsak())
+        every { migertsakRepository.findByPersonIdent("9") } returns listOf(Migrertsak())
         service.migrer(10, GYLDIG_MIGRERINGSKJØRETIDSPUNKT)
 
         assertThat(tasker).hasSize(10)
