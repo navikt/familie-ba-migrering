@@ -7,6 +7,7 @@ server:
     context-path: /
 
 spring:
+  task.scheduling.pool.size: 10
   autoconfigure.exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
   main:
     allow-bean-definition-overriding: true
