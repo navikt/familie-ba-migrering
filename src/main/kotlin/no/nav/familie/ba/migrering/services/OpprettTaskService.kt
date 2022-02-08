@@ -37,7 +37,7 @@ class OpprettTaskService(
         taskRepository.save(
             VerifiserMigreringTask.opprettTaskMedTriggerTid(
                 migrertsak.id.toString(),
-                LocalDate.now().plusDays(1).atTime(7, 0),
+                LocalDate.now().plusDays(1).atTime(7, 30),
                 properties
             )
         )
