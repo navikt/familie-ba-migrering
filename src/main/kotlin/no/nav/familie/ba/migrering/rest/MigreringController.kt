@@ -2,8 +2,8 @@ package no.nav.familie.ba.migrering.rest
 
 import no.nav.familie.ba.migrering.integrasjoner.MigreringResponseDto
 import no.nav.familie.ba.migrering.services.HentSakTilMigreringService
+import no.nav.familie.ba.migrering.services.Kategori
 import no.nav.familie.ba.migrering.services.VerifiserMigeringService
-import no.nav.familie.kontrakter.felles.PersonIdent
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.validation.annotation.Validated
@@ -28,7 +28,7 @@ class MigreringController(
 
     @PostMapping("/")
     fun migrerFraInfotrygd(@Valid @RequestBody startMigreringRequest: StartMigreringRequest): String {
-        return hentSakTilMigreringService.migrer(startMigreringRequest.antallPersoner)
+        return hentSakTilMigreringService.migrer(startMigreringRequest.antallPersoner, kategori = startMigreringRequest.kategori)
     }
 
 
@@ -49,7 +49,7 @@ class MigreringController(
     }
 
 
-    data class StartMigreringRequest(@Min(1) @Max(20) val antallPersoner: Int)
+    data class StartMigreringRequest(@Min(1) @Max(20) val antallPersoner: Int, val kategori: Kategori = Kategori.ORDINÆR)
 
     data class MigrertAvSaksbehandlerRequest(val personIdent: String, val migreringsResponse: MigreringResponseDto)
 }

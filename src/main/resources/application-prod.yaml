@@ -1,6 +1,8 @@
 migrering:
   aktivert: true
-  antallPersoner: 10000
+  antallPersoner:
+    ordinær: 10000
+    utvidet: 0
 
 spring:
   flyway:

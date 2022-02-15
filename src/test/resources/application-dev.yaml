@@ -30,3 +30,6 @@ DB_PASSWORD: familie-pwd
 
 migrering:
   aktivert: true
+  antallPersoner:
+    ordinær: 3
+    utvidet: 3
