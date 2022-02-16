@@ -20,7 +20,8 @@ class HentSakTilMigreringService(
 
     fun migrer(
         antallPersoner: Int,
-        migreringsDato: LocalDate = LocalDate.now()
+        migreringsDato: LocalDate = LocalDate.now(),
+        kategori: Kategori = Kategori.ORDINÆR
     ): String { //migreringsDato skal kun brukes fra tester
         if (!skalKjøreMigering(migreringAktivert, migreringsDato)) {
             Log.info(MIGRERING_DEAKTIVERT_MELDING)
@@ -34,8 +35,8 @@ class HentSakTilMigreringService(
                 MigreringRequest(
                     page = startSide,
                     size = ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
-                    valg = "OR",
-                    undervalg = "OS",
+                    valg = kategori.valg,
+                    undervalg = kategori.undervalg,
                     maksAntallBarn = MAX_ANTALL_BARN,
                     minimumAlder = MINIMUM_ALDER
                 )
@@ -50,7 +51,7 @@ class HentSakTilMigreringService(
             }
         }
 
-        return "Migrerte $antallPersoner"
+        return "Migrerte $antallPersoner av Kategori.$kategori"
     }
 
 
@@ -111,4 +112,9 @@ class HentSakTilMigreringService(
         const val MIGRERING_DEAKTIVERT_MELDING = "Migrering deaktivert, stopper videre jobbing"
 
     }
+}
+
+enum class Kategori(val valg: String, val undervalg: String) {
+    ORDINÆR("OR", "OS"),
+    UTVIDET("UT", "EF")
 }

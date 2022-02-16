@@ -1,6 +1,8 @@
 migrering:
   aktivert: true
-  antallPersoner: 3
+  antallPersoner:
+    ordinær: 3
+    utvidet: 3
 
 rolle:
   teamfamilie:
