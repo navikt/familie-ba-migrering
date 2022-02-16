@@ -86,7 +86,9 @@ ribbon:
 
 migrering:
   aktivert: false
-  antallPersoner: 1
+  antallPersoner:
+    ordinær: 1
+    utvidet: 0
 
 rolle:
   teamfamilie:
