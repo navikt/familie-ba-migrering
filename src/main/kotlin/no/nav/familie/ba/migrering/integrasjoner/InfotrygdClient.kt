@@ -22,8 +22,8 @@ class InfotrygdClient @Autowired constructor(
     @Qualifier("azure") restOperations: RestOperations
 ) : AbstractRestClient(restOperations, "migrering.infotrygd") {
 
-    fun hentPersonerKlareForMigrering(migreringRequest: MigreringRequest): Set<String> {
-        val uri = URI.create("$infotrygdApiUri/infotrygd/barnetrygd/migrering")
+    fun hentPersonerKlareForMigrering(migreringRequest: MigreringRequest): MigreringResponse {
+        val uri = URI.create("$infotrygdApiUri/infotrygd/barnetrygd/migrering/v2")
         return try {
             postForEntity(uri, migreringRequest)
         } catch (ex: Exception) {
@@ -81,6 +81,11 @@ data class MigreringRequest(
     val undervalg: String,
     val maksAntallBarn: Int = 99,
     val minimumAlder: Int = 7,
+)
+
+data class MigreringResponse(
+    val personerKlarForMigrering: Set<String>,
+    val totalPages: Int
 )
 
 class StønadRequest(

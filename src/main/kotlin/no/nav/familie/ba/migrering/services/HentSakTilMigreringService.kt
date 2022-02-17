@@ -31,7 +31,7 @@ class HentSakTilMigreringService(
         var antallPersonerMigrert = 0
         var startSide = 0
         while (antallPersonerMigrert < antallPersoner) {
-            val personerForMigrering = infotrygdClient.hentPersonerKlareForMigrering(
+            val (personerForMigrering, totalPages) = infotrygdClient.hentPersonerKlareForMigrering(
                 MigreringRequest(
                     page = startSide,
                     size = ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
@@ -43,12 +43,10 @@ class HentSakTilMigreringService(
             )
             Log.info("Fant ${personerForMigrering.size} personer for migrering på side $startSide")
             secureLogger.info("Resultat fra infotrygd: $personerForMigrering")
-            if (personerForMigrering.isEmpty()) break
+            if (personerForMigrering.isNotEmpty())
+                antallPersonerMigrert = oppretteEllerSkipMigrering(personerForMigrering, antallPersonerMigrert, antallPersoner)
 
-            antallPersonerMigrert = oppretteEllerSkipMigrering(personerForMigrering, antallPersonerMigrert, antallPersoner)
-            if (antallPersonerMigrert < antallPersoner) {
-                startSide = startSide.inc()
-            }
+            if (++startSide == totalPages) break
         }
 
         return "Migrerte $antallPersoner av Kategori.$kategori"

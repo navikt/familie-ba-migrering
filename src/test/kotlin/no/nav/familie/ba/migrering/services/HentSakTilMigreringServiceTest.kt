@@ -9,6 +9,7 @@ import no.nav.familie.ba.migrering.domain.Migrertsak
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
 import no.nav.familie.ba.migrering.integrasjoner.InfotrygdClient
 import no.nav.familie.ba.migrering.integrasjoner.MigreringRequest
+import no.nav.familie.ba.migrering.integrasjoner.MigreringResponse
 import no.nav.familie.ba.migrering.services.HentSakTilMigreringService.Companion.ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD
 import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
@@ -46,7 +47,7 @@ class HentSakTilMigreringServiceTest {
                     HentSakTilMigreringService.MINIMUM_ALDER,
                 )
             )
-        } returns personIdenter.toSet()
+        } returns MigreringResponse(personIdenter.toSet(), 2)
         every {
             infotrygdClientMock.hentPersonerKlareForMigrering(
                 MigreringRequest(
@@ -58,7 +59,7 @@ class HentSakTilMigreringServiceTest {
                     HentSakTilMigreringService.MINIMUM_ALDER,
                 )
             )
-        } returns emptySet()
+        } returns MigreringResponse(emptySet(), 2)
         val tasker = mutableListOf<Task>()
         every { taskRepositoryMock.save(capture(tasker)) } returns Task(type = "", payload = "")
         every { migertsakRepository.findByPersonIdent(any()) } returns emptyList()
@@ -86,7 +87,7 @@ class HentSakTilMigreringServiceTest {
                     HentSakTilMigreringService.MINIMUM_ALDER,
                 )
             )
-        } returns setOf(personIdent)
+        } returns MigreringResponse(setOf(personIdent), 2)
         every {
             infotrygdClientMock.hentPersonerKlareForMigrering(
                 MigreringRequest(
@@ -98,7 +99,7 @@ class HentSakTilMigreringServiceTest {
                     HentSakTilMigreringService.MINIMUM_ALDER,
                 )
             )
-        } returns emptySet()
+        } returns MigreringResponse(emptySet(), 2)
         every { migertsakRepository.findByPersonIdent(personIdent) } returns listOf(
             Migrertsak()
         )
@@ -125,7 +126,7 @@ class HentSakTilMigreringServiceTest {
                     HentSakTilMigreringService.MINIMUM_ALDER,
                 )
             )
-        } returns arrayOf("1", "2", "3").toSet()
+        } returns MigreringResponse(arrayOf("1", "2", "3").toSet(), 3)
         every {
             infotrygdClientMock.hentPersonerKlareForMigrering(
                 MigreringRequest(
@@ -137,7 +138,7 @@ class HentSakTilMigreringServiceTest {
                     HentSakTilMigreringService.MINIMUM_ALDER,
                 )
             )
-        } returns arrayOf("4", "5", "6", "7", "8").toSet()
+        } returns MigreringResponse(arrayOf("4", "5", "6", "7", "8").toSet(), 3)
         every {
             infotrygdClientMock.hentPersonerKlareForMigrering(
                 MigreringRequest(
@@ -149,7 +150,7 @@ class HentSakTilMigreringServiceTest {
                     HentSakTilMigreringService.MINIMUM_ALDER,
                 )
             )
-        } returns arrayOf("9", "10", "11", "12", "13").toSet()
+        } returns MigreringResponse(arrayOf("9", "10", "11", "12", "13").toSet(), 3)
         val tasker = mutableListOf<Task>()
         every { taskRepositoryMock.save(capture(tasker)) } returns Task(type = "", payload = "")
         every { migertsakRepository.findByPersonIdent(any()) } returns emptyList()
