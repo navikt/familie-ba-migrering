@@ -101,3 +101,6 @@ prosessering:
   fixedDelayString:
     in:
       milliseconds: 10000
+  delete:
+    after:
+      weeks: 1
