@@ -42,6 +42,22 @@ class MigreringController(
         return hentSakTilMigreringService.rekjørMigreringerMedFeiltype(feiltype)
     }
 
+    @PostMapping("/valider/")
+    fun validerOmPersonErMigrert(@Valid @RequestBody body: PersondIdentRequest): Boolean {
+       return verifiserMigeringService.sjekkOmPersonErMigrert(body.personIdent)
+    }
+
+    @PostMapping("/valider/{feiltype}")
+    fun validerOmErMigrert(@Valid @PathVariable feiltype: String): Map<String, List<String>> {
+        val (migrert, fortsattÅpne) =  verifiserMigeringService.sjekkOmFeilytpeErMigrert(feiltype)
+
+
+        return mapOf(
+                "migrert" to migrert,
+                "fortsattÅpne" to fortsattÅpne
+        )
+    }
+
     @PostMapping("/migrert-av-saksbehandler")
     fun migrer(@Valid @RequestBody request: MigrertAvSaksbehandlerRequest): Ressurs<String> {
         verifiserMigeringService.verifiserMigrering(request.personIdent, request.migreringsResponse)
