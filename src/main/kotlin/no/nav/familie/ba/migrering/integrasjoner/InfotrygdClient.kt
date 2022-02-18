@@ -43,6 +43,18 @@ class InfotrygdClient @Autowired constructor(
         }
     }
 
+    fun hentAktivStønadForPerson(personIdent: String): List<Stønad> {
+        val uri = URI.create("$infotrygdApiUri/infotrygd/barnetrygd/stonad?historikk=false")
+
+        return try {
+            val response: InfotrygdSøkResponse<Stønad> = postForEntity(uri, InfotrygdSøkRequest(brukere = listOf(personIdent)))
+            response.bruker
+        } catch (ex: Exception) {
+            loggFeil(ex, uri)
+            throw RuntimeException("Henting av aktiv stønad for person feilet: ${ex.message}", ex)
+        }
+    }
+
     fun hentSaker(personIdent: String): List<Sak> {
         val uri = URI.create("$infotrygdApiUri/infotrygd/barnetrygd/saker")
 
