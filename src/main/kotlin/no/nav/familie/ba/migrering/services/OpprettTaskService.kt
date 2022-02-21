@@ -5,14 +5,16 @@ import no.nav.familie.ba.migrering.integrasjoner.MigreringResponseDto
 import no.nav.familie.ba.migrering.tasks.MigreringTask
 import no.nav.familie.ba.migrering.tasks.MigreringTaskDto
 import no.nav.familie.ba.migrering.tasks.VerifiserMigreringTask
+import no.nav.familie.log.mdc.MDCConstants
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.util.Properties
+import java.util.UUID
 
 @Service
 class OpprettTaskService(
@@ -21,8 +23,13 @@ class OpprettTaskService(
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     fun opprettMigreringtask(personident: String) {
-        taskRepository.save(MigreringTask.opprettTask(MigreringTaskDto(personident)))
-        secureLogger.info("Oppretter MigreringTask for $personident")
+        try {
+            MDC.put(MDCConstants.MDC_CALL_ID, UUID.randomUUID().toString())
+            taskRepository.save(MigreringTask.opprettTask(MigreringTaskDto(personident)))
+            secureLogger.info("Oppretter MigreringTask for $personident")
+        } finally {
+            MDC.clear()
+        }
     }
 
 
