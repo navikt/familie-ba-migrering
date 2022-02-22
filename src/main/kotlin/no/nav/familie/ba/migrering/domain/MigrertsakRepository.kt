@@ -21,6 +21,7 @@ interface MigrertsakRepository : RepositoryInterface<Migrertsak, UUID>, InsertUp
     fun findByPersonIdent(personIdent: String): List<Migrertsak>
     fun findByStatusInAndPersonIdentOrderByMigreringsdato(status: List<MigreringStatus>, personIdent: String): List<Migrertsak>
     fun findByStatusIn(status: List<MigreringStatus>, page: Pageable): List<Migrertsak>
+    fun findByFeiltype(feiltype: String): List<Migrertsak>
 
     @Query("""SELECT ms.feiltype, count(ms.feiltype) as antall from migrertesaker ms where ms.status = 'FEILET' group by ms.feiltype""")
     fun tellFeiledeMigrerteSaker(): List<TellFeilResponse>

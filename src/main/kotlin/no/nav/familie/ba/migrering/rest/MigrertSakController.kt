@@ -31,13 +31,20 @@ class MigrertSakController(
 
     @GetMapping("/")
     @Transactional(readOnly = true)
-    fun hentAlleSaker(@RequestParam(required = false) status: List<MigreringStatus>?, @RequestParam(required = false) feiltype: List<MigreringsfeilType>?, @Schema(defaultValue = "0") @RequestParam(required = true) page: Int): MigrertSakResponse {
+    fun hentAlleSaker(@RequestParam(required = false) status: List<MigreringStatus>?, @Schema(defaultValue = "0") @RequestParam(required = true) page: Int): MigrertSakResponse {
         val pageable = Pageable.ofSize(500).withPage(page)
         return if (status.isNullOrEmpty()) {
             MigrertSakResponse(migrertsakRepository.findAll(pageable).toList())
         } else {
-            MigrertSakResponse(migrertsakRepository.findByStatusIn(status, pageable).filter { feiltype.isNullOrEmpty() || it.feiltype in feiltype.map { it.name } }.toList())
+            MigrertSakResponse(migrertsakRepository.findByStatusIn(status, pageable).toList())
         }
+    }
+
+    @GetMapping("/feiltype")
+    @Transactional(readOnly = true)
+    fun hentFeiledeSaker(@RequestParam(required = false) feiltype: MigreringsfeilType): MigrertSakResponse {
+        return MigrertSakResponse(migrertsakRepository.findByFeiltype(feiltype.name).toList())
+
     }
 
     @PostMapping("/")
