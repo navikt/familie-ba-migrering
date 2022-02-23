@@ -43,7 +43,7 @@ class MigrertSakController(
     @GetMapping("/feiltype")
     @Transactional(readOnly = true)
     fun hentFeiledeSaker(@RequestParam(required = false) feiltype: MigreringsfeilType): MigrertSakResponse {
-        return MigrertSakResponse(migrertsakRepository.findByFeiltype(feiltype.name).toList())
+        return MigrertSakResponse(migrertsakRepository.findByFeiltypeAndStatus(feiltype.name, MigreringStatus.FEILET).toList())
 
     }
 
