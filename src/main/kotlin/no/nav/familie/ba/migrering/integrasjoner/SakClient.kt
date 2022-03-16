@@ -2,6 +2,7 @@ package no.nav.familie.ba.migrering.integrasjoner
 
 import com.fasterxml.jackson.databind.JsonNode
 import no.nav.familie.http.client.AbstractRestClient
+import no.nav.familie.http.client.RessursException
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.getDataOrThrow
 import no.nav.familie.kontrakter.felles.objectMapper
@@ -32,6 +33,7 @@ class SakClient @Autowired constructor(
             return response.getDataOrThrow()
         } catch (e: HttpStatusCodeException) {
             val ressurs = e.getResponseBodyAsString()
+            secureLogger.info("Feilressurs fra sak : $ressurs")
 
             if (!ressurs.isNullOrBlank()) {
                 val actualObj: JsonNode = objectMapper.readTree(ressurs)
@@ -39,6 +41,12 @@ class SakClient @Autowired constructor(
                 throw KanIkkeMigrereException(feiltype = data.toString(), melding = ressurs, e)
             }
           throw e
+        } catch (e: RessursException) {
+            if (e.cause is KanIkkeMigrereException) {
+                throw e
+            } else {
+                throw KanIkkeMigrereException(feiltype = "UKJENT", melding = objectMapper.writeValueAsString(e.ressurs), e)
+            }
         }
 
 
