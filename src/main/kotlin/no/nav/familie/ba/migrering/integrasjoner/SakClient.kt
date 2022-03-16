@@ -1,6 +1,7 @@
 package no.nav.familie.ba.migrering.integrasjoner
 
 import com.fasterxml.jackson.databind.JsonNode
+import no.nav.familie.ba.migrering.rest.MigreringsfeilType
 import no.nav.familie.http.client.AbstractRestClient
 import no.nav.familie.http.client.RessursException
 import no.nav.familie.kontrakter.felles.Ressurs
@@ -43,9 +44,16 @@ class SakClient @Autowired constructor(
           throw e
         } catch (e: RessursException) {
             if (e.cause is KanIkkeMigrereException) {
+                secureLogger.info("Kaster videre cause", e.cause)
                 throw e
             } else {
-                throw KanIkkeMigrereException(feiltype = "UKJENT", melding = objectMapper.writeValueAsString(e.ressurs), e)
+                val feiltype = try {
+                    MigreringsfeilType.valueOf(e.ressurs.data as String).name
+                } catch (e:Exception) {
+                    "UKJENT"
+                }
+
+                throw KanIkkeMigrereException(feiltype = feiltype, melding = objectMapper.writeValueAsString(e.ressurs), e)
             }
         }
 
