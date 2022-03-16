@@ -1,7 +1,9 @@
 package no.nav.familie.ba.migrering.integrasjoner
 
 import com.fasterxml.jackson.databind.JsonNode
+import no.nav.familie.ba.migrering.rest.MigreringsfeilType
 import no.nav.familie.http.client.AbstractRestClient
+import no.nav.familie.http.client.RessursException
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.familie.kontrakter.felles.getDataOrThrow
 import no.nav.familie.kontrakter.felles.objectMapper
@@ -32,6 +34,7 @@ class SakClient @Autowired constructor(
             return response.getDataOrThrow()
         } catch (e: HttpStatusCodeException) {
             val ressurs = e.getResponseBodyAsString()
+            secureLogger.info("Feilressurs fra sak : $ressurs")
 
             if (!ressurs.isNullOrBlank()) {
                 val actualObj: JsonNode = objectMapper.readTree(ressurs)
@@ -39,6 +42,19 @@ class SakClient @Autowired constructor(
                 throw KanIkkeMigrereException(feiltype = data.toString(), melding = ressurs, e)
             }
           throw e
+        } catch (e: RessursException) {
+            if (e.cause is KanIkkeMigrereException) {
+                secureLogger.info("Kaster videre cause", e.cause)
+                throw e
+            } else {
+                val feiltype = try {
+                    MigreringsfeilType.valueOf(e.ressurs.data as String).name
+                } catch (e:Exception) {
+                    "UKJENT"
+                }
+
+                throw KanIkkeMigrereException(feiltype = feiltype, melding = objectMapper.writeValueAsString(e.ressurs), e)
+            }
         }
 
 
