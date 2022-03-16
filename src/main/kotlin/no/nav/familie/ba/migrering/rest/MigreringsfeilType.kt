@@ -19,6 +19,7 @@ enum class MigreringsfeilType(val beskrivelse: String) {
     IKKE_STØTTET_SAKSTYPE("Kan kun migrere ordinære saker (OR, OS)"),
     INGEN_BARN_MED_LØPENDE_STØNAD_I_INFOTRYGD("Fant ingen barn med løpende stønad på sak"),
     INGEN_LØPENDE_SAK_INFOTRYGD("Personen har ikke løpende sak i infotrygd"),
+    INSTITUSJON("Midlertidig ignoerert fordi det er en institusjon"),
     IVERKSETT_BEHANDLING_UTEN_VEDTAK("Fant ikke aktivt vedtak på behandling"),
     KAN_IKKE_OPPRETTE_BEHANDLING("Kan ikke opprette behandling"),
     MANGLER_ANDEL_TILKJENT_YTELSE("Fant ingen andeler tilkjent ytelse på behandlingen"),
@@ -29,4 +30,5 @@ enum class MigreringsfeilType(val beskrivelse: String) {
     UKJENT("Ukjent migreringsfeil"),
     ÅPEN_SAK_INFOTRYGD("Bruker har åpen behandling i Infotrygd"),
     ÅPEN_SAK_TIL_BESLUTNING_I_INFOTRYGD("Bruker har avventende vedtak til beslutning i Infotrygd"),
+
 }
