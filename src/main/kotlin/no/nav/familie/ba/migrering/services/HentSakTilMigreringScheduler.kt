@@ -14,9 +14,14 @@ class HentSakTilMigreringScheduler(
 ) {
 
     @Scheduled(cron = "0 0 13 * * MON-FRI", zone = "Europe/Oslo")
-    fun hentSakTilMigreringScheduler() {
+    fun hentOrdinærSakTilMigreringScheduler() {
         Log.info("Trigger migrering av $antallPersoner")
         hentSakTilMigreringService.migrer(antallPersoner)
+    }
+
+    @Scheduled(cron = "0 50 12 * * MON-FRI", zone = "Europe/Oslo")
+    fun hentUtvidetSakerTilMigreringScheduler() {
+        Log.info("Trigger migrering av $antallPersoner")
         hentSakTilMigreringService.migrer(antallPersonerUtvidetBa, kategori = UTVIDET)
     }
 
