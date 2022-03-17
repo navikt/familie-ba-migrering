@@ -24,15 +24,27 @@ class HentSakTilMigreringSchedulerTest {
     lateinit var hentSakTilMigreringService: HentSakTilMigreringService
 
     @Test
-    fun `Skal migrere antallet personer av hver kategori definert for gjeldende profil`() {
+    fun `Skal migrere antallet ordinære saker definert for gjeldende profil`() {
         val slot = slot<Kategori>()
 
         every { hentSakTilMigreringService.migrer(any(), any(), capture(slot)) } returns ""
 
-        hentSakTilMigreringScheduler.hentSakTilMigreringScheduler()
+        hentSakTilMigreringScheduler.hentOrdinærSakTilMigreringScheduler()
 
         verify(exactly = 1) {
             hentSakTilMigreringService.migrer(3, any(), Kategori.ORDINÆR)
+        }
+    }
+
+    @Test
+    fun `Skal migrere antallet utvidete saker definert for gjeldende profil`() {
+        val slot = slot<Kategori>()
+
+        every { hentSakTilMigreringService.migrer(any(), any(), capture(slot)) } returns ""
+
+        hentSakTilMigreringScheduler.hentUtvidetSakerTilMigreringScheduler()
+
+        verify(exactly = 1) {
             hentSakTilMigreringService.migrer(3, any(), Kategori.UTVIDET)
         }
     }

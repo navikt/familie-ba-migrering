@@ -106,7 +106,7 @@ class HentSakTilMigreringService(
         private val secureLogger = LoggerFactory.getLogger("secureLogger")
         const val ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD = 5000
         const val MAX_ANTALL_BARN = 6
-        const val MINIMUM_ALDER = 3
+        const val MINIMUM_ALDER = 1
         const val MIGRERING_DEAKTIVERT_MELDING = "Migrering deaktivert, stopper videre jobbing"
 
     }
