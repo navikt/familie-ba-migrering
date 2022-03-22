@@ -42,7 +42,7 @@ class MigrertSakController(
 
     @GetMapping("/feiltype")
     @Transactional(readOnly = true)
-    fun hentFeiledeSaker(@RequestParam(required = false) feiltype: MigreringsfeilType): MigrertSakResponse {
+    fun hentFeiledeSaker(@RequestParam(required = true) feiltype: MigreringsfeilType): MigrertSakResponse {
         return MigrertSakResponse(migrertsakRepository.findByFeiltypeAndStatus(feiltype.name, MigreringStatus.FEILET).toList())
 
     }
@@ -89,7 +89,13 @@ class MigrertSakController(
         migrertsakRepository.deleteById(id)
     }
 
-
+    @DeleteMapping("/feiltype/{feiltype}")
+    @Transactional
+    fun slettMigrertSakMedFeiltype(@PathVariable("feiltype") feiltype: MigreringsfeilType) {
+        migrertsakRepository.findByFeiltypeAndStatus(feiltype.name, MigreringStatus.FEILET).forEach {
+            migrertsakRepository.deleteById(it.id)
+        }
+    }
 }
 
 data class PersondIdentRequest(val personIdent: String)
