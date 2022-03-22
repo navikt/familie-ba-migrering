@@ -16,7 +16,7 @@ enum class MigreringsfeilType(val beskrivelse: String) {
     IDENT_IKKE_LENGER_AKTIV("Ident ikke lenger aktiv"),
     IKKE_GYLDIG_KJØREDATO("Ikke gyldig kjøredato"),
     IKKE_STØTTET_GRADERING("Personen har ikke støttet gradering"),
-    IKKE_STØTTET_SAKSTYPE("Kan kun migrere ordinære saker (OR, OS)"),
+    IKKE_STØTTET_SAKSTYPE("Kan kun migrere OR OS/MD eller UT EF"),
     INGEN_BARN_MED_LØPENDE_STØNAD_I_INFOTRYGD("Fant ingen barn med løpende stønad på sak"),
     INGEN_LØPENDE_SAK_INFOTRYGD("Personen har ikke løpende sak i infotrygd"),
     INSTITUSJON("Midlertidig ignoerert fordi det er en institusjon"),
@@ -29,6 +29,6 @@ enum class MigreringsfeilType(val beskrivelse: String) {
     UGYLDIG_ANTALL_DELYTELSER_I_INFOTRYGD("Kan kun migrere ordinære saker med nøyaktig ett utbetalingsbeløp"),
     UKJENT("Ukjent migreringsfeil"),
     ÅPEN_SAK_INFOTRYGD("Bruker har åpen behandling i Infotrygd"),
-    ÅPEN_SAK_TIL_BESLUTNING_I_INFOTRYGD("Bruker har avventende vedtak til beslutning i Infotrygd"),
+    ÅPEN_SAK_TIL_BESLUTNING_I_INFOTRYGD("Bruker har avventende vedtak til beslutning i Infotrygd")
 
 }
