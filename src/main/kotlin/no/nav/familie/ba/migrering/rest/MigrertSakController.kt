@@ -6,6 +6,7 @@ import no.nav.familie.ba.migrering.domain.Migrertsak
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
 import no.nav.familie.ba.migrering.domain.TellFeilResponse
 import no.nav.security.token.support.core.api.ProtectedWithClaims
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Pageable
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
@@ -28,6 +29,7 @@ import javax.validation.Valid
 class MigrertSakController(
     private val migrertsakRepository: MigrertsakRepository
 ) {
+    private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     @GetMapping("/")
     @Transactional(readOnly = true)
@@ -91,9 +93,14 @@ class MigrertSakController(
 
     @DeleteMapping("/feiltype/{feiltype}")
     @Transactional
-    fun slettMigrertSakMedFeiltype(@PathVariable("feiltype") feiltype: MigreringsfeilType) {
+    fun slettMigrertSakMedFeiltype(@PathVariable("feiltype") feiltype: MigreringsfeilType, @Schema(defaultValue = "false") @RequestParam(required = true) dryRun: Boolean) {
         migrertsakRepository.findByFeiltypeAndStatus(feiltype.name, MigreringStatus.FEILET).forEach {
-            migrertsakRepository.deleteById(it.id)
+            if(dryRun) {
+                secureLogger.info("Sletter fra migrertSak: $it")
+                migrertsakRepository.deleteById(it.id)
+            } else {
+                secureLogger.info("dryRun er satt til false, så ignorerer sletting av $it")
+            }
         }
     }
 }
