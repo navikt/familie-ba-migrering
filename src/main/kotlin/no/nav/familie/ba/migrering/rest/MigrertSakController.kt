@@ -45,7 +45,7 @@ class MigrertSakController(
     @GetMapping("/feiltype")
     @Transactional(readOnly = true)
     fun hentFeiledeSaker(@RequestParam(required = true) feiltype: MigreringsfeilType): MigrertSakResponse {
-        return MigrertSakResponse(migrertsakRepository.findByFeiltypeAndStatus(feiltype.name, MigreringStatus.FEILET).toList())
+        return MigrertSakResponse(migrertsakRepository.findByStatusAndFeiltype(MigreringStatus.FEILET, feiltype.name).toList())
 
     }
 
@@ -93,13 +93,13 @@ class MigrertSakController(
 
     @DeleteMapping("/feiltype/{feiltype}")
     @Transactional
-    fun slettMigrertSakMedFeiltype(@PathVariable("feiltype") feiltype: MigreringsfeilType, @Schema(defaultValue = "false") @RequestParam(required = true) dryRun: Boolean) {
-        migrertsakRepository.findByFeiltypeAndStatus(feiltype.name, MigreringStatus.FEILET).forEach {
+    fun slettMigrertSakMedFeiltype(@PathVariable("feiltype") feiltype: MigreringsfeilType, @Schema(defaultValue = "true") @RequestParam(required = true) dryRun: Boolean) {
+        migrertsakRepository.findByStatusAndFeiltype(MigreringStatus.FEILET, feiltype.name).forEach {
             if(dryRun) {
+                secureLogger.info("dryRun er satt til false, så ignorerer sletting av $it")
+            } else {
                 secureLogger.info("Sletter fra migrertSak: $it")
                 migrertsakRepository.deleteById(it.id)
-            } else {
-                secureLogger.info("dryRun er satt til false, så ignorerer sletting av $it")
             }
         }
     }
