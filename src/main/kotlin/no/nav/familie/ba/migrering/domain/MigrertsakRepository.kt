@@ -27,6 +27,8 @@ interface MigrertsakRepository : RepositoryInterface<Migrertsak, UUID>, InsertUp
 
     fun findByStatusAndFeiltype(status: MigreringStatus, feiltype: String): List<Migrertsak>
 
+    fun countByStatusIn(status: List<MigreringStatus>): Long
+
 }
 
 class TellFeilResponse(val feiltype: String, val antall: Int)
