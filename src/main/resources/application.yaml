@@ -104,3 +104,4 @@ prosessering:
   delete:
     after:
       weeks: 1
+  cronRetryTasks: "0 5 6 * * ?"

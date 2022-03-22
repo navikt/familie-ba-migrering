@@ -41,7 +41,6 @@ class MålerService(private val migrerertsakRepository: MigrertsakRepository) {
                     antallFeil
                 )
             )
-
         )
         antallLøpendeSakerGauge.register(rows, true)
     }
