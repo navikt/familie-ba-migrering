@@ -8,7 +8,8 @@ package no.nav.familie.ba.migrering.rest
 enum class MigreringsfeilType(val beskrivelse: String) {
     AKTIV_BEHANDLING("Det finnes allerede en aktiv behandling på personen som ikke er migrering"),
     ALLEREDE_MIGRERT("Personen er allerede migrert"),
-    BEREGNET_BELØP_FOR_UTBETALING_ULIKT_BELØP_FRA_INFOTRYGD("Beregnet beløp var ulikt beløp fra Infotryg"),
+    BEREGNET_BELØP_FOR_UTBETALING_ULIKT_BELØP_FRA_INFOTRYGD("Beregnet beløp var ulikt beløp fra Infotrygd"),
+    BEREGNET_DELT_BOSTED_BELØP_ULIKT_BELØP_FRA_INFOTRYGD("Beløp beregnet for delt bosted var ulikt beløp fra Infotrygd"),
     DIFF_BARN_INFOTRYGD_OG_PDL("Kan ikke migrere fordi barn fra PDL ikke samsvarer med løpende barnetrygdbarn fra Infotrygd"),
     FAGSAK_AVSLUTTET_UTEN_MIGRERING("Personen er allerede migrert"),
     FLERE_DELYTELSER_I_INFOTRYGD("Finnes flere delytelser på sak"),
@@ -16,7 +17,7 @@ enum class MigreringsfeilType(val beskrivelse: String) {
     IDENT_IKKE_LENGER_AKTIV("Ident ikke lenger aktiv"),
     IKKE_GYLDIG_KJØREDATO("Ikke gyldig kjøredato"),
     IKKE_STØTTET_GRADERING("Personen har ikke støttet gradering"),
-    IKKE_STØTTET_SAKSTYPE("Kan kun migrere ordinære saker (OR, OS)"),
+    IKKE_STØTTET_SAKSTYPE("Kan kun migrere OR OS/MD eller UT EF"),
     INGEN_BARN_MED_LØPENDE_STØNAD_I_INFOTRYGD("Fant ingen barn med løpende stønad på sak"),
     INGEN_LØPENDE_SAK_INFOTRYGD("Personen har ikke løpende sak i infotrygd"),
     INSTITUSJON("Midlertidig ignoerert fordi det er en institusjon"),
@@ -29,6 +30,6 @@ enum class MigreringsfeilType(val beskrivelse: String) {
     UGYLDIG_ANTALL_DELYTELSER_I_INFOTRYGD("Kan kun migrere ordinære saker med nøyaktig ett utbetalingsbeløp"),
     UKJENT("Ukjent migreringsfeil"),
     ÅPEN_SAK_INFOTRYGD("Bruker har åpen behandling i Infotrygd"),
-    ÅPEN_SAK_TIL_BESLUTNING_I_INFOTRYGD("Bruker har avventende vedtak til beslutning i Infotrygd"),
+    ÅPEN_SAK_TIL_BESLUTNING_I_INFOTRYGD("Bruker har avventende vedtak til beslutning i Infotrygd")
 
 }
