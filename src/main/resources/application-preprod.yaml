@@ -2,7 +2,9 @@ migrering:
   aktivert: true
   antallPersoner:
     ordinær: 3
+    ordinær.deltbosted: 3
     utvidet: 3
+    utvidet.deltbosted: 1
 
 rolle:
   teamfamilie:

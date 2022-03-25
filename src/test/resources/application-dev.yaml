@@ -32,4 +32,5 @@ migrering:
   aktivert: true
   antallPersoner:
     ordinær: 3
+    ordinær.deltbosted: 3
     utvidet: 3

@@ -116,4 +116,5 @@ enum class Kategori(val valg: String, val undervalg: String) {
     ORDINÆR("OR", "OS"),
     UTVIDET("UT", "EF"),
     ORDINÆR_DELT_BOSTED("OR", "MD"),
+    UTVIDET_DELT_BOSTED("UT", "MD"),
 }
