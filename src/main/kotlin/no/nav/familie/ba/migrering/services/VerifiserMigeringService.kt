@@ -75,4 +75,9 @@ class VerifiserMigeringService(
             false
         }
     }
+
+    fun listÅpneSaker(ident: String): List<String> {
+        return infotrygdClient.hentSaker(ident).filter { it.status != "FB" }
+            .map { sak -> "${sak.saksnr}-${sak.saksblokk},${sak.valg}/${sak.undervalg},${sak.status},${sak.type}, ${sak.regDato},${sak.stønad?.iverksattFom}-${sak.stønad?.opphørtFom}-${sak.stønad?.opphørsgrunn} " }
+    }
 }

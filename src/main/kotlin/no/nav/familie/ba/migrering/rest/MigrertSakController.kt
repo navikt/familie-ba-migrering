@@ -55,7 +55,6 @@ class MigrertSakController(
        return MigrertSakResponse(migrertsakRepository.findByStatusInAndPersonIdentOrderByMigreringsdato(MigreringStatus.values().toList(), body.personIdent))
     }
 
-
     @GetMapping("/tell-feilet")
     @Transactional(readOnly = true)
     fun tellAntallFeiledeMigrering(): List<TellFeilResponse> {
@@ -103,6 +102,7 @@ class MigrertSakController(
             }
         }
     }
+
 }
 
 data class PersondIdentRequest(val personIdent: String)

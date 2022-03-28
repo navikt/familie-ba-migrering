@@ -6,6 +6,7 @@ import no.nav.familie.ba.migrering.services.Kategori
 import no.nav.familie.ba.migrering.services.VerifiserMigeringService
 import no.nav.familie.kontrakter.felles.Ressurs
 import no.nav.security.token.support.core.api.ProtectedWithClaims
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -62,6 +63,12 @@ class MigreringController(
     fun migrer(@Valid @RequestBody request: MigrertAvSaksbehandlerRequest): Ressurs<String> {
         verifiserMigeringService.verifiserMigrering(request.personIdent, request.migreringsResponse)
         return Ressurs.success("OK")
+    }
+
+    @PostMapping("/sak")
+    @Transactional(readOnly = true)
+    fun visÅpneSakerFor(@Valid @RequestBody identer: Set<String>): List<Pair<String, List<String>>>{
+        return identer.map{Pair(it, verifiserMigeringService.listÅpneSaker(it))}
     }
 
 
