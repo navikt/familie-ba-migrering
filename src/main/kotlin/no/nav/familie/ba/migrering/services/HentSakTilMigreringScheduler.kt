@@ -44,9 +44,10 @@ class HentSakTilMigreringScheduler(
 
     @Scheduled(cron = "0 0 17 * * MON-FRI", zone = "Europe/Oslo")
     fun rekjørMigreringerMedFeiltypeÅpenSak() {
-        Log.info("Trigger automatisk rekjøring av migreringer som feilet pga. åpen sak i Infotrygd ")
+        Log.info("Trigger automatisk rekjøring av migreringer som feilet pga. åpen sak i Infotrygd, samt ukjente feil")
         hentSakTilMigreringService.rekjørMigreringerMedFeiltype(MigreringsfeilType.ÅPEN_SAK_INFOTRYGD.name)
         hentSakTilMigreringService.rekjørMigreringerMedFeiltype(MigreringsfeilType.ÅPEN_SAK_TIL_BESLUTNING_I_INFOTRYGD.name)
+        hentSakTilMigreringService.rekjørMigreringerMedFeiltype(MigreringsfeilType.UKJENT.name)
     }
 
     companion object {
