@@ -1,5 +1,5 @@
 migrering:
-  aktivert: true
+  aktivert: false
   antallPersoner:
     ordinær: 0
     ordinær.deltbosted: 0
