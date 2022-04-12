@@ -1,9 +1,9 @@
 migrering:
   aktivert: true
   antallPersoner:
-    ordinær: 10000
+    ordinær: 0
     ordinær.deltbosted: 0
-    utvidet: 1000
+    utvidet: 0
     utvidet.deltbosted: 0
 
 spring:
