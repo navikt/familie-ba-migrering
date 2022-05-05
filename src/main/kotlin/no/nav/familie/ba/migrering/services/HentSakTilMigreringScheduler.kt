@@ -18,19 +18,19 @@ class HentSakTilMigreringScheduler(
     @Value("\${migrering.antallPersoner.utvidet.deltbosted:0}") val antallPersonerUtvidetDeltBosted: Int,
 ) {
 
-    @Scheduled(cron = "0 0 13 * * MON-FRI", zone = "Europe/Oslo")
+    @Scheduled(cron = "0 0 16 * * MON-FRI", zone = "Europe/Oslo")
     fun hentOrdinærSakTilMigreringScheduler() {
         Log.info("Trigger migrering av $antallPersoneOrdinærr ordinære saker")
         hentSakTilMigreringService.migrer(antallPersoneOrdinærr)
     }
 
-    @Scheduled(cron = "0 50 12 * * MON-FRI", zone = "Europe/Oslo")
+    @Scheduled(cron = "0 50 16 * * MON-FRI", zone = "Europe/Oslo")
     fun hentUtvidetSakerTilMigreringScheduler() {
         Log.info("Trigger migrering av $antallPersonerUtvidet utvidete saker")
         hentSakTilMigreringService.migrer(antallPersonerUtvidet, kategori = UTVIDET)
     }
 
-    @Scheduled(cron = "0 40 12 * * MON-FRI", zone = "Europe/Oslo")
+    @Scheduled(cron = "0 0 13 * * MON-FRI", zone = "Europe/Oslo")
     fun hentDeltBostedScheduler() {
         Log.info("Trigger migrering av $antallPersonerOrdinærDeltBosted ordinære saker med delt bosted")
         if (antallPersonerOrdinærDeltBosted > 0) {
