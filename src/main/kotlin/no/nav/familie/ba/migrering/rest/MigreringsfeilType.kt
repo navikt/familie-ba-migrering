@@ -14,6 +14,7 @@ enum class MigreringsfeilType(val beskrivelse: String) {
     FAGSAK_AVSLUTTET_UTEN_MIGRERING("Personen er allerede migrert"),
     FLERE_DELYTELSER_I_INFOTRYGD("Finnes flere delytelser på sak"),
     FLERE_LØPENDE_SAKER_INFOTRYGD("Fant mer enn én aktiv sak på bruker i infotrygd"),
+    HISTORISK_IDENT_REGNET_SOM_EKSTRA_BARN_I_INFOTRYGD("Listen med barn fra Infotrygd har identer tilhørende samme barn"),
     IDENT_IKKE_LENGER_AKTIV("Ident ikke lenger aktiv"),
     IKKE_GYLDIG_KJØREDATO("Ikke gyldig kjøredato"),
     IKKE_STØTTET_GRADERING("Personen har ikke støttet gradering"),
