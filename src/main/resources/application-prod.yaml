@@ -2,9 +2,9 @@ migrering:
   aktivert: true
   antallPersoner:
     ordinær: 250
-    ordinær.deltbosted: 2500
+    ordinær.deltbosted: 7000
     utvidet: 250
-    utvidet.deltbosted: 1000
+    utvidet.deltbosted: 2500
 
 spring:
   flyway:
