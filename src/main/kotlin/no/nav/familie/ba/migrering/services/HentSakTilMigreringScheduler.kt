@@ -42,14 +42,14 @@ class HentSakTilMigreringScheduler(
         }
     }
 
-    @Scheduled(cron = "0 0 17 * * FRI", zone = "Europe/Oslo")
+    @Scheduled(cron = "0 0 15 * * FRI", zone = "Europe/Oslo")
     fun rekjørMigreringerMedFeiltypeÅpenSak() {
         Log.info("Trigger automatisk rekjøring av migreringer som feilet pga. åpen sak i Infotrygd")
         hentSakTilMigreringService.rekjørMigreringerMedFeiltype(MigreringsfeilType.ÅPEN_SAK_INFOTRYGD.name)
         hentSakTilMigreringService.rekjørMigreringerMedFeiltype(MigreringsfeilType.ÅPEN_SAK_TIL_BESLUTNING_I_INFOTRYGD.name)
     }
 
-    @Scheduled(cron = "0 0 17 * * MON-FRI", zone = "Europe/Oslo")
+    @Scheduled(cron = "0 0 15 * * MON-FRI", zone = "Europe/Oslo")
     fun rekjørMigreringerMedFeiltypeUKJENT() {
         Log.info("Trigger automatisk rekjøring av migreringer som feilet ukjente feil")
         hentSakTilMigreringService.rekjørMigreringerMedFeiltype(MigreringsfeilType.UKJENT.name)
