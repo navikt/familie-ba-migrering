@@ -1,3 +1,3 @@
 UPDATE migrertesaker
 SET status = 'ARKIVERT'
-WHERE = 'FEILET';
+WHERE status = 'FEILET';
