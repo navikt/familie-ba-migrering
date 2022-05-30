@@ -62,7 +62,7 @@ class HentSakTilMigreringServiceTest {
         } returns MigreringResponse(emptySet(), 2)
         val tasker = mutableListOf<Task>()
         every { taskRepositoryMock.save(capture(tasker)) } returns Task(type = "", payload = "")
-        every { migertsakRepository.findByPersonIdent(any()) } returns emptyList()
+        every { migertsakRepository.findByPersonIdentAndStatusNot(any(), MigreringStatus.ARKIVERT) } returns emptyList()
         service.migrer(10, GYLDIG_MIGRERINGSKJØRETIDSPUNKT)
 
         assertThat(tasker).hasSize(2)
@@ -100,7 +100,7 @@ class HentSakTilMigreringServiceTest {
                 )
             )
         } returns MigreringResponse(emptySet(), 2)
-        every { migertsakRepository.findByPersonIdent(personIdent) } returns listOf(
+        every { migertsakRepository.findByPersonIdentAndStatusNot(personIdent, MigreringStatus.ARKIVERT) } returns listOf(
             Migrertsak()
         )
         every { taskRepositoryMock.save(any()) } returns Task(type = "", payload = "")
@@ -153,9 +153,9 @@ class HentSakTilMigreringServiceTest {
         } returns MigreringResponse(arrayOf("9", "10", "11", "12", "13").toSet(), 3)
         val tasker = mutableListOf<Task>()
         every { taskRepositoryMock.save(capture(tasker)) } returns Task(type = "", payload = "")
-        every { migertsakRepository.findByPersonIdent(any()) } returns emptyList()
-        every { migertsakRepository.findByPersonIdent( "4") } returns listOf(Migrertsak())
-        every { migertsakRepository.findByPersonIdent("9") } returns listOf(Migrertsak())
+        every { migertsakRepository.findByPersonIdentAndStatusNot(any(), MigreringStatus.ARKIVERT) } returns emptyList()
+        every { migertsakRepository.findByPersonIdentAndStatusNot( "4", MigreringStatus.ARKIVERT) } returns listOf(Migrertsak())
+        every { migertsakRepository.findByPersonIdentAndStatusNot("9", MigreringStatus.ARKIVERT) } returns listOf(Migrertsak())
         service.migrer(10, GYLDIG_MIGRERINGSKJØRETIDSPUNKT)
 
         assertThat(tasker).hasSize(10)

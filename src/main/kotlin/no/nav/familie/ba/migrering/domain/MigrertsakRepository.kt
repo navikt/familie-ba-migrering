@@ -18,7 +18,7 @@ import java.util.UUID
 @Transactional
 interface MigrertsakRepository : RepositoryInterface<Migrertsak, UUID>, InsertUpdateRepository<Migrertsak> {
     fun findByStatusAndPersonIdent(status: MigreringStatus, personIdent: String): List<Migrertsak>
-    fun findByPersonIdent(personIdent: String): List<Migrertsak>
+    fun findByPersonIdentAndStatusNot(personIdent: String, status: MigreringStatus): List<Migrertsak>
     fun findByStatusInAndPersonIdentOrderByMigreringsdato(status: List<MigreringStatus>, personIdent: String): List<Migrertsak>
     fun findByStatusIn(status: List<MigreringStatus>, page: Pageable): List<Migrertsak>
 

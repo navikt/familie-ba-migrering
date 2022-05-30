@@ -51,7 +51,7 @@ class VerifiserMigeringService(
 
 
     fun sjekkOmPersonErMigrert(personIdent: String): Boolean {
-        val (migrertSaker, ikkeMigrerteSaker) = migrertsakRepository.findByPersonIdent(personIdent)
+        val (migrertSaker, ikkeMigrerteSaker) = migrertsakRepository.findByPersonIdentAndStatusNot(personIdent, MigreringStatus.ARKIVERT)
             .partition { it.status in listOf(MigreringStatus.MIGRERT_I_BA, MigreringStatus.VERIFISERT) }
         if (migrertSaker.isNotEmpty()) {
             secureLogger.info("Personen med personident $personIdent er allerede migrert")

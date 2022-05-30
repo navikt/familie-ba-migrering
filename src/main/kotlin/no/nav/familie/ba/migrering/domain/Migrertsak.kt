@@ -38,7 +38,8 @@ enum class MigreringStatus {
     UKJENT,
     MIGRERT_I_BA,
     FEILET,
-    VERIFISERT
+    VERIFISERT,
+    ARKIVERT
 }
 
 data class JsonWrapper(val jsonStr: String?) {
