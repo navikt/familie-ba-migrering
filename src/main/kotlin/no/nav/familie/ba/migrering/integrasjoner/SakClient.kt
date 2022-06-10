@@ -41,7 +41,7 @@ class SakClient @Autowired constructor(
                 val data = actualObj.get("data").asText("UKJENT")
                 throw KanIkkeMigrereException(feiltype = data.toString(), melding = ressurs, e)
             }
-          throw e
+            throw e
         } catch (e: RessursException) {
             if (e.cause is KanIkkeMigrereException) {
                 secureLogger.info("Kaster videre cause", e.cause)
@@ -49,15 +49,13 @@ class SakClient @Autowired constructor(
             } else {
                 val feiltype = try {
                     MigreringsfeilType.valueOf(e.ressurs.data as String).name
-                } catch (e:Exception) {
+                } catch (e: Exception) {
                     "UKJENT"
                 }
 
                 throw KanIkkeMigrereException(feiltype = feiltype, melding = objectMapper.writeValueAsString(e.ressurs), e)
             }
         }
-
-
     }
 }
 

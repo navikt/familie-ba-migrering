@@ -154,7 +154,7 @@ class HentSakTilMigreringServiceTest {
         val tasker = mutableListOf<Task>()
         every { taskRepositoryMock.save(capture(tasker)) } returns Task(type = "", payload = "")
         every { migertsakRepository.findByPersonIdentAndStatusNot(any(), MigreringStatus.ARKIVERT) } returns emptyList()
-        every { migertsakRepository.findByPersonIdentAndStatusNot( "4", MigreringStatus.ARKIVERT) } returns listOf(Migrertsak())
+        every { migertsakRepository.findByPersonIdentAndStatusNot("4", MigreringStatus.ARKIVERT) } returns listOf(Migrertsak())
         every { migertsakRepository.findByPersonIdentAndStatusNot("9", MigreringStatus.ARKIVERT) } returns listOf(Migrertsak())
         service.migrer(10, GYLDIG_MIGRERINGSKJØRETIDSPUNKT)
 
@@ -169,9 +169,7 @@ class HentSakTilMigreringServiceTest {
                 tasker.find { it.payload.contains(personIdent) } != null
             }
         ).isTrue
-
     }
-
 
     @Test
     fun `Rekjør migrering på feiltype - ikke opprett task hvis det er ingen migrertsak å rekjøre`() {
@@ -188,7 +186,8 @@ class HentSakTilMigreringServiceTest {
         every { migertsakRepository.findByStatusAndFeiltype(MigreringStatus.FEILET, "TESTFEIL") } returns listOf(
             Migrertsak(
                 personIdent = "1"
-            ), Migrertsak(personIdent = "2")
+            ),
+            Migrertsak(personIdent = "2")
         )
         every { taskRepositoryMock.save(any()) } returns Task(type = "", payload = "")
         service.rekjørMigreringerMedFeiltype("TESTFEIL").also {
@@ -203,7 +202,8 @@ class HentSakTilMigreringServiceTest {
         every { migertsakRepository.findByStatusAndFeiltype(MigreringStatus.FEILET, "TESTFEIL") } returns listOf(
             Migrertsak(
                 personIdent = "1"
-            ), Migrertsak(personIdent = "1")
+            ),
+            Migrertsak(personIdent = "1")
         )
         every { taskRepositoryMock.save(any()) } returns Task(type = "", payload = "")
         service.rekjørMigreringerMedFeiltype("TESTFEIL").also {
@@ -212,7 +212,6 @@ class HentSakTilMigreringServiceTest {
 
         verify(exactly = 1) { taskRepositoryMock.save(any()) }
     }
-
 
     @Test
     fun `Rekjør migrering på liste identer - ikke opprett task hvis input er empty`() {
@@ -243,8 +242,6 @@ class HentSakTilMigreringServiceTest {
             assertThat(it).isEqualTo("Rekjørt 2 migreringer")
         }
 
-
-
         verify(exactly = 2) { taskRepositoryMock.save(any()) }
     }
 
@@ -253,7 +250,8 @@ class HentSakTilMigreringServiceTest {
         every { migertsakRepository.findByStatusAndPersonIdent(MigreringStatus.FEILET, "1") } returns listOf(
             Migrertsak(
                 personIdent = "1"
-            ), Migrertsak(personIdent = "1")
+            ),
+            Migrertsak(personIdent = "1")
         )
         every { taskRepositoryMock.save(any()) } returns Task(type = "", payload = "")
         service.rekjørMigreringer(setOf("1")).also {
@@ -264,6 +262,6 @@ class HentSakTilMigreringServiceTest {
     }
 
     companion object {
-        private val GYLDIG_MIGRERINGSKJØRETIDSPUNKT:LocalDate = LocalDate.of(2022,1  ,1)
+        private val GYLDIG_MIGRERINGSKJØRETIDSPUNKT: LocalDate = LocalDate.of(2022, 1, 1)
     }
 }

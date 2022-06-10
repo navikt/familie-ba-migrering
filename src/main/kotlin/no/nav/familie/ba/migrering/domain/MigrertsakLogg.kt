@@ -45,7 +45,3 @@ data class MigrertsakLogg(
         }
     }
 }
-
-
-
-

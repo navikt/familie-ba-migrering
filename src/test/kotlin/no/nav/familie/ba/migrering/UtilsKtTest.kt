@@ -1,6 +1,7 @@
 package no.nav.familie.ba.migrering
 
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
@@ -23,7 +24,11 @@ internal class UtilsKtTest {
 
     @Test
     fun `skal kaste exception hvis dato er i et år man ikke har kjøredator`() {
-        assertThrows(IllegalStateException::class.java,  { erIkkeKjøredato(LocalDate.of(2023,1,1))}, "Mangler kjøredato for 2022")
+        assertThrows(
+            IllegalStateException::class.java,
+            { erIkkeKjøredato(LocalDate.of(2023, 1, 1)) },
+            "Mangler kjøredato for 2022"
+        )
     }
 
     @ParameterizedTest
@@ -40,5 +45,4 @@ internal class UtilsKtTest {
     fun `sjekk om man skal kjøre migreing`(migreringAktivert: Boolean, dato: LocalDate, expected: Boolean) {
         assertEquals(expected, skalKjøreMigering(migreringAktivert, dato))
     }
-
 }

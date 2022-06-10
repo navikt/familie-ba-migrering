@@ -19,9 +19,12 @@ import java.util.UUID
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(initializers = [DbContainerInitializer::class])
 @ActiveProfiles("dev")
-@SpringBootTest(classes = [DevLauncher::class],
-                properties = [
-                    "no.nav.security.jwt.issuer.azuread.discoveryUrl: http://localhost:\${mock-oauth2-server.port}/azuread/.well-known/openid-configuration"])
+@SpringBootTest(
+    classes = [DevLauncher::class],
+    properties = [
+        "no.nav.security.jwt.issuer.azuread.discoveryUrl: http://localhost:\${mock-oauth2-server.port}/azuread/.well-known/openid-configuration"
+    ]
+)
 
 @EnableMockOAuth2Server
 class MigrertsakRepositoryTest {
