@@ -18,6 +18,7 @@ enum class MigreringsfeilType(val beskrivelse: String) {
     HAR_BARN_OVER_18_PÅ_INFOTRYGDSAK("Infotrygdsak har barn over 18"),
     HISTORISK_IDENT_REGNET_SOM_EKSTRA_BARN_I_INFOTRYGD("Listen med barn fra Infotrygd har identer tilhørende samme barn"),
     IDENT_IKKE_LENGER_AKTIV("Ident ikke lenger aktiv"),
+    IDENT_BARN_IKKE_LENGER_AKTIV("Ident barn ikke lenger aktiv"),
     IKKE_GYLDIG_KJØREDATO("Ikke gyldig kjøredato"),
     IKKE_STØTTET_GRADERING("Personen har ikke støttet gradering"),
     IKKE_STØTTET_SAKSTYPE("Kan kun migrere OR OS/MD eller UT EF"),
