@@ -5,6 +5,7 @@ import no.nav.familie.ba.migrering.services.HentSakTilMigreringService
 import no.nav.familie.ba.migrering.services.Kategori
 import no.nav.familie.ba.migrering.services.VerifiserMigeringService
 import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.prosessering.internal.TaskMaintenanceService
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
@@ -23,7 +24,8 @@ import javax.validation.constraints.Min
 @Validated
 class MigreringController(
     private val hentSakTilMigreringService: HentSakTilMigreringService,
-    private val verifiserMigeringService: VerifiserMigeringService
+    private val verifiserMigeringService: VerifiserMigeringService,
+    private val taskMaintenanceService: TaskMaintenanceService
 ) {
 
 
@@ -69,6 +71,13 @@ class MigreringController(
     @Transactional(readOnly = true)
     fun visÅpneSakerFor(@Valid @RequestBody identer: Set<String>): List<Pair<String, List<String>>>{
         return identer.map{Pair(it, verifiserMigeringService.listÅpneSaker(it))}
+    }
+
+    @PostMapping("/slett-gamle-tasker")
+    @Transactional
+    fun slettGamletasker(): String {
+        taskMaintenanceService.slettTasksKlarForSletting()
+        return "OK"
     }
 
 
