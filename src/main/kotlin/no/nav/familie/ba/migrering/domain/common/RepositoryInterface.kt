@@ -1,6 +1,5 @@
 package no.nav.familie.ba.migrering.domain.common
 
-
 import org.springframework.data.repository.NoRepositoryBean
 import org.springframework.data.repository.PagingAndSortingRepository
 
@@ -9,4 +8,3 @@ import org.springframework.data.repository.PagingAndSortingRepository
  */
 @NoRepositoryBean
 interface RepositoryInterface<T, ID> : PagingAndSortingRepository<T, ID>
-

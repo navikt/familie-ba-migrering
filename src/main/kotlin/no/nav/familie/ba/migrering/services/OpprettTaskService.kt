@@ -32,7 +32,6 @@ class OpprettTaskService(
         }
     }
 
-
     fun opprettVerifiserMigreringTask(migrertsak: Migrertsak, migrerinstResponseDto: MigreringResponseDto) {
         val properties = Properties().apply {
             put("personIdent", migrertsak.personIdent)
@@ -49,7 +48,6 @@ class OpprettTaskService(
             )
         )
     }
-
 
     companion object {
 

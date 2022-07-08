@@ -22,7 +22,7 @@ class HentSakTilMigreringService(
         antallPersoner: Int,
         migreringsDato: LocalDate = LocalDate.now(),
         kategori: Kategori = Kategori.ORDINÆR
-    ): String { //migreringsDato skal kun brukes fra tester
+    ): String { // migreringsDato skal kun brukes fra tester
         if (!skalKjøreMigering(migreringAktivert, migreringsDato)) {
             Log.info(MIGRERING_DEAKTIVERT_MELDING)
             return MIGRERING_DEAKTIVERT_MELDING
@@ -51,7 +51,6 @@ class HentSakTilMigreringService(
 
         return "Migrerte $antallPersoner av Kategori.$kategori"
     }
-
 
     fun rekjørMigreringer(identer: Set<String>): String {
         if (!migreringAktivert) {
@@ -108,7 +107,6 @@ class HentSakTilMigreringService(
         const val MAX_ANTALL_BARN = 6
         const val MINIMUM_ALDER = 1
         const val MIGRERING_DEAKTIVERT_MELDING = "Migrering deaktivert, stopper videre jobbing"
-
     }
 }
 

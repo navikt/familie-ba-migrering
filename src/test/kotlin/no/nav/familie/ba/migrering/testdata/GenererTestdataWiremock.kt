@@ -8,31 +8,28 @@ import java.time.YearMonth
 
 class GenererTestdataWiremock
 
-
 fun main(args: Array<String>) {
     val restTemplate = RestTemplateBuilder().build()
 
-
     val personer = (1..100).map {
-        //generate random number
+        // generate random number
         (100_000..900_000).random().toString()
     }.toSet()
 
-
     val personAsJson = objectMapper.writeValueAsString(personer).replace("\"", "\\\"")
 
-    //mock infotrygd i
+    // mock infotrygd i
     val infotrygdMigreringResponse = INFOTRYGD_WIREMOCK.replace("BODY", personAsJson)
     println(
         "Oppretter infotrygd-testdata i wiremock " +
-                restTemplate.postForEntity(
-                    "http://localhost:8300/__admin/mappings/new",
-                    infotrygdMigreringResponse,
-                    String::class.java
-                )
+            restTemplate.postForEntity(
+                "http://localhost:8300/__admin/mappings/new",
+                infotrygdMigreringResponse,
+                String::class.java
+            )
     )
 
-    //mock sak i wiremock
+    // mock sak i wiremock
     for (i in 0..99) {
         val modulo = i % 8 // hver 8 skal feile
         if (modulo == 0) {
@@ -68,7 +65,6 @@ fun main(args: Array<String>) {
                         )
                     )
                 }
-
         }
     }
 }
@@ -126,6 +122,3 @@ const val SAK_ERROR_WIREMOCK = """
     }
 }
 """
-
-
-

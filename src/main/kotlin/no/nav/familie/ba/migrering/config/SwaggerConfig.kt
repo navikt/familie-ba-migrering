@@ -12,21 +12,24 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
-
 @Configuration
-class SwaggerConfig(@Value("\${AUTHORIZATION_URL}")
-                    val authorizationUrl: String,
-                    @Value("\${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}")
-                    val tokenUrl: String,
-                    @Value("\${API_SCOPE}")
-                    val apiScope: String) {
+class SwaggerConfig(
+    @Value("\${AUTHORIZATION_URL}")
+    val authorizationUrl: String,
+    @Value("\${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}")
+    val tokenUrl: String,
+    @Value("\${API_SCOPE}")
+    val apiScope: String
+) {
 
     @Bean
     fun openApi(): OpenAPI {
         return OpenAPI().info(Info().title("Migrering API").version("v1"))
-            .components(Components()
-                            .addSecuritySchemes("oauth2", oauth2SecurityScheme())
-                            .addSecuritySchemes("bearer", bearerTokenSecurityScheme()))
+            .components(
+                Components()
+                    .addSecuritySchemes("oauth2", oauth2SecurityScheme())
+                    .addSecuritySchemes("bearer", bearerTokenSecurityScheme())
+            )
             .addSecurityItem(SecurityRequirement().addList("oauth2", listOf("read", "write")))
             .addSecurityItem(SecurityRequirement().addList("bearer", listOf("read", "write")))
     }
@@ -37,11 +40,14 @@ class SwaggerConfig(@Value("\${AUTHORIZATION_URL}")
             .type(SecurityScheme.Type.OAUTH2)
             .scheme("oauth2")
             .`in`(SecurityScheme.In.HEADER)
-            .flows(OAuthFlows()
-                       .authorizationCode(OAuthFlow().authorizationUrl(authorizationUrl)
-                                              .tokenUrl(tokenUrl)
-                                              .scopes(Scopes().addString(apiScope, "read,write"))))
-
+            .flows(
+                OAuthFlows()
+                    .authorizationCode(
+                        OAuthFlow().authorizationUrl(authorizationUrl)
+                            .tokenUrl(tokenUrl)
+                            .scopes(Scopes().addString(apiScope, "read,write"))
+                    )
+            )
     }
 
     private fun bearerTokenSecurityScheme(): SecurityScheme {
@@ -52,5 +58,4 @@ class SwaggerConfig(@Value("\${AUTHORIZATION_URL}")
             .`in`(SecurityScheme.In.HEADER)
             .name("Authorization")
     }
-
 }

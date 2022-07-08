@@ -46,20 +46,18 @@ class MigrertSakController(
     @Transactional(readOnly = true)
     fun hentFeiledeSaker(@RequestParam(required = true) feiltype: MigreringsfeilType): MigrertSakResponse {
         return MigrertSakResponse(migrertsakRepository.findByStatusAndFeiltype(MigreringStatus.FEILET, feiltype.name).toList())
-
     }
 
     @PostMapping("/")
     @Transactional(readOnly = true)
     fun hentAlleSakerForPerson(@Valid @RequestBody body: PersondIdentRequest): MigrertSakResponse {
-       return MigrertSakResponse(migrertsakRepository.findByStatusInAndPersonIdentOrderByMigreringsdato(MigreringStatus.values().toList(), body.personIdent))
+        return MigrertSakResponse(migrertsakRepository.findByStatusInAndPersonIdentOrderByMigreringsdato(MigreringStatus.values().toList(), body.personIdent))
     }
 
     @GetMapping("/tell-feilet")
     @Transactional(readOnly = true)
     fun tellAntallFeiledeMigrering(): List<TellFeilResponse> {
         return migrertsakRepository.tellFeiledeMigrerteSaker()
-
     }
 
     @GetMapping("/list-alle-feilet")
@@ -69,7 +67,6 @@ class MigrertSakController(
             .filter { it.feiltype != null }
             .groupBy { it.feiltype!! }
             .mapValues { it.value.map { it.personIdent }.toSet() }
-
     }
 
     @GetMapping("/{id}")
@@ -94,7 +91,7 @@ class MigrertSakController(
     @Transactional
     fun slettMigrertSakMedFeiltype(@PathVariable("feiltype") feiltype: MigreringsfeilType, @Schema(defaultValue = "true") @RequestParam(required = true) dryRun: Boolean) {
         migrertsakRepository.findByStatusAndFeiltype(MigreringStatus.FEILET, feiltype.name).forEach {
-            if(dryRun) {
+            if (dryRun) {
                 secureLogger.info("dryRun er satt til false, så ignorerer sletting av $it")
             } else {
                 secureLogger.info("Sletter fra migrertSak: $it")
@@ -102,7 +99,6 @@ class MigrertSakController(
             }
         }
     }
-
 }
 
 data class PersondIdentRequest(val personIdent: String)
@@ -112,5 +108,3 @@ class MigrertSakResponse(migrerteSaker: List<Migrertsak>) {
     val total: Int = migrerteSaker.size
     val data: List<Migrertsak> = migrerteSaker
 }
-
-

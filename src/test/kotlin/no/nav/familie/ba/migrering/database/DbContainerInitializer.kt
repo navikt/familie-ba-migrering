@@ -4,7 +4,6 @@ import org.springframework.boot.test.util.TestPropertyValues
 import org.springframework.context.ApplicationContextInitializer
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.core.env.Profiles
-import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.PostgreSQLContainer
 
 class DbContainerInitializer : ApplicationContextInitializer<ConfigurableApplicationContext> {

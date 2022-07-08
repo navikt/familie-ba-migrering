@@ -2,7 +2,6 @@ package no.nav.familie.ba.migrering.domain
 
 import no.nav.familie.ba.migrering.domain.common.InsertUpdateRepository
 import no.nav.familie.ba.migrering.domain.common.RepositoryInterface
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.jdbc.core.RowMapper
@@ -28,7 +27,6 @@ interface MigrertsakRepository : RepositoryInterface<Migrertsak, UUID>, InsertUp
     fun findByStatusAndFeiltype(status: MigreringStatus, feiltype: String): List<Migrertsak>
 
     fun countByStatusIn(status: List<MigreringStatus>): Long
-
 }
 
 class TellFeilResponse(val feiltype: String, val antall: Int)

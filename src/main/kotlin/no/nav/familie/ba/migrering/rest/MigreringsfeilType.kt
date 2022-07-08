@@ -41,5 +41,4 @@ enum class MigreringsfeilType(val beskrivelse: String) {
     ÅPEN_SAK_INFOTRYGD("Bruker har åpen behandling i Infotrygd"),
     ÅPEN_SAK_TIL_BESLUTNING_I_INFOTRYGD("Bruker har avventende vedtak til beslutning i Infotrygd"),
     DELYTELSE_OG_ANTALLBARN_NULL("Infotrygdsak mangler delytelse og antall barn er 0"), // Disse kan man nok la være å migrere
-
 }

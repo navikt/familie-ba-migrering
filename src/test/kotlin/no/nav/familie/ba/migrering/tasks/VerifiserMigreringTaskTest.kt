@@ -1,6 +1,8 @@
 package no.nav.familie.ba.migrering.tasks
 
-import io.mockk.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.slot
 import no.nav.familie.ba.migrering.domain.JsonWrapper
 import no.nav.familie.ba.migrering.domain.MigreringStatus
 import no.nav.familie.ba.migrering.domain.Migrertsak
@@ -18,10 +20,13 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Optional
+import java.util.Properties
+import java.util.UUID
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class VerifiserMigreringTaskTest {
+
     val migrertsakRepositoryMock: MigrertsakRepository = mockk()
     val infotrygdClientMock: InfotrygdClient = mockk()
     val infotrygdFeedClientMock: InfotrygdFeedClient = mockk()
@@ -29,7 +34,8 @@ class VerifiserMigreringTaskTest {
     @Test
     fun `skal oppdatere migrertsak med status VERIFISERT når stønad fra infotrygd har opphørsgrunn 5 og opphørtFom lik virkningFom i BA`() {
         every { infotrygdClientMock.hentStønad(any()) } returns Stønad(
-            opphørsgrunn = "5", opphørtFom = YearMonth.now().format(
+            opphørsgrunn = "5",
+            opphørtFom = YearMonth.now().format(
                 DateTimeFormatter.ofPattern("MMyyyy")
             )
         )
@@ -52,7 +58,10 @@ class VerifiserMigreringTaskTest {
     fun `skal feile hvis stønad id-data mangler eller stønad IKKE har opphørsgrunn 5`() {
         every { infotrygdClientMock.hentStønad(any()) } returns Stønad(opphørsgrunn = "5")
         every { migrertsakRepositoryMock.findById(any()) } returns Optional.of(
-            Migrertsak(personIdent = "12345678910", resultatFraBa = JsonWrapper.of(mockMigreringResponse.copy(infotrygdTkNr = null)))
+            Migrertsak(
+                personIdent = "12345678910",
+                resultatFraBa = JsonWrapper.of(mockMigreringResponse.copy(infotrygdTkNr = null))
+            )
         )
         val statusSlotUpdate = slot<Migrertsak>()
         every { migrertsakRepositoryMock.update(capture(statusSlotUpdate)) } returns Migrertsak()

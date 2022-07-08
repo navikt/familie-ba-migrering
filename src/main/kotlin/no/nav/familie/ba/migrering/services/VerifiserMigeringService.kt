@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.UUID
 
-
 @Service
 class VerifiserMigeringService(
     val opprettMigreringstaskService: OpprettTaskService,
@@ -49,7 +48,6 @@ class VerifiserMigeringService(
         return personerMedFeiltype.partition { personIdent -> sjekkOmPersonErMigrert(personIdent) }
     }
 
-
     fun sjekkOmPersonErMigrert(personIdent: String): Boolean {
         val (migrertSaker, ikkeMigrerteSaker) = migrertsakRepository.findByPersonIdentAndStatusNot(personIdent, MigreringStatus.ARKIVERT)
             .partition { it.status in listOf(MigreringStatus.MIGRERT_I_BA, MigreringStatus.VERIFISERT) }
@@ -57,7 +55,7 @@ class VerifiserMigeringService(
             secureLogger.info("Personen med personident $personIdent er allerede migrert")
             logger.info("Personen er allerede migrert")
             ikkeMigrerteSaker.forEach { migrertsak ->
-                migrertsak.copy(status = MigreringStatus.MIGRERT_I_BA).also { migrertsakRepository.save(it) } //duplikater
+                migrertsak.copy(status = MigreringStatus.MIGRERT_I_BA).also { migrertsakRepository.save(it) } // duplikater
             }
             return true
         }
@@ -68,7 +66,7 @@ class VerifiserMigeringService(
             logger.info("Fant person i vedtaksfeed og har ingen aktive stønader i infotrygd")
             secureLogger.info("Fant person i vedtaksfeed og har ingen aktive stønader i infotrygd: $personIdent")
             ikkeMigrerteSaker.forEach { migrertsak ->
-                migrertsak.copy(status = MigreringStatus.MIGRERT_I_BA).also { migrertsakRepository.save(it) } //duplikater
+                migrertsak.copy(status = MigreringStatus.MIGRERT_I_BA).also { migrertsakRepository.save(it) } // duplikater
             }
             true
         } else {
