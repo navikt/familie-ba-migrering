@@ -6,6 +6,26 @@ on:
 env:
   IMAGE: ghcr.io/navikt/familie-ba-migrering:${{ github.sha }}
 jobs:
+  ktlint:
+    name: Ktlint
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'temurin'
+          cache: 'maven'
+      - name: Kjør ktlint
+        env:
+          GITHUB_USERNAME: x-access-token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mvn antrun:run@ktlint
   deploy:
     name: Bygg app/image, push til github, deploy til dev-gcp
     runs-on: ubuntu-latest

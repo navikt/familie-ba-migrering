@@ -19,8 +19,8 @@ import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
-import java.util.UUID
 import java.util.Properties
+import java.util.UUID
 
 @Service
 @TaskStepBeskrivelse(
@@ -35,7 +35,7 @@ class VerifiserMigreringTask(
     val migrertsakRepository: MigrertsakRepository,
 ) : AsyncTaskStep {
 
-    private val verifiserteMigreringerCounter: Counter =Metrics.counter("verifiserteMigreringer")
+    private val verifiserteMigreringerCounter: Counter = Metrics.counter("verifiserteMigreringer")
 
     override fun doTask(task: Task) {
         val migrertSak = migrertsakRepository.findById(UUID.fromString(task.payload)).get()
@@ -53,7 +53,7 @@ class VerifiserMigreringTask(
             resultatFraBa.infotrygdVirkningFom,
             resultatFraBa.infotrygdRegion
         ) {
-            secureLogger.error("Migrert sak mangler infotrygdstønad id-nøkler:\n${migrertsak}")
+            secureLogger.error("Migrert sak mangler infotrygdstønad id-nøkler:\n$migrertsak")
             "Verifisering feilet: tkNr, iverksattFom, virkningFom og/eller region fra responseDto var null"
         }
         val infotrygdStønad = infotrygdClient.hentStønad(
@@ -71,8 +71,7 @@ class VerifiserMigreringTask(
                 if (infotrygdStønad.opphørtFom == virkningFomIBa) {
                     migrertsakRepository.update(migrertsak.copy(status = MigreringStatus.VERIFISERT))
                     verifiserteMigreringerCounter.increment()
-                }
-                else {
+                } else {
                     secureLogger.error("OpphørtFom i Infotrygd var ulik virkningFom i BA:\n$infotrygdStønad\n$migrertsak")
                     error("OpphørtFom i Infotrygd var ulik virkningFom i BA (${infotrygdStønad.opphørtFom} =/= $virkningFomIBa)")
                 }
@@ -120,4 +119,3 @@ class VerifiserMigreringTask(
         }
     }
 }
-

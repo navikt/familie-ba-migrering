@@ -63,4 +63,3 @@ internal class MigrertSakControllerTest {
         assertThat(listeMedFeilede["FEILTYPE_2"]?.size).isEqualTo(1)
     }
 }
-

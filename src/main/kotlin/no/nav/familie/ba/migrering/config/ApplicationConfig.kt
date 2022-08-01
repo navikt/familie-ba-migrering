@@ -27,7 +27,7 @@ import java.time.temporal.ChronoUnit
 @EnableJwtTokenValidation(ignore = ["org.springframework", "org.springdoc"])
 @EnableOAuth2Client
 @Import(RestTemplateAzure::class)
-@EnableScheduling //brukes av prosessering(Tasks)
+@EnableScheduling // brukes av prosessering(Tasks)
 class ApplicationConfig {
 
     @Bean

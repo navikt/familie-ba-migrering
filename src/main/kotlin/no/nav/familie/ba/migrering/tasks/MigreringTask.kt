@@ -20,7 +20,6 @@ import no.nav.familie.prosessering.domene.Task
 import no.nav.familie.prosessering.domene.TaskRepository
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.Properties
 import java.util.UUID
@@ -38,13 +37,12 @@ class MigreringTask(
     val migrertsakLoggRepository: MigrertsakLoggRepository,
     val taskRepository: TaskRepository,
     val opprettTaskService: OpprettTaskService
-    ) : AsyncTaskStep {
+) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
         val payload = objectMapper.readValue(task.payload, MigreringTaskDto::class.java)
 
         secureLogger.info("Migrerer sak for person ${payload.personIdent}")
-
 
         var migrertsak = migrertsakRepository.findByStatusInAndPersonIdentOrderByMigreringsdato(listOf(MigreringStatus.UKJENT, MigreringStatus.FEILET), payload.personIdent).lastOrNull()
 
@@ -104,7 +102,6 @@ class MigreringTask(
         }
     }
 
-
     companion object {
 
         const val TASK_STEP_TYPE = "MigreringTask"
@@ -128,7 +125,8 @@ class MigreringTask(
 data class MigreringTaskDto(val personIdent: String)
 
 val migreringsFeilCounter = mutableMapOf<String, Counter>()
-fun kastOgTellMigreringsFeil(feiltype: MigreringsfeilType
+fun kastOgTellMigreringsFeil(
+    feiltype: MigreringsfeilType
 ): Nothing =
     throw KanIkkeMigrereException(feiltype.name, feiltype.beskrivelse, null).also {
         if (migreringsFeilCounter[feiltype.name] == null) {

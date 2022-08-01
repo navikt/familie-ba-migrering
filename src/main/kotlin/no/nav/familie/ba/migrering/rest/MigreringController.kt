@@ -26,12 +26,10 @@ class MigreringController(
     private val verifiserMigeringService: VerifiserMigeringService
 ) {
 
-
     @PostMapping("/")
     fun migrerFraInfotrygd(@Valid @RequestBody startMigreringRequest: StartMigreringRequest): String {
         return hentSakTilMigreringService.migrer(startMigreringRequest.antallPersoner, kategori = startMigreringRequest.kategori)
     }
-
 
     @PostMapping("/rekjor")
     fun migrerIdenter(@Valid @RequestBody identer: Set<String>): String {
@@ -45,17 +43,16 @@ class MigreringController(
 
     @PostMapping("/valider/")
     fun validerOmPersonErMigrert(@Valid @RequestBody body: PersondIdentRequest): Boolean {
-       return verifiserMigeringService.sjekkOmPersonErMigrert(body.personIdent)
+        return verifiserMigeringService.sjekkOmPersonErMigrert(body.personIdent)
     }
 
     @PostMapping("/valider/{feiltype}")
     fun validerOmErMigrert(@Valid @PathVariable feiltype: String): Map<String, List<String>> {
-        val (migrert, fortsattÅpne) =  verifiserMigeringService.sjekkOmFeilytpeErMigrert(feiltype)
-
+        val (migrert, fortsattÅpne) = verifiserMigeringService.sjekkOmFeilytpeErMigrert(feiltype)
 
         return mapOf(
-                "migrert" to migrert,
-                "fortsattÅpne" to fortsattÅpne
+            "migrert" to migrert,
+            "fortsattÅpne" to fortsattÅpne
         )
     }
 
@@ -67,10 +64,9 @@ class MigreringController(
 
     @PostMapping("/sak")
     @Transactional(readOnly = true)
-    fun visÅpneSakerFor(@Valid @RequestBody identer: Set<String>): List<Pair<String, List<String>>>{
-        return identer.map{Pair(it, verifiserMigeringService.listÅpneSaker(it))}
+    fun visÅpneSakerFor(@Valid @RequestBody identer: Set<String>): List<Pair<String, List<String>>> {
+        return identer.map { Pair(it, verifiserMigeringService.listÅpneSaker(it)) }
     }
-
 
     data class StartMigreringRequest(@Min(1) @Max(20) val antallPersoner: Int, val kategori: Kategori = Kategori.ORDINÆR)
 

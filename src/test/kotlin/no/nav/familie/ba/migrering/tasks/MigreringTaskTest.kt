@@ -77,7 +77,6 @@ class MigreringTaskTest {
         assertThat(slotTask.captured.metadata["personIdent"]).isEqualTo("ooo")
         assertThat(slotTask.captured.metadata["fagsakId"]).isEqualTo("1")
         assertThat(slotTask.captured.metadata["behandlingId"]).isEqualTo("2")
-
     }
 
     @Test
@@ -128,7 +127,8 @@ class MigreringTaskTest {
                 listOf(
                     MigreringStatus.UKJENT,
                     MigreringStatus.FEILET
-                ), "ooo"
+                ),
+                "ooo"
             )
         } returns emptyList()
         every { migrertsakRepositoryMock.insert(capture(statusSlotInsert)) } returns Migrertsak()
@@ -152,7 +152,6 @@ class MigreringTaskTest {
 
         assertThat(statusSlotUpdate.captured.status).isEqualTo(MigreringStatus.FEILET)
     }
-
 
     @Test
     fun `Skal gjenbruke rad med status == UKJENT ved migrering`() {
@@ -178,7 +177,6 @@ class MigreringTaskTest {
         every { taskRepository.save(capture(taskSlot)) } returns task
         every { migrertsakLoggRepositoryMock.insert(any()) } returns MigrertsakLogg.tilMigrertsakLogg(Migrertsak(id = uuidGammelSak))
 
-
         MigreringTask(
             sakClientMock,
             infotrygdClient,
@@ -193,7 +191,6 @@ class MigreringTaskTest {
         assertThat(statusSlotUpdate.captured.status).isEqualTo(MigreringStatus.FEILET)
         assertThat(statusSlotUpdate.captured.aarsak).isEqualTo(aarsak)
         assertThat(statusSlotUpdate.captured.personIdent).isEqualTo(personIdent)
-
     }
 
     @Test
@@ -202,11 +199,13 @@ class MigreringTaskTest {
         every { sakClientMock.migrerPerson(any()) } throws Exception(aarsak)
         val personIdent = "ooo"
 
-        val migrertSak = Migrertsak(id = UUID.randomUUID(),
-                                    personIdent = personIdent,
-                                    status = MigreringStatus.UKJENT,
-                                    feiltype = "TEST",
-                                    aarsak = "Noe galt")
+        val migrertSak = Migrertsak(
+            id = UUID.randomUUID(),
+            personIdent = personIdent,
+            status = MigreringStatus.UKJENT,
+            feiltype = "TEST",
+            aarsak = "Noe galt"
+        )
         every {
             migrertsakRepositoryMock.findByStatusInAndPersonIdentOrderByMigreringsdato(
                 listOf(MigreringStatus.UKJENT, MigreringStatus.FEILET), "ooo"
@@ -222,7 +221,6 @@ class MigreringTaskTest {
         every { taskRepository.save(any()) } returns task
         val migrertsakLoggSlot = slot<MigrertsakLogg>()
         every { migrertsakLoggRepositoryMock.insert(capture(migrertsakLoggSlot)) } returns MigrertsakLogg.tilMigrertsakLogg(migrertSak)
-
 
         MigreringTask(
             sakClientMock,
@@ -241,8 +239,6 @@ class MigreringTaskTest {
         assertThat(migrertsakLoggSlot.captured.feiltype).isEqualTo(migrertSak.feiltype)
         assertThat(migrertsakLoggSlot.captured.aarsak).isEqualTo(migrertSak.aarsak)
         assertThat(migrertsakLoggSlot.captured.migreringsdato).isEqualTo(migrertSak.migreringsdato)
-
-
     }
 
     @Test

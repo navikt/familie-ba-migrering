@@ -41,9 +41,9 @@ class RestSecurityFilterConfig(
 
         override fun shouldNotFilter(request: HttpServletRequest): Boolean {
             return request.requestURI.contains("/internal") ||
-                    request.requestURI.startsWith("/api/task") ||
-                    request.requestURI.startsWith("/swagger") ||
-                    request.requestURI.startsWith("/v3")
+                request.requestURI.startsWith("/api/task") ||
+                request.requestURI.startsWith("/swagger") ||
+                request.requestURI.startsWith("/v3")
         } // i bruk av swagger
     }
 
