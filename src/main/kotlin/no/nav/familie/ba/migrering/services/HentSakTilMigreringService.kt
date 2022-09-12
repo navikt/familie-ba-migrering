@@ -36,9 +36,7 @@ class HentSakTilMigreringService(
                     page = startSide,
                     size = ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     valg = kategori.valg,
-                    undervalg = kategori.undervalg,
-                    maksAntallBarn = MAX_ANTALL_BARN,
-                    minimumAlder = MINIMUM_ALDER
+                    undervalg = kategori.undervalg
                 )
             )
             Log.info("Fant ${personerForMigrering.size} personer for migrering på side $startSide")
@@ -104,8 +102,6 @@ class HentSakTilMigreringService(
         val Log = LoggerFactory.getLogger(HentSakTilMigreringService::class.java)
         private val secureLogger = LoggerFactory.getLogger("secureLogger")
         const val ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD = 5000
-        const val MAX_ANTALL_BARN = 6
-        const val MINIMUM_ALDER = 1
         const val MIGRERING_DEAKTIVERT_MELDING = "Migrering deaktivert, stopper videre jobbing"
     }
 }
@@ -115,4 +111,6 @@ enum class Kategori(val valg: String, val undervalg: String) {
     UTVIDET("UT", "EF"),
     ORDINÆR_DELT_BOSTED("OR", "MD"),
     UTVIDET_DELT_BOSTED("UT", "MD"),
+    ORDINÆR_EØS_PRIMÆRLAND("OR", "EU"),
+    UTVIDET_EØS_PRIMÆRLAND("UT", "EU"),
 }
