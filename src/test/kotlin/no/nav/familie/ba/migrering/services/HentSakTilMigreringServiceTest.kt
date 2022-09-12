@@ -42,9 +42,7 @@ class HentSakTilMigreringServiceTest {
                     0,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
-                    "OS",
-                    HentSakTilMigreringService.MAX_ANTALL_BARN,
-                    HentSakTilMigreringService.MINIMUM_ALDER,
+                    "OS"
                 )
             )
         } returns MigreringResponse(personIdenter.toSet(), 2)
@@ -54,9 +52,7 @@ class HentSakTilMigreringServiceTest {
                     1,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
-                    "OS",
-                    HentSakTilMigreringService.MAX_ANTALL_BARN,
-                    HentSakTilMigreringService.MINIMUM_ALDER,
+                    "OS"
                 )
             )
         } returns MigreringResponse(emptySet(), 2)
@@ -82,9 +78,7 @@ class HentSakTilMigreringServiceTest {
                     0,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
-                    "OS",
-                    HentSakTilMigreringService.MAX_ANTALL_BARN,
-                    HentSakTilMigreringService.MINIMUM_ALDER,
+                    "OS"
                 )
             )
         } returns MigreringResponse(setOf(personIdent), 2)
@@ -94,9 +88,7 @@ class HentSakTilMigreringServiceTest {
                     1,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
-                    "OS",
-                    HentSakTilMigreringService.MAX_ANTALL_BARN,
-                    HentSakTilMigreringService.MINIMUM_ALDER,
+                    "OS"
                 )
             )
         } returns MigreringResponse(emptySet(), 2)
@@ -121,9 +113,7 @@ class HentSakTilMigreringServiceTest {
                     0,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
-                    "OS",
-                    HentSakTilMigreringService.MAX_ANTALL_BARN,
-                    HentSakTilMigreringService.MINIMUM_ALDER,
+                    "OS"
                 )
             )
         } returns MigreringResponse(arrayOf("1", "2", "3").toSet(), 3)
@@ -133,9 +123,7 @@ class HentSakTilMigreringServiceTest {
                     1,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
-                    "OS",
-                    HentSakTilMigreringService.MAX_ANTALL_BARN,
-                    HentSakTilMigreringService.MINIMUM_ALDER,
+                    "OS"
                 )
             )
         } returns MigreringResponse(arrayOf("4", "5", "6", "7", "8").toSet(), 3)
@@ -145,9 +133,7 @@ class HentSakTilMigreringServiceTest {
                     2,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
-                    "OS",
-                    HentSakTilMigreringService.MAX_ANTALL_BARN,
-                    HentSakTilMigreringService.MINIMUM_ALDER,
+                    "OS"
                 )
             )
         } returns MigreringResponse(arrayOf("9", "10", "11", "12", "13").toSet(), 3)
