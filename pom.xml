@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.2</version>
+        <version>2.7.4</version>
     </parent>
 
     <properties>
@@ -20,10 +20,10 @@
         <changelist>-SNAPSHOT</changelist>
         <java.version>17</java.version>
         <jvmTarget>17</jvmTarget>
-        <kotlin.version>1.7.10</kotlin.version>
-	<felles.version>1.20220825085526_fc22ce9</felles.version>
+        <kotlin.version>1.7.20</kotlin.version>
+	<felles.version>1.20220930133126_14f75ec</felles.version>
         <prosessering.version>1.20220624132237_7f5ba9c</prosessering.version>
-        <kontrakter.version>2.0_20220823143537_41dbade</kontrakter.version>
+        <kontrakter.version>2.0_20220914144308_31454d9</kontrakter.version>
         <token-validation-spring.version>2.0.5</token-validation-spring.version>
         <swagger.version>3.0.0</swagger.version>
         <springdoc.version>1.6.11</springdoc.version>
@@ -129,7 +129,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-            <version>1.17.3</version>
+            <version>1.17.4</version>
             <scope>test</scope>
         </dependency>
 
@@ -168,8 +168,8 @@
         </dependency>
         <dependency>
             <groupId>io.mockk</groupId>
-            <artifactId>mockk</artifactId>
-            <version>1.12.5</version>
+            <artifactId>mockk-jvm</artifactId>
+            <version>1.13.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
