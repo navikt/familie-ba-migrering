@@ -21,7 +21,7 @@
         <java.version>17</java.version>
         <jvmTarget>17</jvmTarget>
         <kotlin.version>1.7.20</kotlin.version>
-	<felles.version>1.20220831152500_c0cf580</felles.version>
+	<felles.version>1.20220930133126_14f75ec</felles.version>
         <prosessering.version>1.20220624132237_7f5ba9c</prosessering.version>
         <kontrakter.version>2.0_20220927152732_9674f20</kontrakter.version>
         <token-validation-spring.version>2.0.5</token-validation-spring.version>
@@ -118,7 +118,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.4.1</version>
+            <version>42.5.0</version>
         </dependency>
         <dependency>
             <groupId>no.nav.familie</groupId>
