@@ -48,7 +48,7 @@ jobs:
         if: ${{ failure() }}
         uses: scacap/action-surefire-report@v1.0.13
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@49ed152c8eca782a232dede0303416e8f356c37b
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
