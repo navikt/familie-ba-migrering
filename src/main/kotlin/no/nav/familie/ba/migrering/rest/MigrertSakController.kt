@@ -5,9 +5,15 @@ import no.nav.familie.ba.migrering.domain.MigreringStatus
 import no.nav.familie.ba.migrering.domain.Migrertsak
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
 import no.nav.familie.ba.migrering.domain.TellFeilResponse
+import no.nav.familie.kontrakter.felles.Ressurs
+import no.nav.familie.log.IdUtils
+import no.nav.familie.log.mdc.MDCConstants
 import no.nav.security.token.support.core.api.ProtectedWithClaims
+import no.nav.security.token.support.core.api.Unprotected
 import org.slf4j.LoggerFactory
+import org.slf4j.MDC
 import org.springframework.data.domain.Pageable
+import org.springframework.http.ResponseEntity
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -99,6 +105,26 @@ class MigrertSakController(
             }
         }
     }
+    private val logger = LoggerFactory.getLogger(this::class.java)
+    @PostMapping(path = ["/ping"])
+    @Unprotected
+    fun postPong(): ResponseEntity<Ressurs<String>> {
+        val callId = MDC.get(MDCConstants.MDC_CALL_ID) ?: IdUtils.generateId()
+        logger.info("POST Pong $callId")
+        Thread.sleep(120_000)
+        return ResponseEntity.ok(Ressurs.success("OK"))
+    }
+
+    @GetMapping(path = ["/ping"])
+    @Unprotected
+    fun getPong(): ResponseEntity<Ressurs<String>> {
+        val callId = MDC.get(MDCConstants.MDC_CALL_ID) ?: IdUtils.generateId()
+        logger.info("GET Pong $callId")
+        Thread.sleep(120_000)
+        return ResponseEntity.ok(Ressurs.success("OK"))
+    }
+
+
 }
 
 data class PersondIdentRequest(val personIdent: String)
