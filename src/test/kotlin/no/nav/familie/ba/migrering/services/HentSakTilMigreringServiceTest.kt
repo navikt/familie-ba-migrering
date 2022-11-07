@@ -12,7 +12,7 @@ import no.nav.familie.ba.migrering.integrasjoner.MigreringRequest
 import no.nav.familie.ba.migrering.integrasjoner.MigreringResponse
 import no.nav.familie.ba.migrering.services.HentSakTilMigreringService.Companion.ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD
 import no.nav.familie.prosessering.domene.Task
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -22,7 +22,7 @@ import java.time.LocalDate
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class HentSakTilMigreringServiceTest {
 
-    private val taskRepositoryMock: TaskRepository = mockk()
+    private val taskServiceMock: TaskService = mockk()
     private val infotrygdClientMock: InfotrygdClient = mockk()
     private val migertsakRepository: MigrertsakRepository = mockk()
     private lateinit var service: HentSakTilMigreringService
@@ -30,7 +30,7 @@ class HentSakTilMigreringServiceTest {
     @BeforeEach
     fun setUp() {
         clearAllMocks()
-        service = HentSakTilMigreringService(infotrygdClientMock, OpprettTaskService(taskRepositoryMock), migertsakRepository, true)
+        service = HentSakTilMigreringService(infotrygdClientMock, OpprettTaskService(taskServiceMock), migertsakRepository, true)
     }
 
     @Test
@@ -57,7 +57,7 @@ class HentSakTilMigreringServiceTest {
             )
         } returns MigreringResponse(emptySet(), 2)
         val tasker = mutableListOf<Task>()
-        every { taskRepositoryMock.save(capture(tasker)) } returns Task(type = "", payload = "")
+        every { taskServiceMock.save(capture(tasker)) } returns Task(type = "", payload = "")
         every { migertsakRepository.findByPersonIdentAndStatusNot(any(), MigreringStatus.ARKIVERT) } returns emptyList()
         service.migrer(10, GYLDIG_MIGRERINGSKJØRETIDSPUNKT)
 
@@ -95,13 +95,13 @@ class HentSakTilMigreringServiceTest {
         every { migertsakRepository.findByPersonIdentAndStatusNot(personIdent, MigreringStatus.ARKIVERT) } returns listOf(
             Migrertsak()
         )
-        every { taskRepositoryMock.save(any()) } returns Task(type = "", payload = "")
+        every { taskServiceMock.save(any()) } returns Task(type = "", payload = "")
 
         println(
             service.migrer(10, GYLDIG_MIGRERINGSKJØRETIDSPUNKT)
         )
 
-        verify(exactly = 0) { taskRepositoryMock.save(any()) }
+        verify(exactly = 0) { taskServiceMock.save(any()) }
     }
 
     @Test
@@ -138,7 +138,7 @@ class HentSakTilMigreringServiceTest {
             )
         } returns MigreringResponse(arrayOf("9", "10", "11", "12", "13").toSet(), 3)
         val tasker = mutableListOf<Task>()
-        every { taskRepositoryMock.save(capture(tasker)) } returns Task(type = "", payload = "")
+        every { taskServiceMock.save(capture(tasker)) } returns Task(type = "", payload = "")
         every { migertsakRepository.findByPersonIdentAndStatusNot(any(), MigreringStatus.ARKIVERT) } returns emptyList()
         every { migertsakRepository.findByPersonIdentAndStatusNot("4", MigreringStatus.ARKIVERT) } returns listOf(Migrertsak())
         every { migertsakRepository.findByPersonIdentAndStatusNot("9", MigreringStatus.ARKIVERT) } returns listOf(Migrertsak())
@@ -164,7 +164,7 @@ class HentSakTilMigreringServiceTest {
             assertThat(it).isEqualTo("Rekjørt 0 med feiltype=TESTFEIL")
         }
 
-        verify(exactly = 0) { taskRepositoryMock.save(any()) }
+        verify(exactly = 0) { taskServiceMock.save(any()) }
     }
 
     @Test
@@ -175,12 +175,12 @@ class HentSakTilMigreringServiceTest {
             ),
             Migrertsak(personIdent = "2")
         )
-        every { taskRepositoryMock.save(any()) } returns Task(type = "", payload = "")
+        every { taskServiceMock.save(any()) } returns Task(type = "", payload = "")
         service.rekjørMigreringerMedFeiltype("TESTFEIL").also {
             assertThat(it).isEqualTo("Rekjørt 2 med feiltype=TESTFEIL")
         }
 
-        verify(exactly = 2) { taskRepositoryMock.save(any()) }
+        verify(exactly = 2) { taskServiceMock.save(any()) }
     }
 
     @Test
@@ -191,12 +191,12 @@ class HentSakTilMigreringServiceTest {
             ),
             Migrertsak(personIdent = "1")
         )
-        every { taskRepositoryMock.save(any()) } returns Task(type = "", payload = "")
+        every { taskServiceMock.save(any()) } returns Task(type = "", payload = "")
         service.rekjørMigreringerMedFeiltype("TESTFEIL").also {
             assertThat(it).isEqualTo("Rekjørt 1 med feiltype=TESTFEIL")
         }
 
-        verify(exactly = 1) { taskRepositoryMock.save(any()) }
+        verify(exactly = 1) { taskServiceMock.save(any()) }
     }
 
     @Test
@@ -205,7 +205,7 @@ class HentSakTilMigreringServiceTest {
             assertThat(it).isEqualTo("Rekjørt 0 migreringer")
         }
 
-        verify(exactly = 0) { taskRepositoryMock.save(any()) }
+        verify(exactly = 0) { taskServiceMock.save(any()) }
     }
 
     @Test
@@ -215,20 +215,20 @@ class HentSakTilMigreringServiceTest {
             assertThat(it).isEqualTo("Rekjørt 0 migreringer")
         }
 
-        verify(exactly = 0) { taskRepositoryMock.save(any()) }
+        verify(exactly = 0) { taskServiceMock.save(any()) }
     }
 
     @Test
     fun `Rekjør migrering på liste identer - oppretter 2 tasker når det er 2 med feiltype`() {
         every { migertsakRepository.findByStatusAndPersonIdent(MigreringStatus.FEILET, "1") } returns listOf(Migrertsak())
         every { migertsakRepository.findByStatusAndPersonIdent(MigreringStatus.FEILET, "2") } returns listOf(Migrertsak())
-        every { taskRepositoryMock.save(any()) } returns Task(type = "", payload = "")
+        every { taskServiceMock.save(any()) } returns Task(type = "", payload = "")
 
         service.rekjørMigreringer(setOf("1", "2")).also {
             assertThat(it).isEqualTo("Rekjørt 2 migreringer")
         }
 
-        verify(exactly = 2) { taskRepositoryMock.save(any()) }
+        verify(exactly = 2) { taskServiceMock.save(any()) }
     }
 
     @Test
@@ -239,12 +239,12 @@ class HentSakTilMigreringServiceTest {
             ),
             Migrertsak(personIdent = "1")
         )
-        every { taskRepositoryMock.save(any()) } returns Task(type = "", payload = "")
+        every { taskServiceMock.save(any()) } returns Task(type = "", payload = "")
         service.rekjørMigreringer(setOf("1")).also {
             assertThat(it).isEqualTo("Rekjørt 1 migreringer")
         }
 
-        verify(exactly = 1) { taskRepositoryMock.save(any()) }
+        verify(exactly = 1) { taskServiceMock.save(any()) }
     }
 
     companion object {

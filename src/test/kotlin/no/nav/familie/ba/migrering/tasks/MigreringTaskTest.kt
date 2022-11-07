@@ -15,7 +15,7 @@ import no.nav.familie.ba.migrering.integrasjoner.SakClient
 import no.nav.familie.ba.migrering.rest.MigreringsfeilType.ÅPEN_SAK_TIL_BESLUTNING_I_INFOTRYGD
 import no.nav.familie.ba.migrering.services.OpprettTaskService
 import no.nav.familie.prosessering.domene.Task
-import no.nav.familie.prosessering.domene.TaskRepository
+import no.nav.familie.prosessering.internal.TaskService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -30,7 +30,7 @@ class MigreringTaskTest {
     private val migrertsakLoggRepositoryMock: MigrertsakLoggRepository = mockk()
     private val sakClientMock: SakClient = mockk()
     private val infotrygdClient: InfotrygdClient = mockk(relaxed = true)
-    private val taskRepository: TaskRepository = mockk()
+    private val taskService: TaskService = mockk()
 
     @BeforeEach
     fun setUp() {
@@ -45,7 +45,7 @@ class MigreringTaskTest {
         every { migrertsakRepositoryMock.findByStatusInAndPersonIdentOrderByMigreringsdato(any(), "ooo") } returns emptyList()
         every { migrertsakRepositoryMock.insert(capture(statusSlotInsert)) } returns Migrertsak(personIdent = "ooo")
         every { migrertsakRepositoryMock.update(capture(statusSlotUpdate)) } returns Migrertsak()
-        every { taskRepository.save(capture(slotTask)) } returns VerifiserMigreringTask.opprettTaskMedTriggerTid(
+        every { taskService.save(capture(slotTask)) } returns VerifiserMigreringTask.opprettTaskMedTriggerTid(
             "1",
             properties = Properties()
         )
@@ -56,8 +56,8 @@ class MigreringTaskTest {
             infotrygdClient,
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
-            taskRepository,
-            OpprettTaskService(taskRepository)
+            taskService,
+            OpprettTaskService(taskService)
         ).doTask(
             MigreringTask.opprettTask(
                 MigreringTaskDto(
@@ -97,8 +97,8 @@ class MigreringTaskTest {
             infotrygdClient,
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
-            taskRepository,
-            OpprettTaskService(taskRepository)
+            taskService,
+            OpprettTaskService(taskService)
         ).doTask(
             MigreringTask.opprettTask(
                 MigreringTaskDto(
@@ -140,8 +140,8 @@ class MigreringTaskTest {
             infotrygdClient,
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
-            taskRepository,
-            OpprettTaskService(taskRepository)
+            taskService,
+            OpprettTaskService(taskService)
         ).doTask(
             MigreringTask.opprettTask(
                 MigreringTaskDto(
@@ -174,7 +174,7 @@ class MigreringTaskTest {
                 personIdent = personIdent
             )
         )
-        every { taskRepository.save(capture(taskSlot)) } returns task
+        every { taskService.save(capture(taskSlot)) } returns task
         every { migrertsakLoggRepositoryMock.insert(any()) } returns MigrertsakLogg.tilMigrertsakLogg(Migrertsak(id = uuidGammelSak))
 
         MigreringTask(
@@ -182,8 +182,8 @@ class MigreringTaskTest {
             infotrygdClient,
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
-            taskRepository,
-            OpprettTaskService(taskRepository)
+            taskService,
+            OpprettTaskService(taskService)
         ).doTask(
             task
         )
@@ -218,7 +218,7 @@ class MigreringTaskTest {
                 personIdent = personIdent
             )
         )
-        every { taskRepository.save(any()) } returns task
+        every { taskService.save(any()) } returns task
         val migrertsakLoggSlot = slot<MigrertsakLogg>()
         every { migrertsakLoggRepositoryMock.insert(capture(migrertsakLoggSlot)) } returns MigrertsakLogg.tilMigrertsakLogg(migrertSak)
 
@@ -227,8 +227,8 @@ class MigreringTaskTest {
             infotrygdClient,
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
-            taskRepository,
-            OpprettTaskService(taskRepository)
+            taskService,
+            OpprettTaskService(taskService)
         ).doTask(
             task
         )
@@ -258,8 +258,8 @@ class MigreringTaskTest {
             infotrygdClient,
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
-            taskRepository,
-            OpprettTaskService(taskRepository)
+            taskService,
+            OpprettTaskService(taskService)
         ).doTask(
             MigreringTask.opprettTask(
                 MigreringTaskDto(
