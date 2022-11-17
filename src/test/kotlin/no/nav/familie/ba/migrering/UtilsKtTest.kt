@@ -26,8 +26,8 @@ internal class UtilsKtTest {
     fun `skal kaste exception hvis dato er i et år man ikke har kjøredator`() {
         assertThrows(
             IllegalStateException::class.java,
-            { erIkkeKjøredato(LocalDate.of(2023, 1, 1)) },
-            "Mangler kjøredato for 2022"
+            { erIkkeKjøredato(LocalDate.of(2024, 1, 1)) },
+            "Mangler kjøredato for 2024"
         )
     }
 
@@ -41,6 +41,14 @@ internal class UtilsKtTest {
         "false, 2022-01-17, false",
         "false, 2022-01-18, false",
         "false, 2022-01-19, false",
+        "true, 2023-09-17, true",
+        "true, 2023-09-18, false",
+        "true, 2023-09-19, false",
+        "true, 2023-09-20, true",
+        "true, 2023-09-21, true",
+        "false, 2023-09-17, false",
+        "false, 2023-09-18, false",
+        "false, 2023-09-19, false",
     )
     fun `sjekk om man skal kjøre migreing`(migreringAktivert: Boolean, dato: LocalDate, expected: Boolean) {
         assertEquals(expected, skalKjøreMigering(migreringAktivert, dato))
