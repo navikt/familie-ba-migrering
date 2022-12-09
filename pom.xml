@@ -23,7 +23,7 @@
         <kotlin.version>1.7.20</kotlin.version>
         <felles.version>1.20221202080911_bcf8f33</felles.version>
         <prosessering.version>1.20221107103336_b052a4b</prosessering.version>
-        <kontrakter.version>2.0_20221031164044_9bbca66</kontrakter.version>
+        <kontrakter.version>2.0_20221202084337_d05f555</kontrakter.version>
         <token-validation-spring.version>2.0.5</token-validation-spring.version>
         <swagger.version>3.0.0</swagger.version>
         <springdoc.version>1.6.12</springdoc.version>
