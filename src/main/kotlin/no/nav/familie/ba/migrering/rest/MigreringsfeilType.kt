@@ -25,6 +25,7 @@ enum class MigreringsfeilType(val beskrivelse: String) {
     INGEN_BARN_MED_LØPENDE_STØNAD_I_INFOTRYGD("Fant ingen barn med løpende stønad på sak"),
     INGEN_LØPENDE_SAK_INFOTRYGD("Personen har ikke løpende sak i infotrygd"),
     INSTITUSJON("Midlertidig ignoerert fordi det er en institusjon"),
+    ENSLIG_MINDREÅRIG("Saken kan ikke migreres. Må behandles i Infotrygd"),
     IVERKSETT_BEHANDLING_UTEN_VEDTAK("Fant ikke aktivt vedtak på behandling"),
     KAN_IKKE_OPPRETTE_BEHANDLING("Kan ikke opprette behandling"),
     KUN_ETT_MIGRERINGFORSØK_PER_DAG("Migrering allerede påbegynt i dag. Vent minst en dag før man prøver igjen"),
