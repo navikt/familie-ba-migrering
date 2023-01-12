@@ -20,10 +20,10 @@
         <changelist>-SNAPSHOT</changelist>
         <java.version>17</java.version>
         <jvmTarget>17</jvmTarget>
-        <kotlin.version>1.7.22</kotlin.version>
+        <kotlin.version>1.8.0</kotlin.version>
         <felles.version>1.20221202080911_bcf8f33</felles.version>
-        <prosessering.version>1.20221107103336_b052a4b</prosessering.version>
-        <kontrakter.version>2.0_20221202084337_d05f555</kontrakter.version>
+        <prosessering.version>1.20230103132509_cebcdeb</prosessering.version>
+        <kontrakter.version>2.0_20230111110429_b460008</kontrakter.version>
         <token-validation-spring.version>2.0.5</token-validation-spring.version>
         <swagger.version>3.0.0</swagger.version>
         <springdoc.version>1.6.12</springdoc.version>
@@ -118,7 +118,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.5.0</version>
+            <version>42.5.1</version>
         </dependency>
         <dependency>
             <groupId>no.nav.familie</groupId>
@@ -129,7 +129,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
-            <version>1.17.5</version>
+            <version>1.17.6</version>
             <scope>test</scope>
         </dependency>
 
