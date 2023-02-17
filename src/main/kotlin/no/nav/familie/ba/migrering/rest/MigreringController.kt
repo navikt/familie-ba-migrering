@@ -41,6 +41,17 @@ class MigreringController(
         return hentSakTilMigreringService.rekjørMigreringerMedFeiltype(feiltype)
     }
 
+    @PostMapping("/alle-sakstyper")
+    fun migrerFraInfotrygdAlleSakstyper(): String {
+        hentSakTilMigreringService.migrer(antallPersoner = 2000, kategori = Kategori.ORDINÆR)
+        hentSakTilMigreringService.migrer(antallPersoner = 2000, kategori = Kategori.ORDINÆR_DELT_BOSTED)
+        hentSakTilMigreringService.migrer(antallPersoner = 2000, kategori = Kategori.ORDINÆR_EØS_PRIMÆRLAND)
+        hentSakTilMigreringService.migrer(antallPersoner = 2000, kategori = Kategori.UTVIDET)
+        hentSakTilMigreringService.migrer(antallPersoner = 2000, kategori = Kategori.UTVIDET_DELT_BOSTED)
+        hentSakTilMigreringService.migrer(antallPersoner = 2000, kategori = Kategori.UTVIDET_EØS_PRIMÆRLAND)
+        return "OK"
+    }
+
     @PostMapping("/valider/")
     fun validerOmPersonErMigrert(@Valid @RequestBody body: PersondIdentRequest): Boolean {
         return verifiserMigeringService.sjekkOmPersonErMigrert(body.personIdent)
