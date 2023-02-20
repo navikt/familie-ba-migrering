@@ -64,7 +64,7 @@ class MigreringTask(
         try {
             if (infotrygdClient.harÅpenSak(payload.personIdent))
                 kastOgTellMigreringsFeil(MigreringsfeilType.ÅPEN_SAK_TIL_BESLUTNING_I_INFOTRYGD)
-            else if (infotrygdClient.hentSaker(payload.personIdent).any { it.status != "FB" })
+            else if (infotrygdClient.hentSaker(payload.personIdent).filter { it.resultat != "HB" }.any { it.status != "FB" })
                 kastOgTellMigreringsFeil(MigreringsfeilType.ÅPEN_SAK_INFOTRYGD)
             val responseBa = sakClient.migrerPerson(payload.personIdent)
             migrertsakRepository.update(
