@@ -1,6 +1,7 @@
 package no.nav.familie.ba.migrering.rest
 
 import io.swagger.v3.oas.annotations.media.Schema
+import jakarta.validation.Valid
 import no.nav.familie.ba.migrering.domain.MigreringStatus
 import no.nav.familie.ba.migrering.domain.Migrertsak
 import no.nav.familie.ba.migrering.domain.MigrertsakRepository
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
-import javax.validation.Valid
 
 @RestController
 @RequestMapping("/api/data/migrertsak")

@@ -1,5 +1,8 @@
 package no.nav.familie.ba.migrering.rest
 
+import jakarta.validation.Valid
+import jakarta.validation.constraints.Max
+import jakarta.validation.constraints.Min
 import no.nav.familie.ba.migrering.integrasjoner.MigreringResponseDto
 import no.nav.familie.ba.migrering.services.HentSakTilMigreringService
 import no.nav.familie.ba.migrering.services.Kategori
@@ -13,9 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import javax.validation.Valid
-import javax.validation.constraints.Max
-import javax.validation.constraints.Min
 
 @RestController
 @RequestMapping("/api/migrer")
