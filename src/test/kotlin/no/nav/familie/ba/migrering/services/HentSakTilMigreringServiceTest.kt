@@ -42,8 +42,8 @@ class HentSakTilMigreringServiceTest {
                     0,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
-                    "OS"
-                )
+                    "OS",
+                ),
             )
         } returns MigreringResponse(personIdenter.toSet(), 2)
         every {
@@ -52,8 +52,8 @@ class HentSakTilMigreringServiceTest {
                     1,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
-                    "OS"
-                )
+                    "OS",
+                ),
             )
         } returns MigreringResponse(emptySet(), 2)
         val tasker = mutableListOf<Task>()
@@ -65,7 +65,7 @@ class HentSakTilMigreringServiceTest {
         assertThat(
             personIdenter.all { personIdent ->
                 tasker.find { it.payload.contains(personIdent) } != null
-            }
+            },
         ).isTrue
     }
 
@@ -78,8 +78,8 @@ class HentSakTilMigreringServiceTest {
                     0,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
-                    "OS"
-                )
+                    "OS",
+                ),
             )
         } returns MigreringResponse(setOf(personIdent), 2)
         every {
@@ -88,17 +88,17 @@ class HentSakTilMigreringServiceTest {
                     1,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
-                    "OS"
-                )
+                    "OS",
+                ),
             )
         } returns MigreringResponse(emptySet(), 2)
         every { migertsakRepository.findByPersonIdentAndStatusNot(personIdent, MigreringStatus.ARKIVERT) } returns listOf(
-            Migrertsak()
+            Migrertsak(),
         )
         every { taskServiceMock.save(any()) } returns Task(type = "", payload = "")
 
         println(
-            service.migrer(10, GYLDIG_MIGRERINGSKJØRETIDSPUNKT)
+            service.migrer(10, GYLDIG_MIGRERINGSKJØRETIDSPUNKT),
         )
 
         verify(exactly = 0) { taskServiceMock.save(any()) }
@@ -106,15 +106,14 @@ class HentSakTilMigreringServiceTest {
 
     @Test
     fun `Skal kjøre migrering til maks antall er nådd`() {
-
         every {
             infotrygdClientMock.hentPersonerKlareForMigrering(
                 MigreringRequest(
                     0,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
-                    "OS"
-                )
+                    "OS",
+                ),
             )
         } returns MigreringResponse(arrayOf("1", "2", "3").toSet(), 3)
         every {
@@ -123,8 +122,8 @@ class HentSakTilMigreringServiceTest {
                     1,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
-                    "OS"
-                )
+                    "OS",
+                ),
             )
         } returns MigreringResponse(arrayOf("4", "5", "6", "7", "8").toSet(), 3)
         every {
@@ -133,8 +132,8 @@ class HentSakTilMigreringServiceTest {
                     2,
                     ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     "OR",
-                    "OS"
-                )
+                    "OS",
+                ),
             )
         } returns MigreringResponse(arrayOf("9", "10", "11", "12", "13").toSet(), 3)
         val tasker = mutableListOf<Task>()
@@ -153,7 +152,7 @@ class HentSakTilMigreringServiceTest {
         assertThat(
             listOf("1", "2", "3", "5", "6", "7", "8", "10", "11", "12").all { personIdent ->
                 tasker.find { it.payload.contains(personIdent) } != null
-            }
+            },
         ).isTrue
     }
 
@@ -171,9 +170,9 @@ class HentSakTilMigreringServiceTest {
     fun `Rekjør migrering på feiltype - oppretter 2 tasker når det er 2 med feiltype`() {
         every { migertsakRepository.findByStatusAndFeiltype(MigreringStatus.FEILET, "TESTFEIL") } returns listOf(
             Migrertsak(
-                personIdent = "1"
+                personIdent = "1",
             ),
-            Migrertsak(personIdent = "2")
+            Migrertsak(personIdent = "2"),
         )
         every { taskServiceMock.save(any()) } returns Task(type = "", payload = "")
         service.rekjørMigreringerMedFeiltype("TESTFEIL").also {
@@ -187,9 +186,9 @@ class HentSakTilMigreringServiceTest {
     fun `Rekjør migrering på feiltype - oppretter 1 tasker når det er 2 med feiltype med samme feiltype og personident`() {
         every { migertsakRepository.findByStatusAndFeiltype(MigreringStatus.FEILET, "TESTFEIL") } returns listOf(
             Migrertsak(
-                personIdent = "1"
+                personIdent = "1",
             ),
-            Migrertsak(personIdent = "1")
+            Migrertsak(personIdent = "1"),
         )
         every { taskServiceMock.save(any()) } returns Task(type = "", payload = "")
         service.rekjørMigreringerMedFeiltype("TESTFEIL").also {
@@ -235,9 +234,9 @@ class HentSakTilMigreringServiceTest {
     fun `Rekjør migrering på liste identer - oppretter 1 tasker når det er 2 med feiltype med samme feiltype og personident`() {
         every { migertsakRepository.findByStatusAndPersonIdent(MigreringStatus.FEILET, "1") } returns listOf(
             Migrertsak(
-                personIdent = "1"
+                personIdent = "1",
             ),
-            Migrertsak(personIdent = "1")
+            Migrertsak(personIdent = "1"),
         )
         every { taskServiceMock.save(any()) } returns Task(type = "", payload = "")
         service.rekjørMigreringer(setOf("1")).also {

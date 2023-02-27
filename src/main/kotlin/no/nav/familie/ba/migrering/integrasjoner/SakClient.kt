@@ -22,7 +22,7 @@ private val logger = LoggerFactory.getLogger(SakClient::class.java)
 @Component
 class SakClient @Autowired constructor(
     @param:Value("\${BA_SAK_API_URL}") private val sakApiUri: String,
-    @Qualifier("azure") restOperations: RestOperations
+    @Qualifier("azure") restOperations: RestOperations,
 ) : AbstractRestClient(restOperations, "migrering.sak") {
 
     fun migrerPerson(ident: String): MigreringResponseDto {

@@ -52,7 +52,6 @@ class MigrertsakRowMapper : RowMapper<Migrertsak?> {
 
     @Throws(SQLException::class)
     override fun mapRow(rs: ResultSet, rowNum: Int): Migrertsak {
-
         return Migrertsak(
             id = UUID.fromString(rs.getString("id")),
             callId = rs.getString("call_id"),
@@ -60,7 +59,7 @@ class MigrertsakRowMapper : RowMapper<Migrertsak?> {
             aarsak = rs.getString("aarsak"),
             resultatFraBa = JsonWrapper(rs.getString("resultat_fra_ba")),
             migreringsdato = rs.getTimestamp("migreringsdato").toLocalDateTime(),
-            personIdent = rs.getString("person_ident")
+            personIdent = rs.getString("person_ident"),
         )
     }
 }

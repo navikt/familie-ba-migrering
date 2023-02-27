@@ -15,13 +15,13 @@ class HentSakTilMigreringService(
     val infotrygdClient: InfotrygdClient,
     val opprettTaskService: OpprettTaskService,
     val migrertsakRepository: MigrertsakRepository,
-    @Value("\${migrering.aktivert:false}") val migreringAktivert: Boolean
+    @Value("\${migrering.aktivert:false}") val migreringAktivert: Boolean,
 ) {
 
     fun migrer(
         antallPersoner: Int,
         migreringsDato: LocalDate = LocalDate.now(),
-        kategori: Kategori = Kategori.ORDINÆR
+        kategori: Kategori = Kategori.ORDINÆR,
     ): String { // migreringsDato skal kun brukes fra tester
         if (!skalKjøreMigering(migreringAktivert, migreringsDato)) {
             Log.info(MIGRERING_DEAKTIVERT_MELDING)
@@ -36,13 +36,14 @@ class HentSakTilMigreringService(
                     page = startSide,
                     size = ANTALL_PERSONER_SOM_HENTES_FRA_INFOTRYGD,
                     valg = kategori.valg,
-                    undervalg = kategori.undervalg
-                )
+                    undervalg = kategori.undervalg,
+                ),
             )
             Log.info("Fant ${personerForMigrering.size} personer for migrering på side $startSide")
             secureLogger.info("Resultat fra infotrygd: $personerForMigrering")
-            if (personerForMigrering.isNotEmpty())
+            if (personerForMigrering.isNotEmpty()) {
                 antallPersonerMigrert = oppretteEllerSkipMigrering(personerForMigrering, antallPersonerMigrert, antallPersoner)
+            }
 
             if (++startSide == totalPages) break
         }
@@ -82,17 +83,20 @@ class HentSakTilMigreringService(
     private fun oppretteEllerSkipMigrering(
         personerForMigrering: Set<String>,
         antallAlleredeMigret: Int,
-        antallPersonerSomSkalMigreres: Int
+        antallPersonerSomSkalMigreres: Int,
     ): Int {
         var antallPersonerMigrert = antallAlleredeMigret
         for (person in personerForMigrering) {
             if (migrertsakRepository.findByPersonIdentAndStatusNot(person, MigreringStatus.ARKIVERT).isEmpty()) {
                 opprettTaskService.opprettMigreringtask(person)
                 antallPersonerMigrert++
-            } else secureLogger.info("Skipper oppretting av MigreringTask for $person har treff i MigrertSak")
+            } else {
+                secureLogger.info("Skipper oppretting av MigreringTask for $person har treff i MigrertSak")
+            }
 
-            if (antallPersonerMigrert == antallPersonerSomSkalMigreres)
+            if (antallPersonerMigrert == antallPersonerSomSkalMigreres) {
                 return antallPersonerMigrert
+            }
         }
         return antallPersonerMigrert
     }

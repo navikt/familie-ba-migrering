@@ -25,8 +25,8 @@ fun main(args: Array<String>) {
             restTemplate.postForEntity(
                 "http://localhost:8300/__admin/mappings/new",
                 infotrygdMigreringResponse,
-                String::class.java
-            )
+                String::class.java,
+            ),
     )
 
     // mock sak i wiremock
@@ -41,8 +41,8 @@ fun main(args: Array<String>) {
                         "Oppretter wiremock for sak som skal feile for person  ${personer.elementAt(i)} " + restTemplate.postForEntity(
                             "http://localhost:8300/__admin/mappings/new",
                             request,
-                            String::class.java
-                        )
+                            String::class.java,
+                        ),
                     )
                 }
         } else {
@@ -51,9 +51,9 @@ fun main(args: Array<String>) {
                     MigreringResponseDto(
                         1000,
                         9000,
-                        virkningFom = YearMonth.now()
-                    )
-                )
+                        virkningFom = YearMonth.now(),
+                    ),
+                ),
             ).replace("\"", "\\\"")
                 .also {
                     val request = SAK_WIREMOCK.replace("BODY", it).replace("IDENT", personer.elementAt(i))
@@ -61,8 +61,8 @@ fun main(args: Array<String>) {
                         "Oppretter wiremock for sak som skal returner ok for person  ${personer.elementAt(i)} " + restTemplate.postForEntity(
                             "http://localhost:8300/__admin/mappings/new",
                             request,
-                            String::class.java
-                        )
+                            String::class.java,
+                        ),
                     )
                 }
         }

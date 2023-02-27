@@ -19,7 +19,7 @@ private val logger = LoggerFactory.getLogger(InfotrygdFeedClient::class.java)
 @Component
 class InfotrygdFeedClient @Autowired constructor(
     @param:Value("\${FAMILIE_BA_INFOTRYGD_FEED_API_URL}") private val infotrygdFeedApiUri: String,
-    @Qualifier("azure") restOperations: RestOperations
+    @Qualifier("azure") restOperations: RestOperations,
 ) : AbstractRestClient(restOperations, "migrering.infotrygd.feed") {
 
     fun hentOversiktOverVedtaksmeldingerSendtTilFeed(personIdent: String): List<FeedOpprettetDto> {
@@ -28,9 +28,11 @@ class InfotrygdFeedClient @Autowired constructor(
             val response: Ressurs<List<FeedOpprettetDto>> = postForEntity(uri, personIdent)
             return response.getDataOrThrow().also { logger.info("Vedtaksmeldinger sendt for person: $it") }
         } catch (e: Exception) {
-            val secureLogMessage = if (e is HttpStatusCodeException)
-                "Http feil mot ${uri.path}: httpkode: ${e.statusCode}, feilmelding ${e.getResponseBodyAsString()}" else
+            val secureLogMessage = if (e is HttpStatusCodeException) {
+                "Http feil mot ${uri.path}: httpkode: ${e.statusCode}, feilmelding ${e.getResponseBodyAsString()}"
+            } else {
                 "Feil mot ${uri.path}; melding ${e.message}"
+            }
             secureLogger.error(secureLogMessage, e)
             logger.error("Feil mot ${uri.path}.")
             throw RuntimeException("Feil mot ${uri.path}: ${e.message}", e)
@@ -40,5 +42,5 @@ class InfotrygdFeedClient @Autowired constructor(
 
 data class FeedOpprettetDto(
     val opprettetDato: LocalDateTime,
-    val datoStartNyBa: LocalDate?
+    val datoStartNyBa: LocalDate?,
 )

@@ -5,11 +5,11 @@ import org.springframework.context.annotation.Profile
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
-@Service
-@Profile("dev")
 /**
  * Egen scheduler for dev som kjører oftere enn preprod/prod
  */
+@Service
+@Profile("dev")
 class HentSakTilMigreringDevService(
     val hentSakTilMigreringService: HentSakTilMigreringService,
 ) {

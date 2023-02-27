@@ -27,7 +27,7 @@ data class MigrertsakLogg(
     val aarsak: String? = null,
 
     @Column("call_id")
-    val callId: String = ""
+    val callId: String = "",
 ) {
 
     companion object {
