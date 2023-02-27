@@ -1,6 +1,6 @@
 name: Merge queue
 on:
-  merge_queue:
+  merge_group:
 env:
   IMAGE: ghcr.io/navikt/familie-ba-migrering:${{ github.sha }}
 jobs:
