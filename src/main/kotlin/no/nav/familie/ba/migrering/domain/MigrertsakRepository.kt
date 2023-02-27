@@ -4,6 +4,7 @@ import no.nav.familie.ba.migrering.domain.common.InsertUpdateRepository
 import no.nav.familie.ba.migrering.domain.common.RepositoryInterface
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jdbc.repository.query.Query
+import org.springframework.data.repository.CrudRepository
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -15,7 +16,7 @@ import java.util.UUID
 
 @Repository
 @Transactional
-interface MigrertsakRepository : RepositoryInterface<Migrertsak, UUID>, InsertUpdateRepository<Migrertsak> {
+interface MigrertsakRepository : RepositoryInterface<Migrertsak, UUID>, InsertUpdateRepository<Migrertsak>, CrudRepository<Migrertsak, UUID> {
     fun findByStatusAndPersonIdent(status: MigreringStatus, personIdent: String): List<Migrertsak>
     fun findByPersonIdentAndStatusNot(personIdent: String, status: MigreringStatus): List<Migrertsak>
     fun findByStatusInAndPersonIdentOrderByMigreringsdato(status: List<MigreringStatus>, personIdent: String): List<Migrertsak>
