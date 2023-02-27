@@ -27,7 +27,7 @@ import java.util.UUID
     taskStepType = VerifiserMigreringTask.TASK_STEP_TYPE,
     beskrivelse = "Verifisering av migrering fra Infotrygd",
     maxAntallFeil = 3,
-    triggerTidVedFeilISekunder = 60
+    triggerTidVedFeilISekunder = 60,
 )
 class VerifiserMigreringTask(
     val infotrygdClient: InfotrygdClient,
@@ -51,7 +51,7 @@ class VerifiserMigreringTask(
             resultatFraBa.infotrygdTkNr,
             resultatFraBa.infotrygdIverksattFom,
             resultatFraBa.infotrygdVirkningFom,
-            resultatFraBa.infotrygdRegion
+            resultatFraBa.infotrygdRegion,
         ) {
             secureLogger.error("Migrert sak mangler infotrygdstønad id-nøkler:\n$migrertsak")
             "Verifisering feilet: tkNr, iverksattFom, virkningFom og/eller region fra responseDto var null"
@@ -62,8 +62,8 @@ class VerifiserMigreringTask(
                 resultatFraBa.infotrygdTkNr!!,
                 resultatFraBa.infotrygdIverksattFom!!,
                 resultatFraBa.infotrygdVirkningFom!!,
-                resultatFraBa.infotrygdRegion!!
-            )
+                resultatFraBa.infotrygdRegion!!,
+            ),
         )
         when (infotrygdStønad.opphørsgrunn) {
             "5" -> {
@@ -90,7 +90,7 @@ class VerifiserMigreringTask(
 
     private fun erVedtaksmeldingSendt(
         migrertsak: Migrertsak,
-        virkningFom: YearMonth?
+        virkningFom: YearMonth?,
     ) = infotrygdFeedClient.hentOversiktOverVedtaksmeldingerSendtTilFeed(migrertsak.personIdent).any {
         it.opprettetDato.isAfter(migrertsak.migreringsdato) && YearMonth.from(it.datoStartNyBa!!) == virkningFom
     }
@@ -108,7 +108,7 @@ class VerifiserMigreringTask(
         fun opprettTaskMedTriggerTid(
             migrertsakId: String,
             triggerTid: LocalDateTime = LocalDateTime.now(),
-            properties: Properties
+            properties: Properties,
         ): Task {
             return Task(
                 type = TASK_STEP_TYPE,

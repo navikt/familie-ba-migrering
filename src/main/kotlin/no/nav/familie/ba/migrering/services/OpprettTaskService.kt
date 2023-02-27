@@ -18,7 +18,7 @@ import java.util.UUID
 
 @Service
 class OpprettTaskService(
-    val taskService: TaskService
+    val taskService: TaskService,
 ) {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -44,8 +44,8 @@ class OpprettTaskService(
             VerifiserMigreringTask.opprettTaskMedTriggerTid(
                 migrertsak.id.toString(),
                 LocalDate.now().plusDays(1).atTime(6, 10),
-                properties
-            )
+                properties,
+            ),
         )
     }
 

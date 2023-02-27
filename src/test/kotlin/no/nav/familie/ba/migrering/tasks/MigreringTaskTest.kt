@@ -36,6 +36,7 @@ class MigreringTaskTest {
     fun setUp() {
         clearAllMocks()
     }
+
     @Test
     fun `Skal insert row til migeringsstatus med status == SUKKESS hvis sakClient ikke kast et unntak`() {
         every { sakClientMock.migrerPerson(any()) } returns MigreringResponseDto(1, 2)
@@ -47,7 +48,7 @@ class MigreringTaskTest {
         every { migrertsakRepositoryMock.update(capture(statusSlotUpdate)) } returns Migrertsak()
         every { taskService.save(capture(slotTask)) } returns VerifiserMigreringTask.opprettTaskMedTriggerTid(
             "1",
-            properties = Properties()
+            properties = Properties(),
         )
 
         val personIdent = "ooo"
@@ -57,13 +58,13 @@ class MigreringTaskTest {
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
             taskService,
-            OpprettTaskService(taskService)
+            OpprettTaskService(taskService),
         ).doTask(
             MigreringTask.opprettTask(
                 MigreringTaskDto(
-                    personIdent = personIdent
-                )
-            )
+                    personIdent = personIdent,
+                ),
+            ),
         )
 
         assertThat(statusSlotInsert.captured.status).isEqualTo(MigreringStatus.UKJENT)
@@ -98,13 +99,13 @@ class MigreringTaskTest {
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
             taskService,
-            OpprettTaskService(taskService)
+            OpprettTaskService(taskService),
         ).doTask(
             MigreringTask.opprettTask(
                 MigreringTaskDto(
-                    personIdent = personIdent
-                )
-            )
+                    personIdent = personIdent,
+                ),
+            ),
         )
 
         assertThat(statusSlotInsert.captured.status).isEqualTo(MigreringStatus.UKJENT)
@@ -126,9 +127,9 @@ class MigreringTaskTest {
             migrertsakRepositoryMock.findByStatusInAndPersonIdentOrderByMigreringsdato(
                 listOf(
                     MigreringStatus.UKJENT,
-                    MigreringStatus.FEILET
+                    MigreringStatus.FEILET,
                 ),
-                "ooo"
+                "ooo",
             )
         } returns emptyList()
         every { migrertsakRepositoryMock.insert(capture(statusSlotInsert)) } returns Migrertsak()
@@ -141,13 +142,13 @@ class MigreringTaskTest {
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
             taskService,
-            OpprettTaskService(taskService)
+            OpprettTaskService(taskService),
         ).doTask(
             MigreringTask.opprettTask(
                 MigreringTaskDto(
-                    personIdent = personIdent
-                )
-            )
+                    personIdent = personIdent,
+                ),
+            ),
         ) // do task skal ikke kaste feil fordi feilen skjer i egen context
 
         assertThat(statusSlotUpdate.captured.status).isEqualTo(MigreringStatus.FEILET)
@@ -163,7 +164,8 @@ class MigreringTaskTest {
         val uuidGammelSak = UUID.randomUUID()
         every {
             migrertsakRepositoryMock.findByStatusInAndPersonIdentOrderByMigreringsdato(
-                listOf(MigreringStatus.UKJENT, MigreringStatus.FEILET), "ooo"
+                listOf(MigreringStatus.UKJENT, MigreringStatus.FEILET),
+                "ooo",
             )
         } returns listOf(Migrertsak(id = uuidGammelSak))
         every { migrertsakRepositoryMock.update(capture(statusSlotUpdate)) } returns Migrertsak()
@@ -171,8 +173,8 @@ class MigreringTaskTest {
         val personIdent = "ooo"
         val task = MigreringTask.opprettTask(
             MigreringTaskDto(
-                personIdent = personIdent
-            )
+                personIdent = personIdent,
+            ),
         )
         every { taskService.save(capture(taskSlot)) } returns task
         every { migrertsakLoggRepositoryMock.insert(any()) } returns MigrertsakLogg.tilMigrertsakLogg(Migrertsak(id = uuidGammelSak))
@@ -183,9 +185,9 @@ class MigreringTaskTest {
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
             taskService,
-            OpprettTaskService(taskService)
+            OpprettTaskService(taskService),
         ).doTask(
-            task
+            task,
         )
         assertThat(statusSlotUpdate.captured.id).isEqualTo(uuidGammelSak)
         assertThat(statusSlotUpdate.captured.status).isEqualTo(MigreringStatus.FEILET)
@@ -204,19 +206,20 @@ class MigreringTaskTest {
             personIdent = personIdent,
             status = MigreringStatus.UKJENT,
             feiltype = "TEST",
-            aarsak = "Noe galt"
+            aarsak = "Noe galt",
         )
         every {
             migrertsakRepositoryMock.findByStatusInAndPersonIdentOrderByMigreringsdato(
-                listOf(MigreringStatus.UKJENT, MigreringStatus.FEILET), "ooo"
+                listOf(MigreringStatus.UKJENT, MigreringStatus.FEILET),
+                "ooo",
             )
         } returns listOf(migrertSak)
         every { migrertsakRepositoryMock.update(any()) } returns migrertSak
 
         val task = MigreringTask.opprettTask(
             MigreringTaskDto(
-                personIdent = personIdent
-            )
+                personIdent = personIdent,
+            ),
         )
         every { taskService.save(any()) } returns task
         val migrertsakLoggSlot = slot<MigrertsakLogg>()
@@ -228,9 +231,9 @@ class MigreringTaskTest {
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
             taskService,
-            OpprettTaskService(taskService)
+            OpprettTaskService(taskService),
         ).doTask(
-            task
+            task,
         )
 
         assertThat(migrertsakLoggSlot.captured.id).isEqualTo(migrertSak.id)
@@ -259,13 +262,13 @@ class MigreringTaskTest {
             migrertsakRepositoryMock,
             migrertsakLoggRepositoryMock,
             taskService,
-            OpprettTaskService(taskService)
+            OpprettTaskService(taskService),
         ).doTask(
             MigreringTask.opprettTask(
                 MigreringTaskDto(
-                    personIdent = personIdent
-                )
-            )
+                    personIdent = personIdent,
+                ),
+            ),
         )
 
         assertThat(statusSlotInsert.captured.status).isEqualTo(MigreringStatus.UKJENT)

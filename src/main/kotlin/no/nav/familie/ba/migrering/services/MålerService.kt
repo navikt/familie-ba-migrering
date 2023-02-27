@@ -29,17 +29,17 @@ class MålerService(private val migrerertsakRepository: MigrertsakRepository) {
             listOf(
                 MultiGauge.Row.of(
                     Tags.of("migrert", "total"),
-                    totalMigrerte
+                    totalMigrerte,
                 ),
                 MultiGauge.Row.of(
                     Tags.of("migrert", "ikkeverifisert"),
-                    antallSomIkkeErVerifisertInfotrygd
+                    antallSomIkkeErVerifisertInfotrygd,
                 ),
                 MultiGauge.Row.of(
                     Tags.of("migrert", "feil"),
-                    antallFeil
-                )
-            )
+                    antallFeil,
+                ),
+            ),
         )
         antallLøpendeSakerGauge.register(rows, true)
     }

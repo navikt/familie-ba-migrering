@@ -20,7 +20,7 @@ class VerifiserMigeringService(
     val opprettMigreringstaskService: OpprettTaskService,
     val migrertsakRepository: MigrertsakRepository,
     val infotrygdFeedClient: InfotrygdFeedClient,
-    val infotrygdClient: InfotrygdClient
+    val infotrygdClient: InfotrygdClient,
 ) {
 
     private val logger = LoggerFactory.getLogger(VerifiserMigeringService::class.java)
@@ -35,7 +35,7 @@ class VerifiserMigeringService(
                 status = MigreringStatus.MIGRERT_I_BA,
                 callId = MDC.get(MDCConstants.MDC_CALL_ID) ?: IdUtils.generateId(),
                 resultatFraBa = JsonWrapper.of(migreringsResponse),
-            )
+            ),
         )
 
         opprettMigreringstaskService.opprettVerifiserMigreringTask(migrertsak, migreringsResponse)

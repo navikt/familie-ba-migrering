@@ -23,21 +23,30 @@ import javax.validation.constraints.Min
 @Validated
 class MigreringController(
     private val hentSakTilMigreringService: HentSakTilMigreringService,
-    private val verifiserMigeringService: VerifiserMigeringService
+    private val verifiserMigeringService: VerifiserMigeringService,
 ) {
 
     @PostMapping("/")
-    fun migrerFraInfotrygd(@Valid @RequestBody startMigreringRequest: StartMigreringRequest): String {
+    fun migrerFraInfotrygd(
+        @Valid @RequestBody
+        startMigreringRequest: StartMigreringRequest,
+    ): String {
         return hentSakTilMigreringService.migrer(startMigreringRequest.antallPersoner, kategori = startMigreringRequest.kategori)
     }
 
     @PostMapping("/rekjor")
-    fun migrerIdenter(@Valid @RequestBody identer: Set<String>): String {
+    fun migrerIdenter(
+        @Valid @RequestBody
+        identer: Set<String>,
+    ): String {
         return hentSakTilMigreringService.rekjørMigreringer(identer)
     }
 
     @PostMapping("/rekjor/{feiltype}")
-    fun migrer(@Valid @PathVariable feiltype: String): String {
+    fun migrer(
+        @Valid @PathVariable
+        feiltype: String,
+    ): String {
         return hentSakTilMigreringService.rekjørMigreringerMedFeiltype(feiltype)
     }
 
@@ -53,33 +62,50 @@ class MigreringController(
     }
 
     @PostMapping("/valider/")
-    fun validerOmPersonErMigrert(@Valid @RequestBody body: PersondIdentRequest): Boolean {
+    fun validerOmPersonErMigrert(
+        @Valid @RequestBody
+        body: PersondIdentRequest,
+    ): Boolean {
         return verifiserMigeringService.sjekkOmPersonErMigrert(body.personIdent)
     }
 
     @PostMapping("/valider/{feiltype}")
-    fun validerOmErMigrert(@Valid @PathVariable feiltype: String): Map<String, List<String>> {
+    fun validerOmErMigrert(
+        @Valid @PathVariable
+        feiltype: String,
+    ): Map<String, List<String>> {
         val (migrert, fortsattÅpne) = verifiserMigeringService.sjekkOmFeilytpeErMigrert(feiltype)
 
         return mapOf(
             "migrert" to migrert,
-            "fortsattÅpne" to fortsattÅpne
+            "fortsattÅpne" to fortsattÅpne,
         )
     }
 
     @PostMapping("/migrert-av-saksbehandler")
-    fun migrer(@Valid @RequestBody request: MigrertAvSaksbehandlerRequest): Ressurs<String> {
+    fun migrer(
+        @Valid @RequestBody
+        request: MigrertAvSaksbehandlerRequest,
+    ): Ressurs<String> {
         verifiserMigeringService.verifiserMigrering(request.personIdent, request.migreringsResponse)
         return Ressurs.success("OK")
     }
 
     @PostMapping("/sak")
     @Transactional(readOnly = true)
-    fun visÅpneSakerFor(@Valid @RequestBody identer: Set<String>): List<Pair<String, List<String>>> {
+    fun visÅpneSakerFor(
+        @Valid @RequestBody
+        identer: Set<String>,
+    ): List<Pair<String, List<String>>> {
         return identer.map { Pair(it, verifiserMigeringService.listÅpneSaker(it)) }
     }
 
-    data class StartMigreringRequest(@Min(1) @Max(20) val antallPersoner: Int, val kategori: Kategori = Kategori.ORDINÆR)
+    data class StartMigreringRequest(
+        @Min(1)
+        @Max(20)
+        val antallPersoner: Int,
+        val kategori: Kategori = Kategori.ORDINÆR,
+    )
 
     data class MigrertAvSaksbehandlerRequest(val personIdent: String, val migreringsResponse: MigreringResponseDto)
 }

@@ -28,31 +28,31 @@ internal class MigrertSakControllerTest {
                 UUID.randomUUID(),
                 personIdent = "1",
                 status = MigreringStatus.FEILET,
-                feiltype = "FEILTYPE_1"
+                feiltype = "FEILTYPE_1",
             ),
             Migrertsak(
                 UUID.randomUUID(),
                 personIdent = "2",
                 status = MigreringStatus.FEILET,
-                feiltype = "FEILTYPE_1"
+                feiltype = "FEILTYPE_1",
             ),
             Migrertsak(
                 UUID.randomUUID(),
                 personIdent = "3",
                 status = MigreringStatus.FEILET,
-                feiltype = "FEILTYPE_2"
+                feiltype = "FEILTYPE_2",
             ),
             Migrertsak(
                 UUID.randomUUID(),
                 personIdent = "1",
                 status = MigreringStatus.FEILET,
-                feiltype = "FEILTYPE_1"
+                feiltype = "FEILTYPE_1",
             ),
             Migrertsak(
                 UUID.randomUUID(),
                 personIdent = "4",
                 status = MigreringStatus.FEILET,
-                feiltype = null
+                feiltype = null,
             ),
         )
         val listeMedFeilede = migrertSakController.listFeiledMigreringer()

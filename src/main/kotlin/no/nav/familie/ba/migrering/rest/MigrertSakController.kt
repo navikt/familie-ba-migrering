@@ -27,13 +27,18 @@ import javax.validation.Valid
 @ProtectedWithClaims(issuer = "azuread")
 @Validated
 class MigrertSakController(
-    private val migrertsakRepository: MigrertsakRepository
+    private val migrertsakRepository: MigrertsakRepository,
 ) {
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
 
     @GetMapping("/")
     @Transactional(readOnly = true)
-    fun hentAlleSaker(@RequestParam(required = false) status: List<MigreringStatus>?, @Schema(defaultValue = "0") @RequestParam(required = true) page: Int): MigrertSakResponse {
+    fun hentAlleSaker(
+        @RequestParam(required = false) status: List<MigreringStatus>?,
+        @Schema(defaultValue = "0")
+        @RequestParam(required = true)
+        page: Int,
+    ): MigrertSakResponse {
         val pageable = Pageable.ofSize(500).withPage(page)
         return if (status.isNullOrEmpty()) {
             MigrertSakResponse(migrertsakRepository.findAll(pageable).toList())
@@ -50,7 +55,10 @@ class MigrertSakController(
 
     @PostMapping("/")
     @Transactional(readOnly = true)
-    fun hentAlleSakerForPerson(@Valid @RequestBody body: PersondIdentRequest): MigrertSakResponse {
+    fun hentAlleSakerForPerson(
+        @Valid @RequestBody
+        body: PersondIdentRequest,
+    ): MigrertSakResponse {
         return MigrertSakResponse(migrertsakRepository.findByStatusInAndPersonIdentOrderByMigreringsdato(MigreringStatus.values().toList(), body.personIdent))
     }
 
@@ -77,7 +85,11 @@ class MigrertSakController(
 
     @PutMapping("/{id}")
     @Transactional
-    fun oppdaterMigrertSak(@PathVariable("id") id: UUID, @RequestBody @Valid migrertsak: Migrertsak): Migrertsak {
+    fun oppdaterMigrertSak(
+        @PathVariable("id") id: UUID,
+        @RequestBody @Valid
+        migrertsak: Migrertsak,
+    ): Migrertsak {
         return migrertsakRepository.save(migrertsak)
     }
 
@@ -89,7 +101,12 @@ class MigrertSakController(
 
     @DeleteMapping("/feiltype/{feiltype}")
     @Transactional
-    fun slettMigrertSakMedFeiltype(@PathVariable("feiltype") feiltype: MigreringsfeilType, @Schema(defaultValue = "true") @RequestParam(required = true) dryRun: Boolean) {
+    fun slettMigrertSakMedFeiltype(
+        @PathVariable("feiltype") feiltype: MigreringsfeilType,
+        @Schema(defaultValue = "true")
+        @RequestParam(required = true)
+        dryRun: Boolean,
+    ) {
         migrertsakRepository.findByStatusAndFeiltype(MigreringStatus.FEILET, feiltype.name).forEach {
             if (dryRun) {
                 secureLogger.info("dryRun er satt til false, så ignorerer sletting av $it")

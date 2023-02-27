@@ -28,7 +28,7 @@ import java.util.UUID
 @TaskStepBeskrivelse(
     taskStepType = MigreringTask.TASK_STEP_TYPE,
     beskrivelse = "Migrering sak fra Infotrygd",
-    maxAntallFeil = 3
+    maxAntallFeil = 3,
 )
 class MigreringTask(
     val sakClient: SakClient,
@@ -36,7 +36,7 @@ class MigreringTask(
     val migrertsakRepository: MigrertsakRepository,
     val migrertsakLoggRepository: MigrertsakLoggRepository,
     val taskService: TaskService,
-    val opprettTaskService: OpprettTaskService
+    val opprettTaskService: OpprettTaskService,
 ) : AsyncTaskStep {
 
     override fun doTask(task: Task) {
@@ -54,18 +54,19 @@ class MigreringTask(
                     personIdent = payload.personIdent,
                     migreringsdato = LocalDateTime.now(),
                     status = MigreringStatus.UKJENT,
-                    callId = task.callId
-                )
+                    callId = task.callId,
+                ),
             )
         } else {
             migrertsakLoggRepository.insert(MigrertsakLogg.tilMigrertsakLogg(migrertsak))
         }
 
         try {
-            if (infotrygdClient.harÅpenSak(payload.personIdent))
+            if (infotrygdClient.harÅpenSak(payload.personIdent)) {
                 kastOgTellMigreringsFeil(MigreringsfeilType.ÅPEN_SAK_TIL_BESLUTNING_I_INFOTRYGD)
-            else if (infotrygdClient.hentSaker(payload.personIdent).filter { it.resultat != "HB" }.any { it.status != "FB" })
+            } else if (infotrygdClient.hentSaker(payload.personIdent).filter { it.resultat != "HB" }.any { it.status != "FB" }) {
                 kastOgTellMigreringsFeil(MigreringsfeilType.ÅPEN_SAK_INFOTRYGD)
+            }
             val responseBa = sakClient.migrerPerson(payload.personIdent)
             migrertsakRepository.update(
                 Migrertsak(
@@ -73,8 +74,8 @@ class MigreringTask(
                     personIdent = payload.personIdent,
                     status = MigreringStatus.MIGRERT_I_BA,
                     resultatFraBa = JsonWrapper.of(responseBa),
-                    callId = task.callId
-                )
+                    callId = task.callId,
+                ),
             )
             opprettTaskService.opprettVerifiserMigreringTask(migrertsak, responseBa)
         } catch (e: Exception) {
@@ -90,14 +91,14 @@ class MigreringTask(
                     resultatFraBa = null,
                     feiltype = feiltype,
                     aarsak = e.message,
-                    callId = task.callId
-                )
+                    callId = task.callId,
+                ),
             )
             task.metadata.put("feiltype", feiltype)
 
             secureLogger.info(
                 "Migrering av sak for person ${payload.personIdent} feilet med feiltype=$feiltype.",
-                e
+                e,
             )
         }
     }
@@ -112,11 +113,11 @@ class MigreringTask(
             return Task(
                 type = TASK_STEP_TYPE,
                 payload = objectMapper.writeValueAsString(
-                    migreringTaskDto
+                    migreringTaskDto,
                 ),
                 properties = Properties().apply {
                     put("personIdent", migreringTaskDto.personIdent)
-                }
+                },
             )
         }
     }
@@ -126,7 +127,7 @@ data class MigreringTaskDto(val personIdent: String)
 
 val migreringsFeilCounter = mutableMapOf<String, Counter>()
 fun kastOgTellMigreringsFeil(
-    feiltype: MigreringsfeilType
+    feiltype: MigreringsfeilType,
 ): Nothing =
     throw KanIkkeMigrereException(feiltype.name, feiltype.beskrivelse, null).also {
         if (migreringsFeilCounter[feiltype.name] == null) {

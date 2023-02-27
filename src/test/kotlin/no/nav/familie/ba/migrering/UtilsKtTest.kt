@@ -27,7 +27,7 @@ internal class UtilsKtTest {
         assertThrows(
             IllegalStateException::class.java,
             { erIkkeKjøredato(LocalDate.of(2024, 1, 1)) },
-            "Mangler kjøredato for 2024"
+            "Mangler kjøredato for 2024",
         )
     }
 

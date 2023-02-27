@@ -36,20 +36,20 @@ class VerifiserMigreringTaskTest {
         every { infotrygdClientMock.hentStønad(any()) } returns Stønad(
             opphørsgrunn = "5",
             opphørtFom = YearMonth.now().format(
-                DateTimeFormatter.ofPattern("MMyyyy")
-            )
+                DateTimeFormatter.ofPattern("MMyyyy"),
+            ),
         )
         every { migrertsakRepositoryMock.findById(any()) } returns Optional.of(
             Migrertsak(
                 personIdent = "12345678910",
-                resultatFraBa = JsonWrapper.of(mockMigreringResponse.copy(virkningFom = YearMonth.now()))
-            )
+                resultatFraBa = JsonWrapper.of(mockMigreringResponse.copy(virkningFom = YearMonth.now())),
+            ),
         )
         val statusSlotUpdate = slot<Migrertsak>()
         every { migrertsakRepositoryMock.update(capture(statusSlotUpdate)) } returns Migrertsak()
 
         VerifiserMigreringTask(infotrygdClientMock, infotrygdFeedClientMock, migrertsakRepositoryMock).doTask(
-            VerifiserMigreringTask.opprettTaskMedTriggerTid(UUID.randomUUID().toString(), properties = Properties())
+            VerifiserMigreringTask.opprettTaskMedTriggerTid(UUID.randomUUID().toString(), properties = Properties()),
         )
         assertThat(statusSlotUpdate.captured.status).isEqualTo(MigreringStatus.VERIFISERT)
     }
@@ -60,29 +60,29 @@ class VerifiserMigreringTaskTest {
         every { migrertsakRepositoryMock.findById(any()) } returns Optional.of(
             Migrertsak(
                 personIdent = "12345678910",
-                resultatFraBa = JsonWrapper.of(mockMigreringResponse.copy(infotrygdTkNr = null))
-            )
+                resultatFraBa = JsonWrapper.of(mockMigreringResponse.copy(infotrygdTkNr = null)),
+            ),
         )
         val statusSlotUpdate = slot<Migrertsak>()
         every { migrertsakRepositoryMock.update(capture(statusSlotUpdate)) } returns Migrertsak()
 
         assertThatThrownBy {
             VerifiserMigreringTask(infotrygdClientMock, infotrygdFeedClientMock, migrertsakRepositoryMock).doTask(
-                VerifiserMigreringTask.opprettTaskMedTriggerTid(UUID.randomUUID().toString(), properties = Properties())
+                VerifiserMigreringTask.opprettTaskMedTriggerTid(UUID.randomUUID().toString(), properties = Properties()),
             )
         }.hasMessageContaining("tkNr, iverksattFom, virkningFom og/eller region fra responseDto var null")
 
         every { infotrygdClientMock.hentStønad(any()) } returns Stønad(opphørsgrunn = "0")
         every { migrertsakRepositoryMock.findById(any()) } returns Optional.of(
-            Migrertsak(personIdent = "12345678910", resultatFraBa = JsonWrapper.of(mockMigreringResponse))
+            Migrertsak(personIdent = "12345678910", resultatFraBa = JsonWrapper.of(mockMigreringResponse)),
         )
         every { infotrygdFeedClientMock.hentOversiktOverVedtaksmeldingerSendtTilFeed(any()) } returns listOf(
-            FeedOpprettetDto(LocalDateTime.now(), LocalDate.now())
+            FeedOpprettetDto(LocalDateTime.now(), LocalDate.now()),
         )
 
         assertThatThrownBy {
             VerifiserMigreringTask(infotrygdClientMock, infotrygdFeedClientMock, migrertsakRepositoryMock).doTask(
-                VerifiserMigreringTask.opprettTaskMedTriggerTid(UUID.randomUUID().toString(), properties = Properties())
+                VerifiserMigreringTask.opprettTaskMedTriggerTid(UUID.randomUUID().toString(), properties = Properties()),
             )
         }.hasMessageContaining("Opphørsgrunn")
     }
@@ -91,14 +91,14 @@ class VerifiserMigreringTaskTest {
     fun `skal feile hvis stønad opphørtFom fra Infotrygd er ulik virkningFom i BA`() {
         every { infotrygdClientMock.hentStønad(any()) } returns Stønad(opphørsgrunn = "5", opphørtFom = "000000")
         every { migrertsakRepositoryMock.findById(any()) } returns Optional.of(
-            Migrertsak(personIdent = "12345678910", resultatFraBa = JsonWrapper.of(mockMigreringResponse))
+            Migrertsak(personIdent = "12345678910", resultatFraBa = JsonWrapper.of(mockMigreringResponse)),
         )
         val statusSlotUpdate = slot<Migrertsak>()
         every { migrertsakRepositoryMock.update(capture(statusSlotUpdate)) } returns Migrertsak()
 
         assertThatThrownBy {
             VerifiserMigreringTask(infotrygdClientMock, infotrygdFeedClientMock, migrertsakRepositoryMock).doTask(
-                VerifiserMigreringTask.opprettTaskMedTriggerTid(UUID.randomUUID().toString(), properties = Properties())
+                VerifiserMigreringTask.opprettTaskMedTriggerTid(UUID.randomUUID().toString(), properties = Properties()),
             )
         }.hasMessageContainingAll("OpphørtFom", "virkningFom")
     }
@@ -107,13 +107,13 @@ class VerifiserMigreringTaskTest {
     fun `skal feile hvis det ikke er sendt vedtaksmelding til infotrygd-feed`() {
         every { infotrygdClientMock.hentStønad(any()) } returns Stønad(opphørsgrunn = "0")
         every { migrertsakRepositoryMock.findById(any()) } returns Optional.of(
-            Migrertsak(personIdent = "12345678910", resultatFraBa = JsonWrapper.of(mockMigreringResponse))
+            Migrertsak(personIdent = "12345678910", resultatFraBa = JsonWrapper.of(mockMigreringResponse)),
         )
         every { infotrygdFeedClientMock.hentOversiktOverVedtaksmeldingerSendtTilFeed(any()) } returns listOf()
 
         assertThatThrownBy {
             VerifiserMigreringTask(infotrygdClientMock, infotrygdFeedClientMock, migrertsakRepositoryMock).doTask(
-                VerifiserMigreringTask.opprettTaskMedTriggerTid(UUID.randomUUID().toString(), properties = Properties())
+                VerifiserMigreringTask.opprettTaskMedTriggerTid(UUID.randomUUID().toString(), properties = Properties()),
             )
         }.hasMessageContainingAll("vedtaksmelding", "infotrygd-feed")
     }

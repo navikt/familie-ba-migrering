@@ -22,10 +22,9 @@ import java.util.UUID
 @SpringBootTest(
     classes = [DevLauncher::class],
     properties = [
-        "no.nav.security.jwt.issuer.azuread.discoveryUrl: http://localhost:\${mock-oauth2-server.port}/azuread/.well-known/openid-configuration"
-    ]
+        "no.nav.security.jwt.issuer.azuread.discoveryUrl: http://localhost:\${mock-oauth2-server.port}/azuread/.well-known/openid-configuration",
+    ],
 )
-
 @EnableMockOAuth2Server
 class MigrertsakRepositoryTest {
 
@@ -57,7 +56,8 @@ class MigrertsakRepositoryTest {
             aarsak = null,
             resultatFraBa = resultatFraBa,
             migreringsdato = LocalDateTime.now(),
-            personIdent = "1234", status = MigreringStatus.MIGRERT_I_BA
+            personIdent = "1234",
+            status = MigreringStatus.MIGRERT_I_BA,
         )
 
         migrertsakRepository.insert(migrertsak)
@@ -73,7 +73,8 @@ class MigrertsakRepositoryTest {
             aarsak = null,
             resultatFraBa = resultatFraBa,
             migreringsdato = LocalDateTime.now(),
-            personIdent = "1234", status = MigreringStatus.MIGRERT_I_BA
+            personIdent = "1234",
+            status = MigreringStatus.MIGRERT_I_BA,
         )
 
         migrertsakRepository.insert(migrertsak)
@@ -93,8 +94,9 @@ class MigrertsakRepositoryTest {
                 aarsak = null,
                 resultatFraBa = resultatFraBa,
                 migreringsdato = LocalDateTime.now(),
-                personIdent = "1234", status = MigreringStatus.MIGRERT_I_BA
-            )
+                personIdent = "1234",
+                status = MigreringStatus.MIGRERT_I_BA,
+            ),
         )
 
         migrertsakRepository.insert(
@@ -104,8 +106,9 @@ class MigrertsakRepositoryTest {
                 aarsak = null,
                 resultatFraBa = null,
                 migreringsdato = LocalDateTime.now(),
-                personIdent = "1234", status = MigreringStatus.MIGRERT_I_BA
-            )
+                personIdent = "1234",
+                status = MigreringStatus.MIGRERT_I_BA,
+            ),
         )
 
         val saker = migrertsakRepositoryForJsonQuery.finnMedBaResultat("test", "ok")

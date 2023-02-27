@@ -26,7 +26,7 @@ class DatabaseConfig : AbstractJdbcConfiguration() {
                 StringTilPropertiesWrapperConverter(),
                 PGObjectTilJsonWrapperConverter(),
                 JsonWrapperTilPGObjectConverter(),
-            )
+            ),
         )
     }
 }
@@ -39,9 +39,12 @@ class PGObjectTilJsonWrapperConverter : Converter<PGobject, JsonWrapper?> {
 
 @WritingConverter
 class JsonWrapperTilPGObjectConverter : Converter<JsonWrapper, PGobject?> {
-    override fun convert(source: JsonWrapper): PGobject? = if (source.jsonStr == null) null else
+    override fun convert(source: JsonWrapper): PGobject? = if (source.jsonStr == null) {
+        null
+    } else {
         PGobject().apply {
             this.value = source.jsonStr
             this.type = "Json"
         }
+    }
 }

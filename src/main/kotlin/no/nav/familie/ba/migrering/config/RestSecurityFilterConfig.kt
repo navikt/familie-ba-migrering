@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse
 @Configuration
 class RestSecurityFilterConfig(
     @Value("\${rolle.teamfamilie.forvalter}")
-    val forvalterRolleTeamfamilie: String
+    val forvalterRolleTeamfamilie: String,
 ) {
 
     private val secureLogger = LoggerFactory.getLogger("secureLogger")
@@ -23,7 +23,7 @@ class RestSecurityFilterConfig(
         override fun doFilterInternal(
             request: HttpServletRequest,
             response: HttpServletResponse,
-            filterChain: FilterChain
+            filterChain: FilterChain,
         ) {
             val grupper = hentGrupper()
             if ((!tilgangSomApp() && !grupper.contains(forvalterRolleTeamfamilie)) && !environment.activeProfiles.contains("dev")) {
@@ -54,7 +54,7 @@ class RestSecurityFilterConfig(
                     @Suppress("UNCHECKED_CAST")
                     it.getClaims("azuread")?.get("groups") as List<String>? ?: emptyList()
                 },
-                onFailure = { emptyList() }
+                onFailure = { emptyList() },
             )
     }
 
@@ -70,7 +70,7 @@ class RestSecurityFilterConfig(
                         roller.contains("access_as_application")
                     }
                 },
-                onFailure = { false }
+                onFailure = { false },
             )
     }
 }

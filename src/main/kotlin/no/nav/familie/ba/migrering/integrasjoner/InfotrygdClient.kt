@@ -19,7 +19,7 @@ private val logger = LoggerFactory.getLogger(InfotrygdClient::class.java)
 @Component
 class InfotrygdClient @Autowired constructor(
     @param:Value("\${FAMILIE_BA_INFOTRYGD_API_URL}") private val infotrygdApiUri: String,
-    @Qualifier("azure") restOperations: RestOperations
+    @Qualifier("azure") restOperations: RestOperations,
 ) : AbstractRestClient(restOperations, "migrering.infotrygd") {
 
     fun hentPersonerKlareForMigrering(migreringRequest: MigreringRequest): MigreringResponse {
@@ -78,9 +78,11 @@ class InfotrygdClient @Autowired constructor(
     }
 
     private fun loggFeil(ex: Exception, uri: URI) {
-        val secureLogMessage = if (ex is HttpClientErrorException)
-            "Http feil mot ${uri.path}: httpkode: ${ex.statusCode}, feilmelding ${ex.message}" else
+        val secureLogMessage = if (ex is HttpClientErrorException) {
+            "Http feil mot ${uri.path}: httpkode: ${ex.statusCode}, feilmelding ${ex.message}"
+        } else {
             "Feil mot ${uri.path}; melding ${ex.message}"
+        }
         secureLogger.error(secureLogMessage, ex)
         logger.error("Feil mot ${uri.path}.")
     }
@@ -97,7 +99,7 @@ data class MigreringRequest(
 
 data class MigreringResponse(
     val personerKlarForMigrering: Set<String>,
-    val totalPages: Int
+    val totalPages: Int,
 )
 
 class StønadRequest(
@@ -105,7 +107,7 @@ class StønadRequest(
     val tknr: String,
     val iverksattFom: String,
     val virkningFom: String,
-    val region: String
+    val region: String,
 )
 
 data class InfotrygdÅpenSakResponse(val harÅpenSak: Boolean)
