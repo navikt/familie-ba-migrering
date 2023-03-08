@@ -34,8 +34,7 @@ spec:
       memory: 512Mi
       cpu: 200m
   ingresses: # Optional. List of ingress URLs that will route HTTP traffic to the application.
-    - https://familie-ba-migrering.dev.intern.nav.no
-    - https://familie-ba-migrering.dev.nav.no
+    - https://familie-ba-migrering.intern.dev.nav.no
   secureLogs:
     enabled: true
   gcp: # Database
