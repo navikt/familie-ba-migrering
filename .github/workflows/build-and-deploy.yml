@@ -46,7 +46,7 @@ jobs:
           mvn -B --no-transfer-progress package --settings .m2/maven-settings.xml --file pom.xml
       - name: Publish Test Report
         if: ${{ failure() }}
-        uses: scacap/action-surefire-report@v1.4.0
+        uses: scacap/action-surefire-report@v1.6.1
       - name: Login to GitHub Container Registry
         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
         with:
