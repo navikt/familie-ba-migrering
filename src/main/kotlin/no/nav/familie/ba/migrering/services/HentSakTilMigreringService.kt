@@ -117,4 +117,5 @@ enum class Kategori(val valg: String, val undervalg: String) {
     UTVIDET_DELT_BOSTED("UT", "MD"),
     ORDINÆR_EØS_PRIMÆRLAND("OR", "EU"),
     UTVIDET_EØS_PRIMÆRLAND("UT", "EU"),
+    INSTITUSJON("OR", "IB"),
 }
