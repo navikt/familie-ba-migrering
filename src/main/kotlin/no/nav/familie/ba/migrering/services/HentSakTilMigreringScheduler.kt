@@ -49,12 +49,6 @@ class HentSakTilMigreringScheduler(
         hentSakTilMigreringService.rekjørMigreringerMedFeiltype(MigreringsfeilType.ÅPEN_SAK_TIL_BESLUTNING_I_INFOTRYGD.name)
     }
 
-    @Scheduled(cron = "0 0 15 * * MON-FRI", zone = "Europe/Oslo")
-    fun rekjørMigreringerMedFeiltypeUKJENT() {
-        Log.info("Trigger automatisk rekjøring av migreringer som feilet ukjente feil")
-        hentSakTilMigreringService.rekjørMigreringerMedFeiltype(MigreringsfeilType.UKJENT.name)
-    }
-
     companion object {
         val Log = LoggerFactory.getLogger(HentSakTilMigreringScheduler::class.java)
     }
