@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.4</version>
+        <version>3.0.5</version>
     </parent>
 
     <properties>
@@ -22,7 +22,7 @@
         <jvmTarget>17</jvmTarget>
         <kotlin.version>1.8.20</kotlin.version>
         <felles.version>2.20230210162649_a258d57-SPRING_BOOT_3</felles.version>
-        <prosessering.version>2.20230214102837_4b63c2e-SPRING_BOOT_3</prosessering.version>
+        <prosessering.version>2.20230322091650_fb0187e-SPRING_BOOT_3</prosessering.version>
         <kontrakter.version>3.0_20230314075921_27fa962-JAKARTA</kontrakter.version>
         <token-validation-spring.version>3.0.3</token-validation-spring.version>
         <swagger.version>3.0.0</swagger.version>
