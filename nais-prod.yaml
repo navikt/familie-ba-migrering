@@ -79,6 +79,9 @@ spec:
       - application: familie-ba-sak
         namespace: teamfamilie
         cluster: prod-gcp
+    external:
+      - host: familie-ba-infotrygd.prod-fss-pub.nais.io
+      - host: familie-ba-infotrygd-feed.prod-fss-pub.nais.io
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: prod
