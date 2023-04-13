@@ -68,3 +68,23 @@ jobs:
           RESOURCE: nais-preprod.yaml
           IMAGE: ${{ steps.docker-push.outputs.image }}
 
+      - name: Dependabot metadata
+        if: ${{ github.actor == 'dependabot[bot]' }}
+        id: metadata
+        uses: dependabot/fetch-metadata@v1
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Approve a PR
+        if: ${{ github.actor == 'dependabot[bot]' }}
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - name: Enable auto-merge for Dependabot PRs
+        if: ${{ github.actor == 'dependabot[bot]' }}
+        run: gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
