@@ -30,8 +30,8 @@ jobs:
     name: Bygg app/image, push til github, deploy til dev-gcp
     runs-on: ubuntu-latest
     permissions:
-      contents: "read"
-      id-token: "write"
+      contents: write
+      id-token: write
       packages: write
       pull-requests: write
     steps:
