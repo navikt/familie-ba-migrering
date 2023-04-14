@@ -2,10 +2,10 @@ name: Build-Deploy-Prod
 on:
   push:
     branches:
-      - main
+      - 'main'
   pull_request:
     branches:
-      - main
+      - 'main'
     types: [ closed ]
 env:
   IMAGE: ghcr.io/navikt/familie-ba-migrering:${{ github.sha }}
