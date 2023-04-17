@@ -30,9 +30,8 @@ jobs:
     name: Bygg app/image, push til github, deploy til dev-gcp
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
       id-token: write
-      packages: write
       pull-requests: write
     steps:
       - uses: actions/checkout@v3
@@ -79,12 +78,6 @@ jobs:
       - name: Approve a PR
         if: ${{ github.actor == 'dependabot[bot]' }}
         run: gh pr review --approve "$PR_URL"
-        env:
-          PR_URL: ${{github.event.pull_request.html_url}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      - name: Enable auto-merge for Dependabot PRs
-        if: ${{ github.actor == 'dependabot[bot]' && (steps.metadata.outputs.update-type == 'version-update:semver-patch' || steps.metadata.outputs.update-type == 'version-update:semver-minor') }}
-        run: gh pr merge --auto --squash "$PR_URL"
         env:
           PR_URL: ${{github.event.pull_request.html_url}}
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
