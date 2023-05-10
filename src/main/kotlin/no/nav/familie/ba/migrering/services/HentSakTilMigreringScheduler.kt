@@ -6,7 +6,6 @@ import no.nav.familie.ba.migrering.services.Kategori.UTVIDET
 import no.nav.familie.ba.migrering.services.Kategori.UTVIDET_DELT_BOSTED
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
 @Service
@@ -18,19 +17,19 @@ class HentSakTilMigreringScheduler(
     @Value("\${migrering.antallPersoner.utvidet.deltbosted:0}") val antallPersonerUtvidetDeltBosted: Int,
 ) {
 
-    @Scheduled(cron = "0 0 16 * * MON-FRI", zone = "Europe/Oslo")
+//    @Scheduled(cron = "0 0 16 * * MON-FRI", zone = "Europe/Oslo")
     fun hentOrdinærSakTilMigreringScheduler() {
         Log.info("Trigger migrering av $antallPersoneOrdinærr ordinære saker")
         hentSakTilMigreringService.migrer(antallPersoneOrdinærr)
     }
 
-    @Scheduled(cron = "0 50 16 * * MON-FRI", zone = "Europe/Oslo")
+//    @Scheduled(cron = "0 50 16 * * MON-FRI", zone = "Europe/Oslo")
     fun hentUtvidetSakerTilMigreringScheduler() {
         Log.info("Trigger migrering av $antallPersonerUtvidet utvidete saker")
         hentSakTilMigreringService.migrer(antallPersonerUtvidet, kategori = UTVIDET)
     }
 
-    @Scheduled(cron = "0 0 13 * * MON-FRI", zone = "Europe/Oslo")
+//    @Scheduled(cron = "0 0 13 * * MON-FRI", zone = "Europe/Oslo")
     fun hentDeltBostedScheduler() {
         Log.info("Trigger migrering av $antallPersonerOrdinærDeltBosted ordinære saker med delt bosted")
         if (antallPersonerOrdinærDeltBosted > 0) {
@@ -42,7 +41,7 @@ class HentSakTilMigreringScheduler(
         }
     }
 
-    @Scheduled(cron = "0 0 15 * * FRI", zone = "Europe/Oslo")
+//    @Scheduled(cron = "0 0 15 * * FRI", zone = "Europe/Oslo")
     fun rekjørMigreringerMedFeiltypeÅpenSak() {
         Log.info("Trigger automatisk rekjøring av migreringer som feilet pga. åpen sak i Infotrygd")
         hentSakTilMigreringService.rekjørMigreringerMedFeiltype(MigreringsfeilType.ÅPEN_SAK_INFOTRYGD.name)
