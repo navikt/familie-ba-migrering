@@ -26,7 +26,7 @@
         <kontrakter.version>3.0_20230526102731_e1eff1d</kontrakter.version>
         <token-validation-spring.version>3.0.3</token-validation-spring.version>
         <swagger.version>3.0.0</swagger.version>
-        <springdoc.version>2.1.0</springdoc.version>
+        <springdoc.version>2.2.0</springdoc.version>
 
         <!-- Må settes for å kunne kjøre opp mock-oauth2-server i unit-tester -->
         <okhttp3.version>4.9.0</okhttp3.version>
