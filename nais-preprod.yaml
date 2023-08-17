@@ -39,7 +39,7 @@ spec:
     enabled: true
   gcp: # Database
     sqlInstances:
-      - type: POSTGRES_12
+      - type: POSTGRES_15
         name: familie-ba-migrering
         diskAutoresize: true
         autoBackupTime: "03:00"
