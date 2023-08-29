@@ -43,6 +43,7 @@ spec:
         name: familie-ba-migrering
         diskAutoresize: true
         autoBackupTime: "03:00"
+        cascadingDelete: true
         databases:
           - name: familie-ba-migrering
             envVarPrefix: DB
