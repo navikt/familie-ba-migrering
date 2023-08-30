@@ -1,5 +1,7 @@
 # familie-ba-migrering
 
+Arkivert og slettet app siden automatisk migrering nå er skrudd av
+
 ## Kjøring lokalt
 For oppsett av utviklingsmiljø, så kjør
 ```
